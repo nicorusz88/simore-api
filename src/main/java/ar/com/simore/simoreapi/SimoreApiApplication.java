@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@PropertySource({"file:/opt/simore/application.properties", "file:/opt/simore/data.properties"})
+@PropertySource({"file:${user.home}/opt/simore/application.properties", "file:${user.home}/opt/simore/data.properties"})
 public class SimoreApiApplication {
 
 	public static void main(String[] args) {
