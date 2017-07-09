@@ -1,31 +1,22 @@
 package ar.com.simore.simoreapi.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "role")
-public abstract class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public abstract class User extends BaseEntity {
     private String userName;
     private String password;
     private String firstName;
     private String lastName;
     private boolean deleted = false;
+    @ManyToOne
+    private Role role;
 
-    @Column(name = "role", insertable = false, updatable = false)
-    private String role;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+    @ManyToMany
+    private List<Treatment> treatment;
 
     public String getPassword() {
         return password;
@@ -51,14 +42,6 @@ public abstract class User {
         this.lastName = lastName;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -73,5 +56,21 @@ public abstract class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public List<Treatment> getTreatment() {
+        return treatment;
+    }
+
+    public void setTreatment(List<Treatment> treatment) {
+        this.treatment = treatment;
     }
 }

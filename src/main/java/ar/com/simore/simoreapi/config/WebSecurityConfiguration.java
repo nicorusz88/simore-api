@@ -35,7 +35,7 @@ public class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdap
 
                 if (user != null) {
                     return new User(user.getUserName(), user.getPassword(), true, true, true, true,
-                            AuthorityUtils.createAuthorityList(user.getRole().toUpperCase()));
+                            AuthorityUtils.createAuthorityList(user.getRole().getName()));
                 } else {
                     throw new UsernameNotFoundException("Could not find the user '"
                             + userName + "'");
