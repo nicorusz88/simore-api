@@ -1,19 +1,21 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
 
 @Entity
 @Table(name = "user")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class User extends BaseEntity {
+public class User extends BaseEntity {
     private String userName;
     private String password;
     private String firstName;
     private String lastName;
     private boolean deleted = false;
-    @ManyToOne
-    private Role role;
+    @OneToMany
+    private List<Role> roles;
 
     @ManyToMany
     private List<Treatment> treatment;
@@ -58,12 +60,12 @@ public abstract class User extends BaseEntity {
         this.userName = userName;
     }
 
-    public Role getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public List<Treatment> getTreatment() {

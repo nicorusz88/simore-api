@@ -1,23 +1,65 @@
 package ar.com.simore.simoreapi.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
 
 @Entity
+@Table(name = "treatment_template")
 public class TreatmentTemplate extends BaseEntity {
 
-    @ManyToMany
+    private String name;
+
+    @OneToMany
     private List<Vital> vitals;
 
-    @ManyToMany
+    @OneToMany
     private List<Medication> medications;
 
-    @ManyToMany
+    @OneToMany
     private List<Recommendation> recommendations;
 
-    @ManyToMany
+    @OneToMany
     private List<CheckIn> checkIns;
 
+    public List<Vital> getVitals() {
+        return vitals;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setVitals(List<Vital> vitals) {
+        this.vitals = vitals;
+    }
+
+    public List<Medication> getMedications() {
+        return medications;
+    }
+
+    public void setMedications(List<Medication> medications) {
+        this.medications = medications;
+    }
+
+    public List<Recommendation> getRecommendations() {
+        return recommendations;
+    }
+
+    public void setRecommendations(List<Recommendation> recommendations) {
+        this.recommendations = recommendations;
+    }
+
+    public List<CheckIn> getCheckIns() {
+        return checkIns;
+    }
+
+    public void setCheckIns(List<CheckIn> checkIns) {
+        this.checkIns = checkIns;
+    }
 }

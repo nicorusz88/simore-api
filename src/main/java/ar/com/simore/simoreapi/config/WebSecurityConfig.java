@@ -1,7 +1,9 @@
 package ar.com.simore.simoreapi.config;
 
+import ar.com.simore.simoreapi.entities.Role;
 import ar.com.simore.simoreapi.entities.SimpleUserDetails;
 import ar.com.simore.simoreapi.entities.User;
+import ar.com.simore.simoreapi.entities.utils.RolesNamesEnum;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.xauth.XAuthTokenConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @EnableWebSecurity
 @Configuration
 @Order
@@ -28,12 +32,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.cors().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/conductores/**").hasAnyRole(CustomUserDetailsService.ROLE_CONDUCTOR, CustomUserDetailsService.ROLE_ADMINISTRADOR, CustomUserDetailsService.ROLE_OPERADOR);
-        http.authorizeRequests().antMatchers("/operadores/**").hasAnyRole(CustomUserDetailsService.ROLE_ADMINISTRADOR, CustomUserDetailsService.ROLE_OPERADOR);
-        http.authorizeRequests().antMatchers("/administradores/**").hasRole(CustomUserDetailsService.ROLE_ADMINISTRADOR);
-        http.authorizeRequests().antMatchers("/clientes/**").hasAnyRole(CustomUserDetailsService.ROLE_ADMINISTRADOR, CustomUserDetailsService.ROLE_OPERADOR);
+        http.authorizeRequests().antMatchers("/dashboard/**").hasAnyRole(RolesNamesEnum.ADMINISTRATOR.name(), RolesNamesEnum.PROFESSIONAL.name());
+        http.authorizeRequests().antMatchers("/administrators/**").hasRole(RolesNamesEnum.ADMINISTRATOR.name());
+        http.authorizeRequests().antMatchers("/professionals/**").hasAnyRole(RolesNamesEnum.PROFESSIONAL.name());
+        http.authorizeRequests().antMatchers("/pacients/**").hasAnyRole(RolesNamesEnum.PACIENT.name());
 
 
         SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity> securityConfigurerAdapter = new XAuthTokenConfigurer(
@@ -68,12 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
-
-    public static final String ROLE_ADMINISTRADOR = "ADMINISTRADOR";
-    public static final String ROLE_OPERADOR = "OPERADOR";
-    public static final String ROLE_CONDUCTOR = "CONDUCTOR";
-
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -81,7 +81,12 @@ class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUserName(username);
 
         if (user != null) {
-            return new SimpleUserDetails(user.getUserName(), user.getPassword(), user.getRole().toUpperCase());
+            List<Role> roles1 = user.getRoles();
+            String[] roles = new String[10];
+            for (int i = 0; i < roles1.size(); i++) {
+                roles[i] = roles1.get(i).getName();
+            }
+            return new SimpleUserDetails(user.getUserName(), user.getPassword(), roles);
         } else {
             return null;
         }

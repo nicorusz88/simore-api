@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.config;
 
 
+import ar.com.simore.simoreapi.entities.Role;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.util.List;
 
 @Configuration
 public class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
@@ -25,6 +31,16 @@ public class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdap
     }
 
     @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**");
+            }
+        };
+    }
+
+    @Bean
     UserDetailsService userDetailsService() {
         return new UserDetailsService() {
 
@@ -34,8 +50,13 @@ public class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdap
 
 
                 if (user != null) {
+                    List<Role> roles1 = user.getRoles();
+                    String[] roles = new String[roles1.size()];
+                    for (int i = 0; i < roles1.size(); i++) {
+                        roles[i] = roles1.get(i).getName();
+                    }
                     return new User(user.getUserName(), user.getPassword(), true, true, true, true,
-                            AuthorityUtils.createAuthorityList(user.getRole().getName()));
+                            AuthorityUtils.createAuthorityList(roles));
                 } else {
                     throw new UsernameNotFoundException("Could not find the user '"
                             + userName + "'");

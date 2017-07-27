@@ -1,8 +1,10 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 
-@Entity
+@MappedSuperclass
+@Table(name = "base_treatment_component")
 public class BaseTreatmentComponent extends BaseEntity{
 
     private String name;

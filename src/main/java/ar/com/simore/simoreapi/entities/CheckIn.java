@@ -1,8 +1,11 @@
 package ar.com.simore.simoreapi.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "checkin")
 public class CheckIn extends BaseTreatmentComponent {
 
     private String text;

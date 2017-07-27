@@ -1,8 +1,10 @@
 package ar.com.simore.simoreapi.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "medication")
 public class Medication extends BaseTreatmentComponent{
 
     private String quantity;
