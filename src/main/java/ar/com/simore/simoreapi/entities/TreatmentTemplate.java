@@ -3,12 +3,13 @@ package ar.com.simore.simoreapi.entities;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
 @Table(name = "treatment_template")
 public class TreatmentTemplate extends BaseEntity {
-
+    @Size(max = 100)
     private String name;
 
     @OneToMany

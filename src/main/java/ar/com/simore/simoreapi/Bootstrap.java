@@ -66,6 +66,7 @@ public class Bootstrap {
             user1.setFirstName("admin");
             user1.setLastName("admin");
             user1.setPassword("admin");
+            user1.setGender("Masculino");
             user1.setDeleted(false);
             Role role1 = roleRepository.findByName(RolesNamesEnum.ADMINISTRATOR.name());
             List<Role> roles = new ArrayList<>();
@@ -82,6 +83,7 @@ public class Bootstrap {
             user1.setFirstName("prof");
             user1.setLastName("prof");
             user1.setPassword("prof");
+            user1.setGender("Masculino");
             user1.setDeleted(false);
             Role role1 = roleRepository.findByName(RolesNamesEnum.PROFESSIONAL.name());
             List<Role> roles = new ArrayList<>();
@@ -98,6 +100,7 @@ public class Bootstrap {
             user1.setFirstName("pacient");
             user1.setLastName("pacient");
             user1.setPassword("pacient");
+            user1.setGender("Masculino");
             user1.setDeleted(false);
             Role role1 = roleRepository.findByName(RolesNamesEnum.PACIENT.name());
             List<Role> roles = new ArrayList<>();

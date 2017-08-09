@@ -1,4 +1,4 @@
-package ar.com.simore.simoreapi.config;
+package ar.com.simore.simoreapi;
 
 import ar.com.simore.simoreapi.entities.Role;
 import ar.com.simore.simoreapi.entities.SimpleUserDetails;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,14 +32,14 @@ import java.util.List;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.cors().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.authorizeRequests().antMatchers("/dashboard/**").hasAnyRole(RolesNamesEnum.ADMINISTRATOR.name(), RolesNamesEnum.PROFESSIONAL.name());
-        http.authorizeRequests().antMatchers("/administrators/**").hasRole(RolesNamesEnum.ADMINISTRATOR.name());
-        http.authorizeRequests().antMatchers("/professionals/**").hasAnyRole(RolesNamesEnum.PROFESSIONAL.name());
-        http.authorizeRequests().antMatchers("/pacients/**").hasAnyRole(RolesNamesEnum.PACIENT.name());
+        http.csrf().disable().cors();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                .authorizeRequests()
+                    .antMatchers("/authenticate").permitAll()
+                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .antMatchers("/users/**").hasAnyRole(RolesNamesEnum.ADMINISTRATOR.name(), RolesNamesEnum.PROFESSIONAL.name())
+                    .antMatchers("/**").authenticated();
 
 
         SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity> securityConfigurerAdapter = new XAuthTokenConfigurer(

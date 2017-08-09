@@ -1,7 +1,6 @@
 package ar.com.simore.simoreapi.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 @Entity

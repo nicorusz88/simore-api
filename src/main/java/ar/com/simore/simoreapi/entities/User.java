@@ -1,24 +1,64 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity {
+    @NotBlank(message = "El nombre de usuario no puede estar vacio.")
+    @Size(max = 20)
     private String userName;
     private String password;
-    private String firstName;
-    private String lastName;
-    private boolean deleted = false;
-    @OneToMany
-    private List<Role> roles;
 
-    @ManyToMany
-    private List<Treatment> treatment;
+    @NotBlank(message = "El nombre no puede estar vacio.")
+    @Size(max = 50)
+    private String firstName;
+
+    @NotBlank(message = "El apellido no puede estar vacio.")
+    @Size(max = 50)
+    private String lastName;
+
+    @Size(max = 20)
+    private String gender;
+
+    private Date birthDate;
+
+    @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Address address;
+
+    @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private MedicalInsurance medicalInsurance;
+    @Size(max = 10)
+    private String bloodType;
+    private int height;
+    private int weight;
+    @Size(max = 50)
+    private String phone;
+    @Size(max = 300)
+    private String avatar;
+
+    @Email(message = "El email es inválido")
+    @Size(max = 200)
+    private String email;
+
+    @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Treatment treatment;
+    private boolean deleted = false;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @NotNull
+    private List<Role> roles;
 
     public String getPassword() {
         return password;
@@ -68,11 +108,91 @@ public class User extends BaseEntity {
         this.roles = roles;
     }
 
-    public List<Treatment> getTreatment() {
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public MedicalInsurance getMedicalInsurance() {
+        return medicalInsurance;
+    }
+
+    public void setMedicalInsurance(MedicalInsurance medicalInsurance) {
+        this.medicalInsurance = medicalInsurance;
+    }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Treatment getTreatment() {
         return treatment;
     }
 
-    public void setTreatment(List<Treatment> treatment) {
+    public void setTreatment(Treatment treatment) {
         this.treatment = treatment;
     }
 }

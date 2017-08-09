@@ -1,4 +1,4 @@
-package ar.com.simore.simoreapi.config;
+package ar.com.simore.simoreapi;
 
 
 import ar.com.simore.simoreapi.entities.Role;
@@ -6,6 +6,7 @@ import ar.com.simore.simoreapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -35,7 +36,7 @@ public class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdap
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**");
+                registry.addMapping("/**").allowedMethods("*");
             }
         };
     }
