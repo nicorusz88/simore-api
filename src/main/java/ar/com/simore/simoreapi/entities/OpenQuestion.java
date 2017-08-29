@@ -5,6 +5,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "open_question")
-public class OpenQuestion extends BaseEntity implements Question{
+public class OpenQuestion extends Question{
 
 }

@@ -9,11 +9,11 @@ public class Recommendation extends BaseTreatmentComponent{
 
     private String text;
 
-    public String getText() {
+    public String getName() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setName(String text) {
         this.text = text;
     }
 }

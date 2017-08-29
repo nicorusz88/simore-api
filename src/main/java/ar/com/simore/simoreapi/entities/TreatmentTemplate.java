@@ -1,5 +1,6 @@
 package ar.com.simore.simoreapi.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -12,17 +13,20 @@ public class TreatmentTemplate extends BaseEntity {
     @Size(max = 100)
     private String name;
 
-    @OneToMany
+    @OneToMany(cascade= CascadeType.ALL)
     private List<Vital> vitals;
 
-    @OneToMany
+    @OneToMany(cascade= CascadeType.ALL)
     private List<Medication> medications;
 
-    @OneToMany
+    @OneToMany(cascade= CascadeType.ALL)
     private List<Recommendation> recommendations;
 
-    @OneToMany
+    @OneToMany(cascade= CascadeType.ALL)
     private List<CheckIn> checkIns;
+
+    @OneToMany(cascade= CascadeType.ALL)
+    private List<Appointment> appointments;
 
     public List<Vital> getVitals() {
         return vitals;
@@ -62,5 +66,13 @@ public class TreatmentTemplate extends BaseEntity {
 
     public void setCheckIns(List<CheckIn> checkIns) {
         this.checkIns = checkIns;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }

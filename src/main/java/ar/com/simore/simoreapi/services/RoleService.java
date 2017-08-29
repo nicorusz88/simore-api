@@ -15,5 +15,4 @@ public class RoleService extends BaseService<RoleRepository, Role> {
     protected RoleRepository getRepository() {
         return roleRepository;
     }
-
 }

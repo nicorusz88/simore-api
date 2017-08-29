@@ -9,11 +9,11 @@ public class BaseTreatmentComponent extends BaseEntity{
 
     private String name;
 
-    public String getText() {
+    public String getName() {
         return name;
     }
 
-    public void setText(String text) {
-        this.name = text;
+    public void setName(String name) {
+        this.name = name;
     }
 }

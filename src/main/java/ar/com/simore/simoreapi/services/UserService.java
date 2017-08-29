@@ -21,9 +21,9 @@ public class UserService extends BaseService<UserRepository, User> {
 
     public List<User> getByRoles(String roles) {
         // Yes yes, I know we should use criteria here
-        roles.replaceAll(" ","");
+        roles = roles.replaceAll(" ","");
         String[] rolesSplitted = roles.split(",");
-        String role1 = "";
+        String role1;
         String role2 = "";
         String role3 = "";
         switch (rolesSplitted.length) {

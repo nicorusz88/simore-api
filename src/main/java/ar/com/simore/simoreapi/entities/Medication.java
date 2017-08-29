@@ -7,25 +7,28 @@ import javax.persistence.Table;
 @Table(name = "medication")
 public class Medication extends BaseTreatmentComponent{
 
-    private String quantity;
     /**
-     * Frecuency in  hours
+     * Quantity to take the drug in Mg
      */
-    private int frecuency;
+    private long quantity;
+    /**
+     * Frecuency to take the drug in hours
+     */
+    private long frecuency;
 
-    public String getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
 
-    public int getFrecuency() {
+    public long getFrecuency() {
         return frecuency;
     }
 
-    public void setFrecuency(int frecuency) {
+    public void setFrecuency(long frecuency) {
         this.frecuency = frecuency;
     }
 }
