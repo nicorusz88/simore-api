@@ -2,7 +2,7 @@ package ar.com.simore.simoreapi;
 
 import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.utils.RolesNamesEnum;
-import ar.com.simore.simoreapi.entities.utils.VitalTypesEnum;
+import ar.com.simore.simoreapi.entities.utils.VitalsEnum;
 import ar.com.simore.simoreapi.entities.utils.YesNoOptionEnum;
 import ar.com.simore.simoreapi.repositories.RoleRepository;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
@@ -43,9 +43,8 @@ public class Bootstrap {
 
 
     private void initRoles() {
-
-        List<Role> roles = (List<Role>) roleRepository.findAll();
-        if (roles.isEmpty()) {
+        final long count = roleRepository.count();
+        if (count==0) {
             logger.warn("ATENTION: No roles, creating them...");
             Role role1 = new Role();
             role1.setName(RolesNamesEnum.ADMINISTRATOR.name());
@@ -61,7 +60,7 @@ public class Bootstrap {
     }
 
     private void initUsers() {
-
+        
         List<User> administrators = userRepository.findByRoles_Name(RolesNamesEnum.ADMINISTRATOR.name());
         List<User> professionals = userRepository.findByRoles_Name(RolesNamesEnum.PROFESSIONAL.name());
         List<User> pacients = userRepository.findByRoles_Name(RolesNamesEnum.PACIENT.name());
@@ -121,8 +120,8 @@ public class Bootstrap {
 
     private void initTreatmentsTemplates() {
 
-        List<TreatmentTemplate> treatments = (List<TreatmentTemplate>) treatmentTemplateRepository.findAll();
-        if(treatments.isEmpty()){
+        final long count = treatmentTemplateRepository.count();
+        if (count==0) {
             logger.warn("ATENTION: No Treatment Templates, creating Treatment templates for Cardiac Disease, Diabeted Type I and Hypertension");
             TreatmentTemplate treatmentTemplate = generateTreatmentTemplateCardiacDisease();
             treatmentTemplateRepository.save(treatmentTemplate);
@@ -215,16 +214,16 @@ public class Bootstrap {
     private List<Vital> generateVitalsCardiovascularDisease() {
         List<Vital> vitales = new ArrayList<>();
         Vital vital1 = new Vital();
-        vital1.setType(VitalTypesEnum.HEART_RATE);
-        vital1.setName(VitalTypesEnum.HEART_RATE.getName());
+        vital1.setType(VitalsEnum.HEART_RATE);
+        vital1.setName(VitalsEnum.HEART_RATE.getName());
 
         Vital vital2 = new Vital();
-        vital2.setType(VitalTypesEnum.BLOOD_OXYGEN);
-        vital2.setName(VitalTypesEnum.BLOOD_OXYGEN.getName());
+        vital2.setType(VitalsEnum.BLOOD_OXYGEN);
+        vital2.setName(VitalsEnum.BLOOD_OXYGEN.getName());
 
         Vital vital3 = new Vital();
-        vital3.setType(VitalTypesEnum.BLOOD_PRESSURE);
-        vital3.setName(VitalTypesEnum.BLOOD_PRESSURE.getName());
+        vital3.setType(VitalsEnum.BLOOD_PRESSURE);
+        vital3.setName(VitalsEnum.BLOOD_PRESSURE.getName());
 
         vitales.add(vital1);
         vitales.add(vital2);
@@ -268,24 +267,24 @@ public class Bootstrap {
     private List<Vital> generateVitalsDiabetesType1() {
         List<Vital> vitales = new ArrayList<>();
         Vital vital1 = new Vital();
-        vital1.setType(VitalTypesEnum.STEPS);
-        vital1.setName(VitalTypesEnum.STEPS.getName());
+        vital1.setType(VitalsEnum.STEPS);
+        vital1.setName(VitalsEnum.STEPS.getName());
 
         Vital vital2 = new Vital();
-        vital2.setType(VitalTypesEnum.WEIGHT);
-        vital2.setName(VitalTypesEnum.WEIGHT.getName());
+        vital2.setType(VitalsEnum.WEIGHT);
+        vital2.setName(VitalsEnum.WEIGHT.getName());
 
         Vital vital3 = new Vital();
-        vital3.setType(VitalTypesEnum.DISTANCE);
-        vital3.setName(VitalTypesEnum.DISTANCE.getName());
+        vital3.setType(VitalsEnum.DISTANCE);
+        vital3.setName(VitalsEnum.DISTANCE.getName());
 
         Vital vital4 = new Vital();
-        vital4.setType(VitalTypesEnum.BURNT_CALORIES);
-        vital4.setName(VitalTypesEnum.BURNT_CALORIES.getName());
+        vital4.setType(VitalsEnum.BURNT_CALORIES);
+        vital4.setName(VitalsEnum.BURNT_CALORIES.getName());
 
         Vital vital5 = new Vital();
-        vital5.setType(VitalTypesEnum.BLOOD_PRESSURE);
-        vital5.setName(VitalTypesEnum.BLOOD_PRESSURE.getName());
+        vital5.setType(VitalsEnum.BLOOD_PRESSURE);
+        vital5.setName(VitalsEnum.BLOOD_PRESSURE.getName());
 
         vitales.add(vital1);
         vitales.add(vital2);
@@ -406,28 +405,28 @@ public class Bootstrap {
     private List<Vital> generateVitalsHypertension() {
         List<Vital> vitales = new ArrayList<>();
         Vital vital1 = new Vital();
-        vital1.setType(VitalTypesEnum.STEPS);
-        vital1.setName(VitalTypesEnum.STEPS.getName());
+        vital1.setType(VitalsEnum.STEPS);
+        vital1.setName(VitalsEnum.STEPS.getName());
 
         Vital vital2 = new Vital();
-        vital2.setType(VitalTypesEnum.WEIGHT);
-        vital2.setName(VitalTypesEnum.WEIGHT.getName());
+        vital2.setType(VitalsEnum.WEIGHT);
+        vital2.setName(VitalsEnum.WEIGHT.getName());
 
         Vital vital3 = new Vital();
-        vital3.setType(VitalTypesEnum.DISTANCE);
-        vital3.setName(VitalTypesEnum.DISTANCE.getName());
+        vital3.setType(VitalsEnum.DISTANCE);
+        vital3.setName(VitalsEnum.DISTANCE.getName());
 
         Vital vital4 = new Vital();
-        vital4.setType(VitalTypesEnum.BURNT_CALORIES);
-        vital4.setName(VitalTypesEnum.BURNT_CALORIES.getName());
+        vital4.setType(VitalsEnum.BURNT_CALORIES);
+        vital4.setName(VitalsEnum.BURNT_CALORIES.getName());
 
         Vital vital5 = new Vital();
-        vital5.setType(VitalTypesEnum.BLOOD_PRESSURE);
-        vital5.setName(VitalTypesEnum.BLOOD_PRESSURE.getName());
+        vital5.setType(VitalsEnum.BLOOD_PRESSURE);
+        vital5.setName(VitalsEnum.BLOOD_PRESSURE.getName());
 
         Vital vital6 = new Vital();
-        vital6.setType(VitalTypesEnum.HEART_RATE);
-        vital6.setName(VitalTypesEnum.HEART_RATE.getName());
+        vital6.setType(VitalsEnum.HEART_RATE);
+        vital6.setName(VitalsEnum.HEART_RATE.getName());
 
         vitales.add(vital1);
         vitales.add(vital2);

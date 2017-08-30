@@ -1,6 +1,5 @@
 package ar.com.simore.simoreapi.entities;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -31,12 +30,10 @@ public class User extends BaseEntity {
 
     private Date birthDate;
 
-    @OneToOne
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
-    @OneToOne
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private MedicalInsurance medicalInsurance;
     @Size(max = 10)
     private String bloodType;
@@ -51,9 +48,9 @@ public class User extends BaseEntity {
     @Size(max = 200)
     private String email;
 
-    @OneToOne
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Treatment treatment;
+
     private boolean deleted = false;
 
     @ManyToMany(fetch = FetchType.EAGER)

@@ -1,9 +1,6 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -17,17 +14,44 @@ public class Treatment extends BaseEntity {
     @Size(max = 500)
     private String description;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Vital> vitals;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<VitalMeasurement> vitalsMeasurements;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Medication> medications;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<MedicationStatus> medicationsStatuses;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Recommendation> recommendations;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<RecommendationStatus> recommendationsStatuses;
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CheckIn> checkIns;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CheckInResult> checkInsResults;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<AppointmentStatus> appointmentsStatuses;
+
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
 
     public List<Vital> getVitals() {
         return vitals;
@@ -75,5 +99,45 @@ public class Treatment extends BaseEntity {
 
     public void setCheckIns(List<CheckIn> checkIns) {
         this.checkIns = checkIns;
+    }
+
+    public List<VitalMeasurement> getVitalsMeasurements() {
+        return vitalsMeasurements;
+    }
+
+    public void setVitalsMeasurements(List<VitalMeasurement> vitalsMeasurements) {
+        this.vitalsMeasurements = vitalsMeasurements;
+    }
+
+    public List<MedicationStatus> getMedicationsStatuses() {
+        return medicationsStatuses;
+    }
+
+    public void setMedicationsStatuses(List<MedicationStatus> medicationsStatuses) {
+        this.medicationsStatuses = medicationsStatuses;
+    }
+
+    public List<RecommendationStatus> getRecommendationsStatuses() {
+        return recommendationsStatuses;
+    }
+
+    public void setRecommendationsStatuses(List<RecommendationStatus> recommendationsStatuses) {
+        this.recommendationsStatuses = recommendationsStatuses;
+    }
+
+    public List<CheckInResult> getCheckInsResults() {
+        return checkInsResults;
+    }
+
+    public void setCheckInsResults(List<CheckInResult> checkInsResults) {
+        this.checkInsResults = checkInsResults;
+    }
+
+    public List<AppointmentStatus> getAppointmentsStatuses() {
+        return appointmentsStatuses;
+    }
+
+    public void setAppointmentsStatuses(List<AppointmentStatus> appointmentsStatuses) {
+        this.appointmentsStatuses = appointmentsStatuses;
     }
 }

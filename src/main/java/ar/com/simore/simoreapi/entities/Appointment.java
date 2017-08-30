@@ -5,7 +5,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "Appointment")
+@Table(name = "appointment")
 public class Appointment extends BaseTreatmentComponent {
 
     /**

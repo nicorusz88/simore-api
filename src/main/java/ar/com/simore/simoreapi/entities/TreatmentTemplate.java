@@ -13,19 +13,20 @@ public class TreatmentTemplate extends BaseEntity {
     @Size(max = 100)
     private String name;
 
-    @OneToMany(cascade= CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Vital> vitals;
 
-    @OneToMany(cascade= CascadeType.ALL)
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Medication> medications;
 
-    @OneToMany(cascade= CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Recommendation> recommendations;
 
-    @OneToMany(cascade= CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CheckIn> checkIns;
 
-    @OneToMany(cascade= CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
     public List<Vital> getVitals() {
