@@ -37,8 +37,10 @@ public class User extends BaseEntity {
     private MedicalInsurance medicalInsurance;
     @Size(max = 10)
     private String bloodType;
-    private int height;
-    private int weight;
+
+    private float height;
+    private float weight;
+
     @Size(max = 50)
     private String phone;
     @Size(max = 300)
@@ -145,19 +147,19 @@ public class User extends BaseEntity {
         this.bloodType = bloodType;
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(float height) {
         this.height = height;
     }
 
-    public int getWeight() {
+    public float getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(float weight) {
         this.weight = weight;
     }
 
