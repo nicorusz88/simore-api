@@ -62,6 +62,17 @@ public class User extends BaseEntity {
     @NotNull
     private List<Role> roles;
 
+    @ManyToOne
+    private User professional;
+
+    public User getProfessional() {
+        return professional;
+    }
+
+    public void setProfessional(User professional) {
+        this.professional = professional;
+    }
+
     public String getPassword() {
         return password;
     }
