@@ -1,6 +1,9 @@
 package ar.com.simore.simoreapi.services;
 
+import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
+import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +24,9 @@ public abstract class BaseService<S extends CrudRepository<E, Long>, E> {
         return getRepository().findOne(id);
     }
 
-    public void save(E entity) {
+    public ResponseEntity save(E entity) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
         getRepository().save(entity);
+        return ResponseEntity.ok().build();
     }
 
     public void delete(long id) {

@@ -33,9 +33,9 @@ public class Bootstrap {
     public void init() {
 
         try {
+            initTreatmentsTemplates();
             initRoles();
             initUsers();
-            initTreatmentsTemplates();
         } catch (Exception e) {
             logger.error("ERROR initializing data: " + e.getMessage());
         }
@@ -63,7 +63,6 @@ public class Bootstrap {
         
         List<User> administrators = userRepository.findByRoles_Name(RolesNamesEnum.ADMINISTRATOR.name());
         List<User> professionals = userRepository.findByRoles_Name(RolesNamesEnum.PROFESSIONAL.name());
-        List<User> pacients = userRepository.findByRoles_Name(RolesNamesEnum.PACIENT.name());
 
         if (administrators.isEmpty()) {
             logger.warn("ATENTION: No administrators, creating [user/pass]: admin/admin");
@@ -98,22 +97,6 @@ public class Bootstrap {
             user1.setRoles(roles);
             userRepository.save(user1);
 
-        }
-        if (pacients.isEmpty()) {
-            logger.warn("ATENTION: No pacients, creating [user/pass]: pacient/pacient");
-
-            User user1 = new User();
-            user1.setUserName("pacient");
-            user1.setFirstName("pacient");
-            user1.setLastName("pacient");
-            user1.setPassword("pacient");
-            user1.setGender("Masculino");
-            user1.setDeleted(false);
-            Role role1 = roleRepository.findByName(RolesNamesEnum.PACIENT.name());
-            List<Role> roles = new ArrayList<>();
-            roles.add(role1);
-            user1.setRoles(roles);
-            userRepository.save(user1);
         }
     }
 

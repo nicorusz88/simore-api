@@ -6,11 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "vital")
 public class Vital extends BaseTreatmentComponent {
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private VitalsEnum type;
 
@@ -22,4 +24,13 @@ public class Vital extends BaseTreatmentComponent {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Vital) {
+            if (this.getType().name().equals(((Vital) obj).getType().name())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller to add a tretment component(vital, checkin, etc) to pacient.
+ */
 @RestController
 @RequestMapping("/treatments-templates")
 public class TreatmentTemplateController extends BaseController<TreatmentTemplateService, TreatmentTemplate> {
@@ -18,4 +21,5 @@ public class TreatmentTemplateController extends BaseController<TreatmentTemplat
     TreatmentTemplateService getService() {
         return treatmentTemplateService;
     }
+
 }

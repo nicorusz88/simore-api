@@ -2,15 +2,15 @@ package ar.com.simore.simoreapi.controllers;
 
 
 import ar.com.simore.simoreapi.entities.User;
+import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
+import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -30,8 +30,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @Override
-    public ResponseEntity<User> add(@Valid @RequestBody User user) {
-        userService.save(user);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> add(@Valid @RequestBody User user) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
+        return userService.save(user);
     }
 }
