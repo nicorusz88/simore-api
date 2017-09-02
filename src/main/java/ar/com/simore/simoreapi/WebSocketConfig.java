@@ -18,7 +18,6 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		//http://stackoverflow.com/questions/30502943/spring-websocket-connecting-with-sockjs-to-a-diffrent-domain
 		registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
 	}
 

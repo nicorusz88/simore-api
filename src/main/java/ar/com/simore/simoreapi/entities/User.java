@@ -50,6 +50,9 @@ public class User extends BaseEntity {
     @Size(max = 200)
     private String email;
 
+    @Size(max = 400)
+    private String allergies;
+
     @OneToOne(cascade = CascadeType.ALL)
     private Treatment treatment;
 
@@ -193,5 +196,13 @@ public class User extends BaseEntity {
 
     public void setTreatment(Treatment treatment) {
         this.treatment = treatment;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
     }
 }
