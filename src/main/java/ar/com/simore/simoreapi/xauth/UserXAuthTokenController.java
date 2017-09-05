@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ar.com.simore.simoreapi.entities.User;
+import ar.com.simore.simoreapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +27,8 @@ public class UserXAuthTokenController {
 	private final TokenUtils tokenUtils = new TokenUtils();
 	private final AuthenticationManager authenticationManager;
 	private final UserDetailsService userDetailsService;
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	public UserXAuthTokenController(AuthenticationManager am, UserDetailsService userDetailsService) {
@@ -40,22 +44,24 @@ public class UserXAuthTokenController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		UserDetails details = this.userDetailsService.loadUserByUsername(username);
-
+		final User user = userRepository.findByUserName(username);
 		Map<String, Boolean> roles = new HashMap<String, Boolean>();
 		for (GrantedAuthority authority : details.getAuthorities())
 			roles.put(authority.toString(), Boolean.TRUE);
 
-		return new UserTransfer(details.getUsername(), roles, tokenUtils.createToken(details));
+		return new UserTransfer(user.getId(), details.getUsername(), roles, tokenUtils.createToken(details));
 	}
 
 	public static class UserTransfer {
 
+		private final long id;
 		private final String name;
 		private final Map<String, Boolean> roles;
 		private final String token;
 
-		public UserTransfer(String userName, Map<String, Boolean> roles, String token) {
+		public UserTransfer(long id, String userName, Map<String, Boolean> roles, String token) {
 
+			this.id = id;
 			Map<String, Boolean> mapOfRoles = new ConcurrentHashMap<String, Boolean>();
 			for (String k : roles.keySet())
 				mapOfRoles.put(k, roles.get(k));
@@ -65,6 +71,9 @@ public class UserXAuthTokenController {
 			this.name = userName;
 		}
 
+		public long getId() {
+			return id;
+		}
 		public String getName() {
 			return this.name;
 		}
