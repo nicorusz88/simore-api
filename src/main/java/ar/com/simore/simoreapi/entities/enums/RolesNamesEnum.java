@@ -1,4 +1,4 @@
-package ar.com.simore.simoreapi.entities.utils;
+package ar.com.simore.simoreapi.entities.enums;
 
 public enum RolesNamesEnum {
     ADMINISTRATOR, PROFESSIONAL, PACIENT

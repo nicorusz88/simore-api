@@ -113,6 +113,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.ganyo</groupId>
             <artifactId>gcm-server</artifactId>
             <version>1.0.2</version>

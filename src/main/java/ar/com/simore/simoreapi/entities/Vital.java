@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.entities;
 
-import ar.com.simore.simoreapi.entities.utils.VitalsEnum;
+import ar.com.simore.simoreapi.entities.enums.VitalsEnum;
+import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,12 +17,27 @@ public class Vital extends BaseTreatmentComponent {
     @Enumerated(EnumType.STRING)
     private VitalsEnum type;
 
+    /**
+     * Indicates the wearable brand to measure this vital
+     */
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private WearableTypeEnum wearableType;
+
     public VitalsEnum getType() {
         return type;
     }
 
     public void setType(VitalsEnum type) {
         this.type = type;
+    }
+
+    public WearableTypeEnum getWearableType() {
+        return wearableType;
+    }
+
+    public void setWearableType(WearableTypeEnum wearableType) {
+        this.wearableType = wearableType;
     }
 
     @Override

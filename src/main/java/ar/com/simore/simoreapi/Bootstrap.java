@@ -1,9 +1,10 @@
 package ar.com.simore.simoreapi;
 
 import ar.com.simore.simoreapi.entities.*;
-import ar.com.simore.simoreapi.entities.utils.RolesNamesEnum;
-import ar.com.simore.simoreapi.entities.utils.VitalsEnum;
-import ar.com.simore.simoreapi.entities.utils.YesNoOptionEnum;
+import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
+import ar.com.simore.simoreapi.entities.enums.VitalsEnum;
+import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
+import ar.com.simore.simoreapi.entities.enums.YesNoOptionEnum;
 import ar.com.simore.simoreapi.repositories.RoleRepository;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
@@ -199,14 +200,17 @@ public class Bootstrap {
         Vital vital1 = new Vital();
         vital1.setType(VitalsEnum.HEART_RATE);
         vital1.setName(VitalsEnum.HEART_RATE.getName());
+        vital1.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital2 = new Vital();
         vital2.setType(VitalsEnum.BLOOD_OXYGEN);
         vital2.setName(VitalsEnum.BLOOD_OXYGEN.getName());
+        vital2.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital3 = new Vital();
         vital3.setType(VitalsEnum.BLOOD_PRESSURE);
         vital3.setName(VitalsEnum.BLOOD_PRESSURE.getName());
+        vital3.setWearableType(WearableTypeEnum.FITBIT);
 
         vitales.add(vital1);
         vitales.add(vital2);
@@ -252,22 +256,27 @@ public class Bootstrap {
         Vital vital1 = new Vital();
         vital1.setType(VitalsEnum.STEPS);
         vital1.setName(VitalsEnum.STEPS.getName());
+        vital1.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital2 = new Vital();
         vital2.setType(VitalsEnum.WEIGHT);
         vital2.setName(VitalsEnum.WEIGHT.getName());
+        vital2.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital3 = new Vital();
         vital3.setType(VitalsEnum.DISTANCE);
         vital3.setName(VitalsEnum.DISTANCE.getName());
+        vital3.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital4 = new Vital();
         vital4.setType(VitalsEnum.BURNT_CALORIES);
         vital4.setName(VitalsEnum.BURNT_CALORIES.getName());
+        vital4.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital5 = new Vital();
         vital5.setType(VitalsEnum.BLOOD_PRESSURE);
         vital5.setName(VitalsEnum.BLOOD_PRESSURE.getName());
+        vital5.setWearableType(WearableTypeEnum.FITBIT);
 
         vitales.add(vital1);
         vitales.add(vital2);
@@ -390,26 +399,33 @@ public class Bootstrap {
         Vital vital1 = new Vital();
         vital1.setType(VitalsEnum.STEPS);
         vital1.setName(VitalsEnum.STEPS.getName());
+        vital1.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital2 = new Vital();
         vital2.setType(VitalsEnum.WEIGHT);
         vital2.setName(VitalsEnum.WEIGHT.getName());
+        vital2.setWearableType(WearableTypeEnum.FITBIT);
+
 
         Vital vital3 = new Vital();
         vital3.setType(VitalsEnum.DISTANCE);
         vital3.setName(VitalsEnum.DISTANCE.getName());
+        vital3.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital4 = new Vital();
         vital4.setType(VitalsEnum.BURNT_CALORIES);
         vital4.setName(VitalsEnum.BURNT_CALORIES.getName());
+        vital4.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital5 = new Vital();
         vital5.setType(VitalsEnum.BLOOD_PRESSURE);
         vital5.setName(VitalsEnum.BLOOD_PRESSURE.getName());
+        vital5.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital6 = new Vital();
         vital6.setType(VitalsEnum.HEART_RATE);
         vital6.setName(VitalsEnum.HEART_RATE.getName());
+        vital6.setWearableType(WearableTypeEnum.FITBIT);
 
         vitales.add(vital1);
         vitales.add(vital2);

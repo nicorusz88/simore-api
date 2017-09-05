@@ -1,7 +1,7 @@
 package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.*;
-import ar.com.simore.simoreapi.entities.utils.TreatmentComponentsEnum;
+import ar.com.simore.simoreapi.entities.enums.TreatmentComponentsEnum;
 import ar.com.simore.simoreapi.repositories.TreatmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -65,6 +65,20 @@ public class User extends BaseEntity {
     @ManyToOne
     private User professional;
 
+    /**
+     * Wearable API authorizations
+     */
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<OAuth> oauths;
+
+    public List<OAuth> getOauths() {
+        return oauths;
+    }
+
+    public void setOauths(List<OAuth> oauths) {
+        this.oauths = oauths;
+    }
+
     public User getProfessional() {
         return professional;
     }

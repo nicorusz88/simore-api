@@ -1,10 +1,7 @@
 package ar.com.simore.simoreapi.services;
 
-import ar.com.simore.simoreapi.entities.Role;
-import ar.com.simore.simoreapi.entities.Treatment;
-import ar.com.simore.simoreapi.entities.TreatmentTemplate;
-import ar.com.simore.simoreapi.entities.User;
-import ar.com.simore.simoreapi.entities.utils.RolesNamesEnum;
+import ar.com.simore.simoreapi.entities.*;
+import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
 import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
@@ -92,5 +89,26 @@ public class UserService extends BaseService<UserRepository, User> {
             LOGGER.error(ROLES_NOT_PRESENT);
             throw new TreatmentTemplateNotFoundException(Long.toString(user.getTreatment().getTreatmentTemplate().getId()));
         }
+    }
+
+    /** Adds the fitbit token to the user
+     * @param userId
+     * @param oAuthNew
+     * @return
+     */
+    public ResponseEntity addFitbitToken(long userId, OAuth oAuthNew) {
+        final User user = userRepository.findOne(userId);
+        for (OAuth oAuth : user.getOauths()) {
+            if(oAuth.getWearableType().name().equals(oAuthNew.getWearableType().name())){
+                oAuth.setAccess_token(oAuthNew.getAccess_token());
+                oAuth.setUser_id(oAuthNew.getUser_id());
+                oAuth.setExpires_in(oAuthNew.getExpires_in());
+                userRepository.save(user);
+                return ResponseEntity.ok().build();
+            }
+        }
+        user.getOauths().add(oAuthNew);
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
     }
 }
