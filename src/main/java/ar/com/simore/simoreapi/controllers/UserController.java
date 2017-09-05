@@ -32,7 +32,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @PostMapping("{id}/fitbit")
-    public ResponseEntity addFitbitToken(@PathParam("id") long id, @Valid @RequestBody OAuth oauth) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
+    public ResponseEntity addFitbitToken(@PathVariable("id") Long id, @Valid @RequestBody OAuth oauth) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
         return userService.addFitbitToken(id, oauth);
     }
 
