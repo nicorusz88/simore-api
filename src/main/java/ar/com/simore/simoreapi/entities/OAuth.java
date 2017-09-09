@@ -2,10 +2,7 @@ package ar.com.simore.simoreapi.entities;
 
 import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
@@ -28,6 +25,7 @@ public class OAuth extends BaseEntity{
     private String user_id;
 
     @NotNull
+    @Column( length = 500 )
     private String access_token;
 
     @NotNull

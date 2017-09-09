@@ -6,11 +6,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class LockFileUtils {
-	private static final String VERIFICANDO_EXISTENCIA_DE_ARCHIVO_INDICADOR_DE_INSTANCIA_UNICA = "Verifying existence of unique file...";
-	private static final String VERIFICACION_EXITOSA = "Sucessfull verification";
-	private static final String NO_SE_PUDO_CREAR_EL_LOCK_DE_INSTANCIA_UNICA = "Could not create lock of unique file";
-	private static final String NO_SE_PUEDE_INICIAR_UNA_NUEVA_INSTANCIA_DEBIDO_A_QUE_YA_EXISTE_EL_ARCHIVO_S = "No se puede iniciar una nueva instancia debido a que ya existe el archivo %s";
-	private static final String NO_SE_PUDO_ELIMINAR_EL_ARCHIVO_S = "No se pudo eliminar el archivo %s";
+	private static final String VERIFYING_EXISTENCE_OF_UNIQUE_FILE = "Verifying existence of unique file...";
+	private static final String SUCESSFUL_VERIFICATION = "Sucessful verification";
+	private static final String COULD_NOT_CREATE_LOCK_OF_UNIQUE_FILE = "Could not create lock of unique file";
+	private static final String INSTANCE_CANNOT_START_SINCE_UNIQUE_LOCK_FILE_ALREADY_EXISTS_S = "Instance cannot start since unique lock file already exists %s";
+	private static final String UNIQUE_LOCK_FILE_CANNOT_BE_DELETED_S = "Unique lock file cannot be deleted %s";
 	private static final Logger logger = Logger.getLogger(LockFileUtils.class.getName());
 
 	/**
@@ -22,18 +22,18 @@ public class LockFileUtils {
 	 */
 	public static boolean verifyLockFile(final String lockFile) throws IOException {
 		// Verifico la existencia del archivo .lock
-		logger.info(VERIFICANDO_EXISTENCIA_DE_ARCHIVO_INDICADOR_DE_INSTANCIA_UNICA);
+		logger.info(VERIFYING_EXISTENCE_OF_UNIQUE_FILE);
 		final File lock = new File(lockFile);
 		if (!lock.exists()) {
 			if(lock.createNewFile()){
-				logger.info(VERIFICACION_EXITOSA);
+				logger.info(SUCESSFUL_VERIFICATION);
 				return true;
 			}else{
-				logger.error(NO_SE_PUDO_CREAR_EL_LOCK_DE_INSTANCIA_UNICA);
+				logger.error(COULD_NOT_CREATE_LOCK_OF_UNIQUE_FILE);
 				return false;
 			}
 		} else {
-			logger.warn(String.format(NO_SE_PUEDE_INICIAR_UNA_NUEVA_INSTANCIA_DEBIDO_A_QUE_YA_EXISTE_EL_ARCHIVO_S, lockFile));
+			logger.warn(String.format(INSTANCE_CANNOT_START_SINCE_UNIQUE_LOCK_FILE_ALREADY_EXISTS_S, lockFile));
 			return false;
 		}
 	}
@@ -41,7 +41,7 @@ public class LockFileUtils {
 	public static void removeLockFile(final String lockFile) {
 		final File lock = new File(lockFile);
 		if (!lock.delete() && lock.exists()) {
-			logger.error(String.format(NO_SE_PUDO_ELIMINAR_EL_ARCHIVO_S, lock));
+			logger.error(String.format(UNIQUE_LOCK_FILE_CANNOT_BE_DELETED_S, lock));
 		}
 	}
 

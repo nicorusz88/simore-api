@@ -49,4 +49,12 @@ public class Vital extends BaseTreatmentComponent {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "Vital{" +
+                "type=" + type +
+                ", wearableType=" + wearableType.name() +
+                '}';
+    }
 }

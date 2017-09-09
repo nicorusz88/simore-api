@@ -1,21 +1,42 @@
 package ar.com.simore.simoreapi.entities.enums;
 
 public enum VitalsEnum {
-    HEART_RATE("Hearth Rate", "BPM"),
-    STEPS("Steps", "Steps"),
-    BLOOD_OXYGEN("Blood Oxygen", "SO2"),
-    BLOOD_PRESSURE("Blood Pressure", "mmHg"),
-    WEIGHT("Weight", "KG"),
-    DISTANCE("Distance", "KM"),
-    BURNT_CALORIES("Burnt Calories", "Cal."),
-    SLEEP_TRACKING("Sleep Tracking", "Hour");
+    //TODO: Add real URLs
+    HEART_RATE("Hearth Rate", "BPM", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    STEPS("Steps", "Steps", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    BLOOD_OXYGEN("Blood Oxygen", "SO2", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    BLOOD_PRESSURE("Blood Pressure", "mmHg", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    WEIGHT("Weight", "KG", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    DISTANCE("Distance", "KM", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    SLEEP_TRACKING("Sleep Tracking", "Hour", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json");
 
    private String name;
    private String unit;
+   private String fitbitURL;
+   private String withingsURL;
 
-    VitalsEnum(String name, String unit) {
+    VitalsEnum(String name, String unit, String fitbitURL, String withingsURL) {
         this.name = name;
         this.unit = unit;
+        this.fitbitURL =  fitbitURL;
+        this.withingsURL = withingsURL;
+    }
+
+    public String getFitbitURL() {
+        return fitbitURL;
+    }
+
+    public void setFitbitURL(String fitbitURL) {
+        this.fitbitURL = fitbitURL;
+    }
+
+    public String getWithingsURL() {
+        return withingsURL;
+    }
+
+    public void setWithingsURL(String withingsURL) {
+        this.withingsURL = withingsURL;
     }
 
     public String getName() {

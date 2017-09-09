@@ -1,12 +1,18 @@
 package ar.com.simore.simoreapi.entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "treatment")
 public class Treatment extends BaseEntity {
+
+    private Date createdAt;
 
     @ManyToOne
     private TreatmentTemplate treatmentTemplate;
@@ -14,11 +20,11 @@ public class Treatment extends BaseEntity {
     @Size(max = 500)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Vital> vitals;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<VitalMeasurement> vitalsMeasurements;
+    @OneToOne(cascade = CascadeType.ALL)
+    private VitalsSynchronization vitalsSynchronization;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Medication> medications;
@@ -44,6 +50,21 @@ public class Treatment extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<AppointmentStatus> appointmentsStatuses;
 
+    public VitalsSynchronization getVitalsSynchronization() {
+        return vitalsSynchronization;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setVitalsSynchronization(VitalsSynchronization vitalsSynchronization) {
+        this.vitalsSynchronization = vitalsSynchronization;
+    }
 
     public List<Appointment> getAppointments() {
         return appointments;
@@ -101,13 +122,7 @@ public class Treatment extends BaseEntity {
         this.checkIns = checkIns;
     }
 
-    public List<VitalMeasurement> getVitalsMeasurements() {
-        return vitalsMeasurements;
-    }
 
-    public void setVitalsMeasurements(List<VitalMeasurement> vitalsMeasurements) {
-        this.vitalsMeasurements = vitalsMeasurements;
-    }
 
     public List<MedicationStatus> getMedicationsStatuses() {
         return medicationsStatuses;

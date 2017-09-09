@@ -1,5 +1,7 @@
 package ar.com.simore.simoreapi.entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -68,7 +70,8 @@ public class User extends BaseEntity {
     /**
      * Wearable API authorizations
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<OAuth> oauths;
 
     public List<OAuth> getOauths() {

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <property name="SYNCHRONIZER_FILE" value="/var/log/simore-synchronizer.log"/>
+    <appender name="SYNCHRONIZER-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${SYNCHRONIZER_FILE}</file>
+        <append>true</append>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${SYNCHRONIZER_FILE}.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <!-- additivity=false ensures synchronizer data only goes to the synchronizer log -->
+    <logger name="synchronizer" level="DEBUG" additivity="false">
+        <appender-ref ref="SYNCHRONIZER-FILE"/>
+    </logger>
+    <root>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

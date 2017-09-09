@@ -12,14 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
 
-    public static final String ROLES_NOT_PRESENT = "Roles not present";
+    private static final String ROLES_NOT_PRESENT = "Roles not present";
     private final Logger LOGGER = Logger.getLogger(this.getClass());
 
     @Autowired
@@ -68,7 +71,9 @@ public class UserService extends BaseService<UserRepository, User> {
                     r.getName().equals(RolesNamesEnum.PACIENT.name())).findAny();
             if (hasRolePacient.isPresent()) {
                 final Treatment treatment;
+
                 treatment = assignTreatmentTemplate(user);
+                assignCurrentDateDateToTreatment(treatment);
                 user.setTreatment(treatment);
                 super.save(user);
             } else {
@@ -79,6 +84,14 @@ public class UserService extends BaseService<UserRepository, User> {
             throw new RolesNotPresentException(ROLES_NOT_PRESENT);
         }
         return ResponseEntity.ok(user);
+    }
+
+    /** Sets the "creeatedAt" Date to the treatment
+     * @param treatment
+     */
+    private void assignCurrentDateDateToTreatment(Treatment treatment) {
+        Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        treatment.setCreatedAt(currentDate);
     }
 
     private Treatment assignTreatmentTemplate(User user) throws TreatmentTemplateNotFoundException {
