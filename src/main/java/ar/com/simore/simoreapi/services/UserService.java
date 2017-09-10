@@ -68,7 +68,7 @@ public class UserService extends BaseService<UserRepository, User> {
         if (rolesOptional.isPresent()) {
             List<Role> roles = rolesOptional.get();
             final Optional<Role> hasRolePacient = roles.stream().filter(r ->
-                    r.getName().equals(RolesNamesEnum.PACIENT.name())).findAny();
+                    r.getName().equals(RolesNamesEnum.PATIENT.name())).findAny();
             if (hasRolePacient.isPresent()) {
                 final Treatment treatment;
 

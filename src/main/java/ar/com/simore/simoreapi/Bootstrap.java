@@ -51,7 +51,7 @@ public class Bootstrap {
             role1.setName(RolesNamesEnum.ADMINISTRATOR.name());
             roleRepository.save(role1);
             Role role2 = new Role();
-            role2.setName(RolesNamesEnum.PACIENT.name());
+            role2.setName(RolesNamesEnum.PATIENT.name());
             roleRepository.save(role2);
             Role role3 = new Role();
             role3.setName(RolesNamesEnum.PROFESSIONAL.name());

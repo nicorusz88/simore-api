@@ -1,10 +1,10 @@
 package ar.com.simore.simoreapi.entities;
 
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -19,31 +19,22 @@ public class VitalsSynchronization extends BaseEntity {
     /**
      * Last date of synchronization
      */
-    private Date lastSync;
-    /**
-     * Indicates if the synchronization was sucessfull or not
-     */
-    private boolean wasSuccess;
+    private Date lastSuccessfulSync;
 
-    @OneToMany(cascade = CascadeType.ALL)
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<VitalMeasurement> vitalsMeasurements;
 
 
-    public Date getLastSync() {
-        return lastSync;
+    public Date getLastSuccessfulSync() {
+        return lastSuccessfulSync;
     }
 
-    public void setLastSync(Date lastSync) {
-        this.lastSync = lastSync;
+    public void setLastSuccessfulSync(Date lastSuccessfulSync) {
+        this.lastSuccessfulSync = lastSuccessfulSync;
     }
 
-    public boolean isWasSuccess() {
-        return wasSuccess;
-    }
-
-    public void setWasSuccess(boolean wasSuccess) {
-        this.wasSuccess = wasSuccess;
-    }
 
 
     public List<VitalMeasurement> getVitalsMeasurements() {

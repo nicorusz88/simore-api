@@ -2,11 +2,12 @@ package ar.com.simore.simoreapi.scheduler;
 
 import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
+import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
 import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.UserRepository;
+import ar.com.simore.simoreapi.scheduler.converters.FitBitHeartRateToMeasurementsConverter;
 import ar.com.simore.simoreapi.services.TreatmentService;
-import ar.com.simore.simoreapi.services.VitalsSynchronizationService;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.GenericUrl;
@@ -14,15 +15,14 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -37,31 +37,21 @@ import java.util.stream.Collectors;
  */
 @Component
 public class SyncProcessStarter {
+
+    private final Logger logger = Logger.getLogger("synchronizer");
+
     private static final String SYNCHING_VITAL_S_FROM_S_DEVICE = "Synching vital %s from %s device";
-    private static final String FITBIT_BASE_DATE = "[base-date]";
-    private static final String FITBIT_END_DATE = "[end-date]";
     private static final String UNKNOWN_EXCEPTION_MESSAGE = "An unknown issue ocurred while synching vitals information for Pacient %s and Vital %s";
     private static final String RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S = "Retrieving info for pacient %s, vital %s from URL %s ";
-    private final Logger logger = Logger.getLogger("synchronizer");
+    private static final String API_CALL_ERROR = "Oopps, something wen't wrong while synchronizing. API call status Code: %s, API call status Message: %s";
+    private static final String REQUEST_URL_WAS = "Request URL was:\n";
+    private static final String REQUEST_HEADERS_WERE = "Request HEADERS were:\n";
+    private static final String RECEIVED = "RECEIVED \n ";
     private static final String STARTING_DEVICES_SYNCHRONIZATION = "#######STARTING DEVICES SYNCHRONIZATION#########";
     private static final String ENDING_DEVICES_SYNCHRONIZATION = "#######ENDING DEVICES SYNCHRONIZATION#########";
     private static final String DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES = "Devices synchronization took %s minutes";
     private static final String SYNCHING_S_PACIENTS = "Synching %s pacients";
     private static final String SYNCHING_PACIENT_S = "Synching pacient %s";
-
-
-    /**
-     * Global instance of the JSON factory.
-     */
-    static final JsonFactory JSON_FACTORY = new JacksonFactory();
-
-    private static final String TOKEN_SERVER_URL = "https://api.dailymotion.com/oauth/token";
-    private static final String AUTHORIZATION_SERVER_URL = "https://api.dailymotion.com/oauth/authorize";
-
-    /**
-     * OAuth 2 scope.
-     */
-    private static final String SCOPE = "read";
 
     /**
      * Global instance of the HTTP transport.
@@ -72,7 +62,8 @@ public class SyncProcessStarter {
     //TODO: Search base whitings URL
     private final String withingsBaseURL = "https://api.fitbit.com/1/user";
 
-    private final SimpleDateFormat fitbitQueryDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    private final ObjectMapper jacksonMappper = new ObjectMapper();
 
     @Autowired
     private UserRepository userRepository;
@@ -80,71 +71,169 @@ public class SyncProcessStarter {
     @Autowired
     private TreatmentService treatmentService;
 
-/*    @Autowired
-    private VitalsSynchronizationService vitalsSynchronizationService;*/
 
+    /**
+     * @throws TreatmentTemplateNotFoundException
+     * @throws RolesNotPresentException
+     */
     @Scheduled(fixedDelay = 21600000)
     public void init() throws TreatmentTemplateNotFoundException, RolesNotPresentException {
         final long startTime = System.currentTimeMillis();
         logger.info(STARTING_DEVICES_SYNCHRONIZATION);
-        List<User> pacients = getSynchronizablePacients();
-        Date currentDate = getCurrentDate();
+        final List<User> pacients = getSynchronizablePacients();
         logger.info(String.format(SYNCHING_S_PACIENTS, pacients.size()));
-        for (final User pacientToSync : pacients) {
-            logger.info(String.format(SYNCHING_PACIENT_S, pacientToSync.getUserName()));
-            final Treatment treatment = pacientToSync.getTreatment();
+        for (final User patientToSync : pacients) {
+            logger.info(String.format(SYNCHING_PACIENT_S, patientToSync.getUserName()));
+            final Treatment treatment = patientToSync.getTreatment();
             final List<Vital> vitals = treatment.getVitals();
             for (final Vital vitalToSync : vitals) {
                 logger.info(String.format(SYNCHING_VITAL_S_FROM_S_DEVICE, vitalToSync.getType().name(), vitalToSync.getWearableType().name()));
-                final Optional<OAuth> firstOauth = getPacientAndWearableTypeCredentials(pacientToSync, vitalToSync);
+                final Optional<OAuth> firstOauth = getPatientAndWearableTypeCredentials(patientToSync, vitalToSync);
                 if (firstOauth.isPresent()) {
                     final OAuth oAuth = firstOauth.get();
-                    GenericUrl url = null;
-                    switch (vitalToSync.getWearableType()) {
-                        case FITBIT:
-                            url = generateFitbitVitalConnectUrl(currentDate, pacientToSync, vitalToSync, oAuth);
-                            break;
-                        case WITHINGS:
-                            //TODO: Create withings URL
-                            url = new GenericUrl(withingsBaseURL);
-                            logger.warn("WITHINGS CONNECTION NOT IMPLEMENTED");
-                            break;
-                    }
+                    final GenericUrl url = generateAPIURL(vitalToSync, oAuth);
                     try {
-                        logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, pacientToSync.getUserName(), vitalToSync.toString(), url.toString()));
-                        final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, JSON_FACTORY, firstOauth.get().getAccess_token(), url);
-                        logger.info("RECEIVED \n " + apiResponse.parseAsString());
-
-                        final Optional<VitalsSynchronization> vitalsSynchronizationOptional = Optional.ofNullable(treatment.getVitalsSynchronization());
-                        VitalsSynchronization vitalsSynchronization;
-                        if (vitalsSynchronizationOptional.isPresent()) {
-                            vitalsSynchronization = treatment.getVitalsSynchronization();
-                        } else {
-                            vitalsSynchronization = new VitalsSynchronization();
-                            List<VitalMeasurement> vitalMeasurements = new ArrayList<>();
-                            vitalsSynchronization.setVitalsMeasurements(vitalMeasurements);
-                            treatment.setVitalsSynchronization(vitalsSynchronization);
-                        }
-                        if (apiResponse.isSuccessStatusCode()) {
-                            //vitalsSynchronization.getVitalsMeasurements().add();
-                            vitalsSynchronization.setWasSuccess(true);
-                        } else {
-                            vitalsSynchronization.setWasSuccess(false);
-                        }
-                        vitalsSynchronization.setLastSync(currentDate);
-                        treatmentService.save(treatment);
+                        logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
+                        final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
+                        logger.info(RECEIVED + apiResponse.parseAsString());
+                        processResponse(treatment, vitalToSync, apiResponse);
                     } catch (IOException e) {
-                        logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, pacientToSync.getUserName(), vitalToSync.toString()), e);
+                        logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
                     }
                 }
             }
         }
-
-        final long stopTime = System.currentTimeMillis();
-        final long elapsedTime = stopTime - startTime;
-        final long elapsedTimeInMinutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
+        final long elapsedTimeInMinutes = getElapsedTimeInMinutes(startTime);
         logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
         logger.info(ENDING_DEVICES_SYNCHRONIZATION);
+    }
+
+    private long getElapsedTimeInMinutes(long startTime) {
+        final long stopTime = System.currentTimeMillis();
+        final long elapsedTime = stopTime - startTime;
+        return TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
+    }
+
+    private void processResponse(Treatment treatment, Vital vitalToSync, HttpResponse apiResponse) throws IOException, TreatmentTemplateNotFoundException, RolesNotPresentException {
+        final List<Measurement> measurementsFromResponse = getMeasurementsFromResponse(vitalToSync);
+        if (apiResponse.isSuccessStatusCode() && measurementsFromResponse != null) {
+            setDataToTreatment(treatment, vitalToSync, measurementsFromResponse);
+            treatmentService.save(treatment);
+        } else {
+            logger.error(String.format(API_CALL_ERROR, apiResponse.getStatusCode(), apiResponse.getStatusMessage()));
+            logger.error(REQUEST_URL_WAS + apiResponse.getRequest().getUrl().toString());
+            logger.error(REQUEST_HEADERS_WERE + apiResponse.getRequest().getHeaders().toString());
+        }
+    }
+
+    private void setDataToTreatment(Treatment treatment, Vital vitalToSync, List<Measurement> measurements) {
+        final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
+        final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
+        vitalMeasurement.setMeasurements(measurements);
+        setVitalMeasurementToVitalsSynchronization(vitalsSynchronization, vitalMeasurement);
+        treatment.setVitalsSynchronization(vitalsSynchronization);
+        vitalsSynchronization.setLastSuccessfulSync(getCurrentDate());
+    }
+
+    private void setVitalMeasurementToVitalsSynchronization(VitalsSynchronization vitalsSynchronization, VitalMeasurement vitalMeasurement) {
+        if (vitalMeasurement.getId() == 0) {
+            if (vitalsSynchronization.getVitalsMeasurements() != null) {
+                vitalsSynchronization.getVitalsMeasurements().add(vitalMeasurement);
+            } else {
+                List<VitalMeasurement> vitalMeasurements = new ArrayList<>();
+                vitalMeasurements.add(vitalMeasurement);
+                vitalsSynchronization.setVitalsMeasurements(vitalMeasurements);
+            }
+        }
+    }
+
+
+    private GenericUrl generateAPIURL(Vital vitalToSync, OAuth oAuth) {
+        GenericUrl url = null;
+        switch (vitalToSync.getWearableType()) {
+            case FITBIT:
+                url = generateFitbitVitalConnectUrl(vitalToSync, oAuth);
+                break;
+            case WITHINGS:
+                //TODO: Create withings URL
+                url = new GenericUrl(withingsBaseURL);
+                logger.warn("WITHINGS CONNECTION NOT IMPLEMENTED");
+                break;
+        }
+        return url;
+    }
+
+    private List<Measurement> getMeasurementsFromResponse(Vital vitalToSync) throws IOException {
+        List<Measurement> measurements = new ArrayList<>();
+        switch (vitalToSync.getType()) {
+            case HEART_RATE:
+                ClassLoader classLoader = getClass().getClassLoader();
+                //TODO: We read from file until we are granted access to fitbit intraday data
+                File file = new File(classLoader.getResource("jsonexamples/heartRateIntraDayData.json").getFile());
+                final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
+                measurements = FitBitHeartRateToMeasurementsConverter.convert(getCurrentDate(), fitBitHeartRate);
+                break;
+            case BLOOD_PRESSURE:
+                //TODO: Do converter
+                break;
+            case BURNT_CALORIES:
+                //TODO: Do converter
+                break;
+            case STEPS:
+                //TODO: Do converter
+                break;
+            case WEIGHT:
+                //TODO: Do converter
+                break;
+            case DISTANCE:
+                //TODO: Do converter
+                break;
+            case BLOOD_OXYGEN:
+                //TODO: Do converter
+                break;
+            case SLEEP_TRACKING:
+                //TODO: Do converter
+                break;
+        }
+        return measurements;
+    }
+
+    /**
+     * Gets the existing vitalMeasurement  from VitalsSynchronization or creates and assigns a new one to the vitalsSynchronization
+     *
+     * @param vitalToSync
+     * @param vitalsSynchronization
+     * @return
+     */
+    private VitalMeasurement getVitalMeasurement(Vital vitalToSync, VitalsSynchronization vitalsSynchronization) {
+        final Optional<List<VitalMeasurement>> vitalsMeasurementsOptional = Optional.ofNullable(vitalsSynchronization.getVitalsMeasurements());
+        if (vitalsMeasurementsOptional.isPresent()) {
+            final Optional<VitalMeasurement> vitalMeasurementOptional = vitalsSynchronization.getVitalsMeasurements().stream().filter(vm -> vm.getVital().getType().name().equals(vitalToSync.getType().name())).findFirst();
+            if (vitalMeasurementOptional.isPresent()) {
+                return vitalMeasurementOptional.get();
+            }
+        }
+        VitalMeasurement vitalMeasurement = new VitalMeasurement();
+        vitalMeasurement.setVital(vitalToSync);
+        return vitalMeasurement;
+    }
+
+    /**
+     * Gets the existing vitals synmchronizations from treatment or creates and assigns a new one to the treatment
+     *
+     * @param treatment
+     * @return
+     */
+    private VitalsSynchronization getVitalsSynchronization(Treatment treatment) {
+        VitalsSynchronization vitalsSynchronization;
+        final Optional<VitalsSynchronization> vitalsSynchronizationOptional = Optional.ofNullable(treatment.getVitalsSynchronization());
+        if (vitalsSynchronizationOptional.isPresent()) {
+            vitalsSynchronization = treatment.getVitalsSynchronization();
+        } else {
+            vitalsSynchronization = new VitalsSynchronization();
+            treatment.setVitalsSynchronization(vitalsSynchronization);
+        }
+        return vitalsSynchronization;
     }
 
     /**
@@ -154,7 +243,7 @@ public class SyncProcessStarter {
      * @param vitalToSync
      * @return
      */
-    private Optional<OAuth> getPacientAndWearableTypeCredentials(User pacientToSync, Vital vitalToSync) {
+    private Optional<OAuth> getPatientAndWearableTypeCredentials(User pacientToSync, Vital vitalToSync) {
         return pacientToSync.getOauths().stream().filter(o -> o.getWearableType().name().equals(vitalToSync.getWearableType().name())).findFirst();
     }
 
@@ -163,13 +252,15 @@ public class SyncProcessStarter {
     }
 
     /**
-     * Gets all the pacients that are synchronizable
+     * Gets all the pacients that are synchronizable. //We filter those pacients that have a treatment,
+     * that has vitals in their treatment and that they have already authorized the application
+     * to communicate with the providers.
      *
      * @return
      */
     private List<User> getSynchronizablePacients() {
-        List<User> pacients = userRepository.findByRoles_Name(RolesNamesEnum.PACIENT.name());
-        //We filter those pacients that have a treatment, that has vitals in their treatment and that they have already authorized the application to communicate with the providers.
+        List<User> pacients = userRepository.findByRoles_Name(RolesNamesEnum.PATIENT.name());
+
         pacients = pacients.stream().filter(p -> (p.getTreatment() != null && !p.getTreatment().getVitals().isEmpty() && !p.getOauths().isEmpty())).collect(Collectors.toList());
         return pacients;
     }
@@ -177,59 +268,18 @@ public class SyncProcessStarter {
     /**
      * Generates the URL to retrieve the appropriate information for corresponding Vital Type
      *
-     * @param currentDate   Current Date
-     * @param pacientToSync Pacient to Sync
-     * @param vitalToSync   Vital to sync
-     * @param oAuth         Wearable Type Credentials
+     * @param vitalToSync Vital to sync
+     * @param oAuth       Wearable Type Credentials
      * @return
      */
-    private GenericUrl generateFitbitVitalConnectUrl(Date currentDate, User pacientToSync, Vital vitalToSync, OAuth oAuth) {
+    private GenericUrl generateFitbitVitalConnectUrl(Vital vitalToSync, OAuth oAuth) {
         final String user_id = oAuth.getUser_id();
         String additionalPart = vitalToSync.getType().getFitbitURL();
-        additionalPart = asssignSynchronizationStartDate(pacientToSync, additionalPart);
-        additionalPart = assignSynchronizationEndDate(currentDate, additionalPart);
-        GenericUrl url = new GenericUrl(fitBitBaseURL + "/" + user_id + additionalPart);
-        return url;
-    }
-
-    /**
-     * Sets the starting date for retrieving information. Example if date is 02/07/2018, information will be retrieved from that date.
-     *
-     * @param pacientToSync
-     * @param additionalPart
-     * @return
-     */
-    private String asssignSynchronizationStartDate(User pacientToSync, String additionalPart) {
-        final Optional<VitalsSynchronization> vitalsSynchronizationOptional = Optional.ofNullable(pacientToSync.getTreatment().getVitalsSynchronization());
-        //If vitalsSynchronization does not exists or last sync is null (it has never been synchronized yet) we use the start date as the treatment creation date.
-        if (vitalsSynchronizationOptional.isPresent()) {
-            Date lastSync = pacientToSync.getTreatment().getVitalsSynchronization().getLastSync();
-            //If last sync is null (it has never been synchronized yet) we use the start date as the treatment creation date.
-            if (lastSync != null) {
-                additionalPart = additionalPart.replace(FITBIT_BASE_DATE, fitbitQueryDateFormat.format(lastSync));
-            } else {
-                additionalPart = additionalPart.replace(FITBIT_BASE_DATE, fitbitQueryDateFormat.format(pacientToSync.getTreatment().getCreatedAt()));
-            }
-        } else {
-            additionalPart = additionalPart.replace(FITBIT_BASE_DATE, fitbitQueryDateFormat.format(pacientToSync.getTreatment().getCreatedAt()));
-        }
-        return additionalPart;
-    }
-
-    /**
-     * Sets the ending date for retrieving information. Example if date is 02/05/2018, information will be retrieved until that date.
-     *
-     * @param currentDate
-     * @param additionalPart
-     * @return
-     */
-    private String assignSynchronizationEndDate(Date currentDate, String additionalPart) {
-        additionalPart = additionalPart.replace(FITBIT_END_DATE, fitbitQueryDateFormat.format(currentDate));
-        return additionalPart;
+        return new GenericUrl(fitBitBaseURL + "/" + user_id + additionalPart);
     }
 
 
-    private static HttpResponse executeGet(HttpTransport transport, JsonFactory jsonFactory, String accessToken, GenericUrl url) throws IOException {
+    private static HttpResponse executeGet(HttpTransport transport, String accessToken, GenericUrl url) throws IOException {
         Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
         HttpRequestFactory requestFactory = transport.createRequestFactory(credential);
         return requestFactory.buildGetRequest(url).execute();

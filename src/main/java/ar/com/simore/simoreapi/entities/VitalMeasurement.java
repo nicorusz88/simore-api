@@ -1,10 +1,12 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.util.Date;
+import javax.persistence.*;
+import java.util.List;
 
+/**
+ * It holds all the information related to a specific vital.
+ * Ex. It holds all the BPMs for the heart rate.
+ */
 @Entity
 @Table(name = "vital_measurement")
 public class VitalMeasurement extends BaseEntity {
@@ -12,10 +14,9 @@ public class VitalMeasurement extends BaseEntity {
     @ManyToOne
     private Vital vital;
 
-    private Date date;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Measurement> measurements;
 
-    private Long value1;
-    private Long value2;
 
     public Vital getVital() {
         return vital;
@@ -25,27 +26,11 @@ public class VitalMeasurement extends BaseEntity {
         this.vital = vital;
     }
 
-    public Date getDate() {
-        return date;
+    public List<Measurement> getMeasurements() {
+        return measurements;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Long getValue1() {
-        return value1;
-    }
-
-    public void setValue1(Long value1) {
-        this.value1 = value1;
-    }
-
-    public Long getValue2() {
-        return value2;
-    }
-
-    public void setValue2(Long value2) {
-        this.value2 = value2;
+    public void setMeasurements(List<Measurement> measurements) {
+        this.measurements = measurements;
     }
 }
