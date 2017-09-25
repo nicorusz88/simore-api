@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -102,6 +103,7 @@ public class SyncProcessStarter {
                     }
                 }
             }
+            treatmentService.save(treatment);
         }
         final long elapsedTimeInMinutes = getElapsedTimeInMinutes(startTime);
         logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
@@ -115,10 +117,41 @@ public class SyncProcessStarter {
     }
 
     private void processResponse(Treatment treatment, Vital vitalToSync, HttpResponse apiResponse) throws IOException, TreatmentTemplateNotFoundException, RolesNotPresentException {
-        final List<Measurement> measurementsFromResponse = getMeasurementsFromResponse(vitalToSync);
-        if (apiResponse.isSuccessStatusCode() && measurementsFromResponse != null) {
-            setDataToTreatment(treatment, vitalToSync, measurementsFromResponse);
-            treatmentService.save(treatment);
+        if (apiResponse.isSuccessStatusCode()) {
+            List<Measurement> measurements = new ArrayList<>();
+            switch (vitalToSync.getType()) {
+                case HEART_RATE:
+                    ClassLoader classLoader = getClass().getClassLoader();
+                    //TODO: We read from file until we are granted access to fitbit intraday data
+                    File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
+                    final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
+                    //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
+                    measurements.addAll(FitBitHeartRateToMeasurementsConverter.convert(fitBitHeartRate));
+                    break;
+                case BLOOD_PRESSURE:
+                    //TODO: Do converter
+                    break;
+                case BURNT_CALORIES:
+                    //TODO: Do converter
+                    break;
+                case STEPS:
+                    //TODO: Do converter
+                    break;
+                case WEIGHT:
+                    //TODO: Do converter
+                    break;
+                case DISTANCE:
+                    //TODO: Do converter
+                    break;
+                case BLOOD_OXYGEN:
+                    //TODO: Do converter
+                    break;
+                case SLEEP_TRACKING:
+                    //TODO: Do converter
+                    break;
+            }
+            removeExistingMEasurementsFromCurrentDate(treatment, vitalToSync);
+            setDataToTreatment(treatment, vitalToSync, measurements);
         } else {
             logger.error(String.format(API_CALL_ERROR, apiResponse.getStatusCode(), apiResponse.getStatusMessage()));
             logger.error(REQUEST_URL_WAS + apiResponse.getRequest().getUrl().toString());
@@ -126,15 +159,44 @@ public class SyncProcessStarter {
         }
     }
 
+    /**
+     * Iterates the measurements from a specific vital and removes htthe existing from the current date..
+     * This is to avoidd having duplicates for the same day
+     *
+     * @param treatment
+     * @param vitalToSync
+     */
+    private void removeExistingMEasurementsFromCurrentDate(Treatment treatment, Vital vitalToSync) {
+        final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
+        final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
+        final List<Measurement> measurementsFromCurrentDate = vitalMeasurement.getMeasurements().stream().filter(measurement -> measurement.getDate().compareTo(getCurrentDate()) == 0).collect(Collectors.toList());
+        for (Measurement measurementToDelete : measurementsFromCurrentDate) {
+            vitalMeasurement.getMeasurements().remove(measurementToDelete);
+        }
+    }
+
+    /**
+     * Sets the synched data to the treatment off the patient
+     *
+     * @param treatment
+     * @param vitalToSync
+     * @param measurements
+     */
     private void setDataToTreatment(Treatment treatment, Vital vitalToSync, List<Measurement> measurements) {
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
         vitalMeasurement.setMeasurements(measurements);
         setVitalMeasurementToVitalsSynchronization(vitalsSynchronization, vitalMeasurement);
         treatment.setVitalsSynchronization(vitalsSynchronization);
-        vitalsSynchronization.setLastSuccessfulSync(getCurrentDate());
+        vitalsSynchronization.setLastSuccessfulSync(getCurrentDateTime());
     }
 
+    /**
+     * Sets the vital measurement into the vital synchronization
+     *
+     * @param vitalsSynchronization
+     * @param vitalMeasurement
+     */
     private void setVitalMeasurementToVitalsSynchronization(VitalsSynchronization vitalsSynchronization, VitalMeasurement vitalMeasurement) {
         if (vitalMeasurement.getId() == 0) {
             if (vitalsSynchronization.getVitalsMeasurements() != null) {
@@ -148,6 +210,13 @@ public class SyncProcessStarter {
     }
 
 
+    /**
+     * Generates the URL API depending on the device brand
+     *
+     * @param vitalToSync
+     * @param oAuth
+     * @return
+     */
     private GenericUrl generateAPIURL(Vital vitalToSync, OAuth oAuth) {
         GenericUrl url = null;
         switch (vitalToSync.getWearableType()) {
@@ -161,41 +230,6 @@ public class SyncProcessStarter {
                 break;
         }
         return url;
-    }
-
-    private List<Measurement> getMeasurementsFromResponse(Vital vitalToSync) throws IOException {
-        List<Measurement> measurements = new ArrayList<>();
-        switch (vitalToSync.getType()) {
-            case HEART_RATE:
-                ClassLoader classLoader = getClass().getClassLoader();
-                //TODO: We read from file until we are granted access to fitbit intraday data
-                File file = new File(classLoader.getResource("jsonexamples/heartRateIntraDayData.json").getFile());
-                final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
-                measurements = FitBitHeartRateToMeasurementsConverter.convert(getCurrentDate(), fitBitHeartRate);
-                break;
-            case BLOOD_PRESSURE:
-                //TODO: Do converter
-                break;
-            case BURNT_CALORIES:
-                //TODO: Do converter
-                break;
-            case STEPS:
-                //TODO: Do converter
-                break;
-            case WEIGHT:
-                //TODO: Do converter
-                break;
-            case DISTANCE:
-                //TODO: Do converter
-                break;
-            case BLOOD_OXYGEN:
-                //TODO: Do converter
-                break;
-            case SLEEP_TRACKING:
-                //TODO: Do converter
-                break;
-        }
-        return measurements;
     }
 
     /**
@@ -247,9 +281,24 @@ public class SyncProcessStarter {
         return pacientToSync.getOauths().stream().filter(o -> o.getWearableType().name().equals(vitalToSync.getWearableType().name())).findFirst();
     }
 
+    /**
+     * Ges current date and Time
+     *
+     * @return
+     */
+    private Date getCurrentDateTime() {
+        return Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Ges current date only
+     *
+     * @return
+     */
     private Date getCurrentDate() {
         return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
+
 
     /**
      * Gets all the pacients that are synchronizable. //We filter those pacients that have a treatment,

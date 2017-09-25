@@ -2,7 +2,7 @@ package ar.com.simore.simoreapi.entities.enums;
 
 public enum VitalsEnum {
     //TODO: Add real URLs
-    HEART_RATE("Hearth Rate", "BPM", "/activities/heart/date/today/1d/1min.json", "/activities/heart/date/[base-date]/[end-date].json"),
+    HEART_RATE("Hearth Rate", "BPM", "/activities/heart/date/today/1d.json", "/activities/heart/date/today/1d.json"),
     STEPS("Steps", "Steps", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     BLOOD_OXYGEN("Blood Oxygen", "SO2", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     BLOOD_PRESSURE("Blood Pressure", "mmHg", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),

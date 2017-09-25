@@ -1,6 +1,7 @@
 
 package ar.com.simore.simoreapi.entities.json.fitbit.heartrate;
 
+import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -13,8 +14,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "minutes",
     "name"
 })
-public class HeartRateZone {
-
+public class HeartRateZone implements Serializable
+{
+    private final static long serialVersionUID = 3253021762247925560L;
     @JsonProperty("caloriesOut")
     private Long caloriesOut;
     @JsonProperty("max")
@@ -25,6 +27,7 @@ public class HeartRateZone {
     private Long minutes;
     @JsonProperty("name")
     private String name;
+
 
     @JsonProperty("caloriesOut")
     public Long getCaloriesOut() {

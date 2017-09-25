@@ -14,7 +14,7 @@ public class VitalMeasurement extends BaseEntity {
     @ManyToOne
     private Vital vital;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Measurement> measurements;
 
 

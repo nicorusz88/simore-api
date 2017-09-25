@@ -5,20 +5,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
+import java.io.Serializable;
 import java.util.List;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "activities-heart",
-        "activities-heart-intraday"
+    "activities-heart"
 })
-public class FitBitHeartRate {
-
+public class FitBitHeartRate implements Serializable
+{
+    private final static long serialVersionUID = 4983464079728668475L;
     @JsonProperty("activities-heart")
     private List<ActivitiesHeart> activitiesHeart = null;
-    @JsonProperty("activities-heart-intraday")
-    private ActivitiesHeartIntraday activitiesHeartIntraday;
 
     @JsonProperty("activities-heart")
     public List<ActivitiesHeart> getActivitiesHeart() {
@@ -30,15 +29,4 @@ public class FitBitHeartRate {
         this.activitiesHeart = activitiesHeart;
     }
 
-    @JsonProperty("activities-heart-intraday")
-    public ActivitiesHeartIntraday getActivitiesHeartIntraday() {
-        return activitiesHeartIntraday;
-    }
-
-    @JsonProperty("activities-heart-intraday")
-    public void setActivitiesHeartIntraday(ActivitiesHeartIntraday activitiesHeartIntraday) {
-        this.activitiesHeartIntraday = activitiesHeartIntraday;
-    }
-
 }
-

@@ -1,17 +1,19 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import org.hibernate.annotations.DiscriminatorOptions;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type",discriminatorType= DiscriminatorType.STRING)
 @Table(name = "measurement")
+@DiscriminatorValue(value="measurement")
+@DiscriminatorOptions(force=true)
 public class Measurement extends BaseEntity{
 
     private Date date;
-
-    private Long value1;
-    private Long value2;
 
     public Date getDate() {
         return date;
@@ -19,21 +21,5 @@ public class Measurement extends BaseEntity{
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public Long getValue1() {
-        return value1;
-    }
-
-    public void setValue1(Long value1) {
-        this.value1 = value1;
-    }
-
-    public Long getValue2() {
-        return value2;
-    }
-
-    public void setValue2(Long value2) {
-        this.value2 = value2;
     }
 }
