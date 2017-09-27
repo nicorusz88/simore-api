@@ -5,9 +5,11 @@ import ar.com.simore.simoreapi.entities.Measurement;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.ActivitiesHeart;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,11 +32,7 @@ public class FitBitHeartRateToMeasurementsConverter {
         final List<ActivitiesHeart> activitiesHearts = source.getActivitiesHeart();
         activitiesHearts.forEach(activitiesHeart -> activitiesHeart.getValue().getHeartRateZones().stream().filter(heartRateZone -> heartRateZone.getMinutes() > 0).forEach(heartRateZone -> {
             FitbitHeartRateMeasurement fitbitHeartRateMeasurement = new FitbitHeartRateMeasurement();
-            try {
-                fitbitHeartRateMeasurement.setDate(simpleDateFormat.parse(activitiesHeart.getDateTime()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            fitbitHeartRateMeasurement.setDate(getCurrentDate());
             fitbitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
             fitbitHeartRateMeasurement.setMax(heartRateZone.getMax());
             fitbitHeartRateMeasurement.setMin(heartRateZone.getMin());
@@ -48,13 +46,18 @@ public class FitBitHeartRateToMeasurementsConverter {
             fitbitHeartRateMeasurement.setName(RESTING_HEART_RATE);
             fitbitHeartRateMeasurement.setMin(restingHeartRate);
             fitbitHeartRateMeasurement.setMax(restingHeartRate);
-            try {
-                fitbitHeartRateMeasurement.setDate(simpleDateFormat.parse(activitiesHeart.getDateTime()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            fitbitHeartRateMeasurement.setDate(getCurrentDate());
             fitbitHeartRateMeasurements.add(fitbitHeartRateMeasurement);
         });
         return fitbitHeartRateMeasurements;
+    }
+
+    /**
+     * Ges current date only
+     *
+     * @return
+     */
+    private static Date getCurrentDate() {
+        return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }
