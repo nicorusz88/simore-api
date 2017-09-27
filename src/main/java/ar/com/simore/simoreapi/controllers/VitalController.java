@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/vitals")
@@ -35,5 +36,10 @@ public class VitalController extends BaseController<VitalService, Vital> {
     @PostMapping("/add-to-treatment")
     public ResponseEntity<Treatment> addVitalToTreatment(@RequestParam Long treatmentId, @Valid @RequestBody Vital vital){
         return treatmentService.addTreatmentComponentToTreatment(vital, treatmentId);
+    }
+
+    @GetMapping("/availables")
+    public ResponseEntity<List<Vital>> getTypesAvailableForTreatment(@RequestParam Long treatmentId){
+        return vitalService.getTypesAvailableForTreatment(treatmentId);
     }
 }

@@ -13,6 +13,8 @@ import java.util.Date;
 @DiscriminatorOptions(force=true)
 public class Measurement extends BaseEntity{
 
+    @ManyToOne
+    private VitalMeasurement vitalMeasurement;
     private Date date;
 
     public Date getDate() {
@@ -21,5 +23,13 @@ public class Measurement extends BaseEntity{
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public VitalMeasurement getVitalMeasurement() {
+        return vitalMeasurement;
+    }
+
+    public void setVitalMeasurement(VitalMeasurement vitalMeasurement) {
+        this.vitalMeasurement = vitalMeasurement;
     }
 }

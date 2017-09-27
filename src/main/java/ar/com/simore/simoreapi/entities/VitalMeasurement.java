@@ -14,9 +14,11 @@ public class VitalMeasurement extends BaseEntity {
     @ManyToOne
     private Vital vital;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "vitalMeasurement")
     private List<Measurement> measurements;
 
+    @ManyToOne
+    private VitalsSynchronization vitalsSynchronization;
 
     public Vital getVital() {
         return vital;
@@ -32,5 +34,13 @@ public class VitalMeasurement extends BaseEntity {
 
     public void setMeasurements(List<Measurement> measurements) {
         this.measurements = measurements;
+    }
+
+    public VitalsSynchronization getVitalsSynchronization() {
+        return vitalsSynchronization;
+    }
+
+    public void setVitalsSynchronization(VitalsSynchronization vitalsSynchronization) {
+        this.vitalsSynchronization = vitalsSynchronization;
     }
 }

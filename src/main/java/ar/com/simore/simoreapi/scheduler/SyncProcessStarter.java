@@ -122,7 +122,7 @@ public class SyncProcessStarter {
             switch (vitalToSync.getType()) {
                 case HEART_RATE:
                     ClassLoader classLoader = getClass().getClassLoader();
-                    //TODO: We read from file until we are granted access to fitbit intraday data
+                    //TODO: We read from file with data temporarily
                     File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
                     final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
                     //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
@@ -169,9 +169,11 @@ public class SyncProcessStarter {
     private void removeExistingMEasurementsFromCurrentDate(Treatment treatment, Vital vitalToSync) {
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
-        final List<Measurement> measurementsFromCurrentDate = vitalMeasurement.getMeasurements().stream().filter(measurement -> measurement.getDate().compareTo(getCurrentDate()) == 0).collect(Collectors.toList());
-        for (Measurement measurementToDelete : measurementsFromCurrentDate) {
-            vitalMeasurement.getMeasurements().remove(measurementToDelete);
+        if (vitalMeasurement.getMeasurements() != null && !vitalMeasurement.getMeasurements().isEmpty()) {
+            final List<Measurement> measurementsFromCurrentDate = vitalMeasurement.getMeasurements().stream().filter(measurement -> measurement.getDate().compareTo(getCurrentDate()) == 0).collect(Collectors.toList());
+            for (Measurement measurementToDelete : measurementsFromCurrentDate) {
+                vitalMeasurement.getMeasurements().remove(measurementToDelete);
+            }
         }
     }
 

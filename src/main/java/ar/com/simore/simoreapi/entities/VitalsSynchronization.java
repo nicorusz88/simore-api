@@ -16,13 +16,17 @@ import java.util.List;
 @Table(name = "vitals_synchronization")
 public class VitalsSynchronization extends BaseEntity {
 
+    @OneToOne
+    @JoinColumn (name="treatment")
+    private Treatment treatment;
+
     /**
      * Last date of synchronization
      */
     private Date lastSuccessfulSync;
 
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "vitalsSynchronization")
     @Fetch(FetchMode.SUBSELECT)
     private List<VitalMeasurement> vitalsMeasurements;
 
@@ -43,5 +47,13 @@ public class VitalsSynchronization extends BaseEntity {
 
     public void setVitalsMeasurements(List<VitalMeasurement> vitalsMeasurements) {
         this.vitalsMeasurements = vitalsMeasurements;
+    }
+
+    public Treatment getTreatment() {
+        return treatment;
+    }
+
+    public void setTreatment(Treatment treatment) {
+        this.treatment = treatment;
     }
 }

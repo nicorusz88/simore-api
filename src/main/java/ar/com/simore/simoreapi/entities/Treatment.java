@@ -1,8 +1,5 @@
 package ar.com.simore.simoreapi.entities;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -23,7 +20,7 @@ public class Treatment extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Vital> vitals;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "treatment")
     private VitalsSynchronization vitalsSynchronization;
 
     @OneToMany(cascade = CascadeType.ALL)
