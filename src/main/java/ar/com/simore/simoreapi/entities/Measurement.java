@@ -1,5 +1,6 @@
 package ar.com.simore.simoreapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.DiscriminatorOptions;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Date;
 public class Measurement extends BaseEntity{
 
     @ManyToOne
+    @JsonIgnore
     private VitalMeasurement vitalMeasurement;
     private Date date;
 

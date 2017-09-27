@@ -16,6 +16,7 @@ import java.util.List;
 public class FitBitHeartRateToMeasurementsConverter {
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static final String RESTING_HEART_RATE = "Resting Heart Rate";
 
     /**
      * Only those heartRateZones which their mins are different to Zero re converted
@@ -41,6 +42,19 @@ public class FitBitHeartRateToMeasurementsConverter {
             fitbitHeartRateMeasurement.setMinutes(heartRateZone.getMinutes());
             fitbitHeartRateMeasurements.add(fitbitHeartRateMeasurement);
         }));
+        activitiesHearts.forEach(activitiesHeart -> {
+            Long restingHeartRate = activitiesHeart.getValue().getRestingHeartRate();
+            FitbitHeartRateMeasurement fitbitHeartRateMeasurement = new FitbitHeartRateMeasurement();
+            fitbitHeartRateMeasurement.setName(RESTING_HEART_RATE);
+            fitbitHeartRateMeasurement.setMin(restingHeartRate);
+            fitbitHeartRateMeasurement.setMax(restingHeartRate);
+            try {
+                fitbitHeartRateMeasurement.setDate(simpleDateFormat.parse(activitiesHeart.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            fitbitHeartRateMeasurements.add(fitbitHeartRateMeasurement);
+        });
         return fitbitHeartRateMeasurements;
     }
 }

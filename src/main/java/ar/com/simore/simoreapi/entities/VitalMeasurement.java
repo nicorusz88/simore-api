@@ -1,5 +1,7 @@
 package ar.com.simore.simoreapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class VitalMeasurement extends BaseEntity {
     private List<Measurement> measurements;
 
     @ManyToOne
+    @JsonIgnore
     private VitalsSynchronization vitalsSynchronization;
 
     public Vital getVital() {

@@ -25,6 +25,7 @@ public class FitbitHeartRateMeasurementService extends BaseService<FitbitHeartRa
 
     public ResponseEntity<List<FitbitHeartRateMeasurement>> getByTreatmentAndDate(long treatmentId, String date) throws ParseException {
         final Date dateParsed = DateUtils.simpleDateFormat.parse(date);
-        return ResponseEntity.ok(fitbitHeartRateMeasurementRepository.findByTreatmenAndDate(treatmentId, dateParsed));
+        final List<FitbitHeartRateMeasurement> measurements = fitbitHeartRateMeasurementRepository.findByTreatmenAndDate(treatmentId, dateParsed);
+        return ResponseEntity.ok(measurements);
     }
 }

@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -18,6 +19,7 @@ public class VitalsSynchronization extends BaseEntity {
 
     @OneToOne
     @JoinColumn (name="treatment")
+    @JsonIgnore
     private Treatment treatment;
 
     /**

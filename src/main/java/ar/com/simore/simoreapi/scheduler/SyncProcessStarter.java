@@ -187,6 +187,7 @@ public class SyncProcessStarter {
     private void setDataToTreatment(Treatment treatment, Vital vitalToSync, List<Measurement> measurements) {
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
+        measurements.forEach(measurement -> measurement.setVitalMeasurement(vitalMeasurement));
         vitalMeasurement.setMeasurements(measurements);
         setVitalMeasurementToVitalsSynchronization(vitalsSynchronization, vitalMeasurement);
         treatment.setVitalsSynchronization(vitalsSynchronization);
@@ -251,6 +252,7 @@ public class SyncProcessStarter {
         }
         VitalMeasurement vitalMeasurement = new VitalMeasurement();
         vitalMeasurement.setVital(vitalToSync);
+        vitalMeasurement.setVitalsSynchronization(vitalsSynchronization);
         return vitalMeasurement;
     }
 
@@ -268,6 +270,7 @@ public class SyncProcessStarter {
         } else {
             vitalsSynchronization = new VitalsSynchronization();
             treatment.setVitalsSynchronization(vitalsSynchronization);
+            vitalsSynchronization.setTreatment(treatment);
         }
         return vitalsSynchronization;
     }
