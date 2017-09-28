@@ -16,7 +16,7 @@ public class VitalMeasurement extends BaseEntity {
     @ManyToOne
     private Vital vital;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "vitalMeasurement")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "vitalMeasurement", orphanRemoval=true)
     private List<Measurement> measurements;
 
     @ManyToOne

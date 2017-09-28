@@ -3,10 +3,13 @@ package ar.com.simore.simoreapi.scheduler;
 import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
+import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
 import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.scheduler.converters.FitBitHeartRateToMeasurementsConverter;
+import ar.com.simore.simoreapi.scheduler.converters.FitBitWeightToMeasurementsConverter;
+import ar.com.simore.simoreapi.services.MeasurementService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
@@ -15,14 +18,18 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.util.Charsets;
+import com.google.api.client.util.IOUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -59,9 +66,11 @@ public class SyncProcessStarter {
      */
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
-    private final String fitBitBaseURL = "https://api.fitbit.com/1/user";
+    @Value("${fitbit.base.url}")
+    private String fitBitBaseURL;
     //TODO: Search base whitings URL
-    private final String withingsBaseURL = "https://api.fitbit.com/1/user";
+    @Value("${withings.base.url}")
+    private String withingsBaseURL;
 
 
     private final ObjectMapper jacksonMappper = new ObjectMapper();
@@ -71,6 +80,9 @@ public class SyncProcessStarter {
 
     @Autowired
     private TreatmentService treatmentService;
+
+    @Autowired
+    private MeasurementService measurementService;
 
 
     /**
@@ -96,7 +108,7 @@ public class SyncProcessStarter {
                     try {
                         logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
                         final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
-                        logger.info(RECEIVED + apiResponse.parseAsString());
+                        // logger.info(RECEIVED + parseAsString(apiResponse.getContent()));
                         processResponse(treatment, vitalToSync, apiResponse);
                     } catch (IOException e) {
                         logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
@@ -116,16 +128,16 @@ public class SyncProcessStarter {
         return TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
     }
 
-    private void processResponse(Treatment treatment, Vital vitalToSync, HttpResponse apiResponse) throws IOException, TreatmentTemplateNotFoundException, RolesNotPresentException {
+    private void processResponse(final Treatment treatment, final Vital vitalToSync, final HttpResponse apiResponse) throws IOException, TreatmentTemplateNotFoundException, RolesNotPresentException {
         if (apiResponse.isSuccessStatusCode()) {
             List<Measurement> measurements = new ArrayList<>();
             switch (vitalToSync.getType()) {
                 case HEART_RATE:
-                    ClassLoader classLoader = getClass().getClassLoader();
+                    //ClassLoader classLoader = getClass().getClassLoader();
                     //TODO: We read from file with data temporarily
-                    File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
-                    final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
-                    //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
+                    //File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
+                    //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
+                    final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
                     measurements.addAll(FitBitHeartRateToMeasurementsConverter.convert(fitBitHeartRate));
                     break;
                 case BLOOD_PRESSURE:
@@ -138,7 +150,8 @@ public class SyncProcessStarter {
                     //TODO: Do converter
                     break;
                 case WEIGHT:
-                    //TODO: Do converter
+                    final FitBitWeight fitBitWeight = jacksonMappper.readValue(apiResponse.getContent(), FitBitWeight.class);
+                    measurements.addAll(FitBitWeightToMeasurementsConverter.convert(fitBitWeight));
                     break;
                 case DISTANCE:
                     //TODO: Do converter
@@ -150,7 +163,7 @@ public class SyncProcessStarter {
                     //TODO: Do converter
                     break;
             }
-            removeExistingMEasurementsFromCurrentDate(treatment, vitalToSync);
+            removeExistingMeasurementsFromCurrentDate(treatment, vitalToSync);
             setDataToTreatment(treatment, vitalToSync, measurements);
         } else {
             logger.error(String.format(API_CALL_ERROR, apiResponse.getStatusCode(), apiResponse.getStatusMessage()));
@@ -166,7 +179,7 @@ public class SyncProcessStarter {
      * @param treatment
      * @param vitalToSync
      */
-    private void removeExistingMEasurementsFromCurrentDate(Treatment treatment, Vital vitalToSync) {
+    private void removeExistingMeasurementsFromCurrentDate(Treatment treatment, Vital vitalToSync) {
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
         if (vitalMeasurement.getMeasurements() != null && !vitalMeasurement.getMeasurements().isEmpty()) {
@@ -337,5 +350,22 @@ public class SyncProcessStarter {
         Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod()).setAccessToken(accessToken);
         HttpRequestFactory requestFactory = transport.createRequestFactory(credential);
         return requestFactory.buildGetRequest(url).execute();
+    }
+
+    public String getFitBitBaseURL() {
+        return fitBitBaseURL;
+    }
+
+    public String getWithingsBaseURL() {
+        return withingsBaseURL;
+    }
+
+    public String parseAsString(final InputStream content) throws IOException {
+        if (content == null) {
+            return "";
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        IOUtils.copy(content, out);
+        return out.toString(Charsets.ISO_8859_1.name());
     }
 }

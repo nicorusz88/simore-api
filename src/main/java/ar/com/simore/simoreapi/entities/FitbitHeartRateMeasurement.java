@@ -56,4 +56,15 @@ public class FitbitHeartRateMeasurement extends Measurement {
     public void setMinutes(long minutes) {
         this.minutes = minutes;
     }
+
+    @Override
+    public String toString() {
+        return "FitbitHeartRateMeasurement{" +
+                "name='" + name + '\'' +
+                ", caloriesOut=" + caloriesOut +
+                ", max=" + max +
+                ", min=" + min +
+                ", minutes=" + minutes +
+                '}';
+    }
 }

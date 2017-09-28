@@ -7,12 +7,12 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type",discriminatorType= DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "measurement")
-@DiscriminatorValue(value="measurement")
-@DiscriminatorOptions(force=true)
-public class Measurement extends BaseEntity{
+@DiscriminatorValue(value = "measurement")
+@DiscriminatorOptions(force = true)
+public class Measurement extends BaseEntity {
 
     @ManyToOne
     @JsonIgnore
@@ -33,5 +33,10 @@ public class Measurement extends BaseEntity{
 
     public void setVitalMeasurement(VitalMeasurement vitalMeasurement) {
         this.vitalMeasurement = vitalMeasurement;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getId() == ((Measurement) obj).getId();
     }
 }

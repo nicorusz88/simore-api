@@ -6,7 +6,7 @@ public enum VitalsEnum {
     STEPS("Steps", "Steps", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     BLOOD_OXYGEN("Blood Oxygen", "SO2", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     BLOOD_PRESSURE("Blood Pressure", "mmHg", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
-    WEIGHT("Weight", "KG", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    WEIGHT("Weight", "KG", "/body/log/weight/date/today.json", "/activities/heart/date/[base-date]/[end-date].json"),
     DISTANCE("Distance", "KM", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     SLEEP_TRACKING("Sleep Tracking", "Hour", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json");

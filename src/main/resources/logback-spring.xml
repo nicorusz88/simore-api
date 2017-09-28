@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
     <logger name="org.springframework.web" level="INFO"/>
+    <property name="LOG_FILE" value="/var/log/simore.log"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
     <property name="SYNCHRONIZER_FILE" value="/var/log/simore-synchronizer.log"/>
     <appender name="SYNCHRONIZER-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${SYNCHRONIZER_FILE}</file>
@@ -21,7 +24,8 @@
     <logger name="synchronizer" level="DEBUG" additivity="false">
         <appender-ref ref="SYNCHRONIZER-FILE"/>
     </logger>
-    <root>
-        <appender-ref ref="FILE"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
     </root>
 </configuration>
