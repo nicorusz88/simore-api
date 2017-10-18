@@ -2,6 +2,7 @@ package ar.com.simore.simoreapi.scheduler;
 
 import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
+import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
@@ -133,34 +134,67 @@ public class SyncProcessStarter {
             List<Measurement> measurements = new ArrayList<>();
             switch (vitalToSync.getType()) {
                 case HEART_RATE:
-                    //ClassLoader classLoader = getClass().getClassLoader();
-                    //TODO: We read from file with data temporarily
-                    //File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
-                    //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
-                    final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
-                    measurements.addAll(FitBitHeartRateToMeasurementsConverter.convert(fitBitHeartRate));
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //ClassLoader classLoader = getClass().getClassLoader();
+                        //TODO: We read from file with data temporarily
+                        //File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
+                        //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
+                        final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
+                        measurements.addAll(FitBitHeartRateToMeasurementsConverter.convert(fitBitHeartRate));
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
                 case BLOOD_PRESSURE:
-                    //TODO: Do converter
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //TODO: Do converter for fitbit
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
                 case BURNT_CALORIES:
-                    //TODO: Do converter
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //TODO: Do converter for fitbit
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
                 case STEPS:
-                    //TODO: Do converter
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //TODO: Do converter for fitbit
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
                 case WEIGHT:
-                    final FitBitWeight fitBitWeight = jacksonMappper.readValue(apiResponse.getContent(), FitBitWeight.class);
-                    measurements.addAll(FitBitWeightToMeasurementsConverter.convert(fitBitWeight));
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        final FitBitWeight fitBitWeight = jacksonMappper.readValue(apiResponse.getContent(), FitBitWeight.class);
+                        measurements.addAll(FitBitWeightToMeasurementsConverter.convert(fitBitWeight));
+                    }else{
+                        //TODO: Do converter for withings
+                    }
+
                     break;
                 case DISTANCE:
-                    //TODO: Do converter
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //TODO: Do converter for fitbit
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
                 case BLOOD_OXYGEN:
-                    //TODO: Do converter
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //TODO: Do converter for fitbit
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
                 case SLEEP_TRACKING:
-                    //TODO: Do converter
+                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                        //TODO: Do converter for fitbit
+                    }else{
+                        //TODO: Do converter for withings
+                    }
                     break;
             }
             removeExistingMeasurementsFromCurrentDate(treatment, vitalToSync);

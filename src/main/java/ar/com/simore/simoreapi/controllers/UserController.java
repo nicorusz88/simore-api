@@ -26,18 +26,48 @@ public class UserController extends BaseController<UserService, User> {
         return userService;
     }
 
+    /** Gets all users within the passes in roles, comma separated.
+     * Ex. ADMINISTRATOR,PROFESSIONAL
+     * @param roles
+     * @return
+     */
     @GetMapping("/roles")
     public ResponseEntity<List<User>> getByRoles(@RequestParam String roles) {
         return ResponseEntity.ok(userService.getByRoles(roles));
     }
 
+
+    /** Adds a user
+     * @param user
+     * @return
+     * @throws TreatmentTemplateNotFoundException
+     * @throws RolesNotPresentException
+     */
+    @Override
+    public ResponseEntity<User> add(@Valid @RequestBody User user) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
+        return userService.save(user);
+    }
+
+    /** Adds a fitbit token to a user
+     * @param id user id
+     * @param oauth
+     * @return
+     * @throws TreatmentTemplateNotFoundException
+     * @throws RolesNotPresentException
+     */
     @PostMapping("{id}/fitbit")
     public ResponseEntity addFitbitToken(@PathVariable("id") Long id, @Valid @RequestBody OAuth oauth) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
         return userService.addFitbitToken(id, oauth);
     }
 
-    @Override
-    public ResponseEntity<User> add(@Valid @RequestBody User user) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
-        return userService.save(user);
+    /** Gets all patients from a professional
+     * @param professionalID
+     * @return
+     */
+    @GetMapping("/{professionalID}/get-patients")
+    public ResponseEntity<List<User>> getPatientsFromProfessional(@PathVariable("professionalID") Long professionalID) {
+        return ResponseEntity.ok(userService.getPatientsFromProfessional(professionalID));
     }
+
+
 }

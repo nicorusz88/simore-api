@@ -94,6 +94,11 @@ public class UserService extends BaseService<UserRepository, User> {
         treatment.setCreatedAt(currentDate);
     }
 
+    /** it creates a treatment from a template and assigns it to a user
+     * @param user
+     * @return
+     * @throws TreatmentTemplateNotFoundException
+     */
     private Treatment assignTreatmentTemplate(User user) throws TreatmentTemplateNotFoundException {
         final TreatmentTemplate treatmentTemplate = treatmentTemmplateRepository.findOne(user.getTreatment().getTreatmentTemplate().getId());
         if (treatmentTemplate != null) {
@@ -123,5 +128,14 @@ public class UserService extends BaseService<UserRepository, User> {
         user.getOauths().add(oAuthNew);
         userRepository.save(user);
         return ResponseEntity.ok().build();
+    }
+
+    /** Gets all patiends from a professional
+     * @param professionalID
+     * @return
+     */
+    public List<User> getPatientsFromProfessional(final Long professionalID) {
+        final User professional = userRepository.findOne(professionalID);
+        return userRepository.findByProfessional(professional);
     }
 }
