@@ -1,4 +1,4 @@
-package ar.com.simore.simoreapi.scheduler.converters;
+package ar.com.simore.simoreapi.scheduler.converters.fitbit;
 
 import ar.com.simore.simoreapi.entities.FitbitHeartRateMeasurement;
 import ar.com.simore.simoreapi.entities.Measurement;

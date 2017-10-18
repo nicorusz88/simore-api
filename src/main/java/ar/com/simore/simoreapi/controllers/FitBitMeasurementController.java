@@ -14,8 +14,8 @@ import java.text.ParseException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/fitbit-heartrate-measurements")
-public class FitBitHeartRateMeasurementController extends BaseController<FitbitHeartRateMeasurementService, FitbitHeartRateMeasurement> {
+@RequestMapping("/measurements/fitbit")
+public class FitBitMeasurementController extends BaseController<FitbitHeartRateMeasurementService, FitbitHeartRateMeasurement> {
 
     @Autowired
     private FitbitHeartRateMeasurementService fitbitHeartRateMeasurementService;
@@ -26,7 +26,7 @@ public class FitBitHeartRateMeasurementController extends BaseController<FitbitH
     }
 
 
-    @GetMapping("/treatment/{treatmentId}/date/{date}")
+    @GetMapping("heart-rate/treatment/{treatmentId}/date/{date}")
     public ResponseEntity<List<FitbitHeartRateMeasurement>> getByDate(@PathVariable long treatmentId, @PathVariable String date) throws ParseException {
         return fitbitHeartRateMeasurementService.getByTreatmentAndDate(treatmentId, date);
     }

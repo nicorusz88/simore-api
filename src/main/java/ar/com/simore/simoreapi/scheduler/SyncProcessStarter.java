@@ -3,13 +3,15 @@ package ar.com.simore.simoreapi.scheduler;
 import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
+import ar.com.simore.simoreapi.entities.json.fitbit.calories.FitBitCalories;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
 import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.UserRepository;
-import ar.com.simore.simoreapi.scheduler.converters.FitBitHeartRateToMeasurementsConverter;
-import ar.com.simore.simoreapi.scheduler.converters.FitBitWeightToMeasurementsConverter;
+import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitCalorieToMeasurementsConverter;
+import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitHeartRateToMeasurementsConverter;
+import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitWeightToMeasurementsConverter;
 import ar.com.simore.simoreapi.services.MeasurementService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -132,6 +134,8 @@ public class SyncProcessStarter {
     private void processResponse(final Treatment treatment, final Vital vitalToSync, final HttpResponse apiResponse) throws IOException, TreatmentTemplateNotFoundException, RolesNotPresentException {
         if (apiResponse.isSuccessStatusCode()) {
             List<Measurement> measurements = new ArrayList<>();
+            final String content = parseAsString(apiResponse.getContent());
+            logger.info(RECEIVED + content);
             switch (vitalToSync.getType()) {
                 case HEART_RATE:
                     if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
@@ -139,7 +143,7 @@ public class SyncProcessStarter {
                         //TODO: We read from file with data temporarily
                         //File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
                         //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
-                        final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(apiResponse.getContent(), FitBitHeartRate.class);
+                        final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(content, FitBitHeartRate.class);
                         measurements.addAll(FitBitHeartRateToMeasurementsConverter.convert(fitBitHeartRate));
                     }else{
                         //TODO: Do converter for withings
@@ -154,7 +158,8 @@ public class SyncProcessStarter {
                     break;
                 case BURNT_CALORIES:
                     if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
-                        //TODO: Do converter for fitbit
+                        final FitBitCalories fitBitCalories = jacksonMappper.readValue(content, FitBitCalories.class);
+                        measurements.addAll(FitBitCalorieToMeasurementsConverter.convert(fitBitCalories));
                     }else{
                         //TODO: Do converter for withings
                     }
@@ -168,7 +173,7 @@ public class SyncProcessStarter {
                     break;
                 case WEIGHT:
                     if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
-                        final FitBitWeight fitBitWeight = jacksonMappper.readValue(apiResponse.getContent(), FitBitWeight.class);
+                        final FitBitWeight fitBitWeight = jacksonMappper.readValue(content, FitBitWeight.class);
                         measurements.addAll(FitBitWeightToMeasurementsConverter.convert(fitBitWeight));
                     }else{
                         //TODO: Do converter for withings

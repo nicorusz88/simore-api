@@ -1,4 +1,4 @@
-package ar.com.simore.simoreapi.scheduler.converters;
+package ar.com.simore.simoreapi.scheduler.converters.fitbit;
 
 import ar.com.simore.simoreapi.entities.FitbitWeightMeasurement;
 import ar.com.simore.simoreapi.entities.Measurement;
@@ -27,7 +27,7 @@ public class FitBitWeightToMeasurementsConverter {
      * @return
      */
     public static List<Measurement> convert(final FitBitWeight source) {
-        List<Measurement> fitbitHeartRateMeasurements = new ArrayList<>();
+        List<Measurement> fitbitWeightMeasurements = new ArrayList<>();
 
         final List<Weight> weights = source.getWeight();
         weights.forEach(weight -> {
@@ -37,9 +37,9 @@ public class FitBitWeightToMeasurementsConverter {
             fitbitWeightMeasurement.setWeight(weight.getWeight());
             fitbitWeightMeasurement.setFat(weight.getFat());
             logger.info(String.format(CONVERTED, fitbitWeightMeasurement.toString()));
-            fitbitHeartRateMeasurements.add(fitbitWeightMeasurement);
+            fitbitWeightMeasurements.add(fitbitWeightMeasurement);
         });
-        return fitbitHeartRateMeasurements;
+        return fitbitWeightMeasurements;
     }
 
     /**

@@ -8,7 +8,7 @@ public enum VitalsEnum {
     BLOOD_PRESSURE("Blood Pressure", "mmHg", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
     WEIGHT("Weight", "KG", "/body/log/weight/date/today.json", "/activities/heart/date/[base-date]/[end-date].json"),
     DISTANCE("Distance", "KM", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
-    BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
+    BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/calories/date/today/1d.json", "/activities/heart/date/[base-date]/[end-date].json"),
     SLEEP_TRACKING("Sleep Tracking", "Hour", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json");
 
    private String name;
