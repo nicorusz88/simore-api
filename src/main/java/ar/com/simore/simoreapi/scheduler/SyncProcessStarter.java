@@ -221,11 +221,13 @@ public class SyncProcessStarter {
      * @param vitalToSync
      */
     private void removeExistingMeasurementsFromCurrentDate(Treatment treatment, Vital vitalToSync) {
+        logger.info(String.format("Cleaning existing measurements for today %s ", getCurrentDate()));
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
         if (vitalMeasurement.getMeasurements() != null && !vitalMeasurement.getMeasurements().isEmpty()) {
             final List<Measurement> measurementsFromCurrentDate = vitalMeasurement.getMeasurements().stream().filter(measurement -> measurement.getDate().compareTo(getCurrentDate()) == 0).collect(Collectors.toList());
             for (Measurement measurementToDelete : measurementsFromCurrentDate) {
+                logger.info(String.format("Removing measurement %s ", measurementToDelete.toString()));
                 vitalMeasurement.getMeasurements().remove(measurementToDelete);
             }
         }
@@ -242,7 +244,7 @@ public class SyncProcessStarter {
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
         measurements.forEach(measurement -> measurement.setVitalMeasurement(vitalMeasurement));
-        vitalMeasurement.setMeasurements(measurements);
+        vitalMeasurement.getMeasurements().addAll(measurements);
         setVitalMeasurementToVitalsSynchronization(vitalsSynchronization, vitalMeasurement);
         treatment.setVitalsSynchronization(vitalsSynchronization);
         vitalsSynchronization.setLastSuccessfulSync(getCurrentDateTime());

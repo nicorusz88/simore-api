@@ -39,4 +39,12 @@ public class Measurement extends BaseEntity {
     public boolean equals(Object obj) {
         return this.getId() == ((Measurement) obj).getId();
     }
+
+    @Override
+    public String toString() {
+        return "Measurement{" +
+                "vitalMeasurement=" + vitalMeasurement +
+                ", date=" + date +
+                '}';
+    }
 }
