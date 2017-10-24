@@ -244,7 +244,14 @@ public class SyncProcessStarter {
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
         measurements.forEach(measurement -> measurement.setVitalMeasurement(vitalMeasurement));
-        vitalMeasurement.getMeasurements().addAll(measurements);
+        Optional<List<Measurement>> measurementsOpt = Optional.ofNullable(vitalMeasurement.getMeasurements());
+        if (measurementsOpt.isPresent()) {
+            vitalMeasurement.getMeasurements().addAll(measurements);
+        } else {
+            final List<Measurement> measurementList = new ArrayList<>();
+            measurementList.addAll(measurements);
+            vitalMeasurement.setMeasurements(measurementList);
+        }
         setVitalMeasurementToVitalsSynchronization(vitalsSynchronization, vitalMeasurement);
         treatment.setVitalsSynchronization(vitalsSynchronization);
         vitalsSynchronization.setLastSuccessfulSync(getCurrentDateTime());
