@@ -2,14 +2,14 @@ package ar.com.simore.simoreapi.entities.enums;
 
 public enum VitalsEnum {
     //TODO: Add real URLs
-    HEART_RATE("Hearth Rate", "BPM", "/activities/heart/date/today/1d.json", "/activities/heart/date/today/1d.json"),
-    STEPS("Steps", "Steps", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
-    BLOOD_OXYGEN("Blood Oxygen", "SO2", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
-    BLOOD_PRESSURE("Blood Pressure", "mmHg", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
-    WEIGHT("Weight", "KG", "/body/log/weight/date/today.json", "/activities/heart/date/[base-date]/[end-date].json"),
-    DISTANCE("Distance", "KM", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json"),
-    BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/calories/date/today/1d.json", "/activities/heart/date/[base-date]/[end-date].json"),
-    SLEEP_TRACKING("Sleep Tracking", "Hour", "/activities/heart/date/[base-date]/[end-date].json", "/activities/heart/date/[base-date]/[end-date].json");
+    HEART_RATE("Hearth Rate", "BPM", "/activities/heart/date/today/1d.json", ""),
+    STEPS("Steps", "Steps", "/activities/heart/date/[base-date]/[end-date].json", ""),
+    BLOOD_OXYGEN("Blood Oxygen", "SO2", "", ""),
+    BLOOD_PRESSURE("Blood Pressure", "mmHg", "", ""),
+    WEIGHT("Weight", "KG", "/body/log/weight/date/today.json", ""),
+    DISTANCE("Distance", "KM", "/activities/distance/date/today/1d.json", ""),
+    BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/calories/date/today/1d.json", ""),
+    SLEEP_TRACKING("Sleep Tracking", "Hour", "", "");
 
    private String name;
    private String unit;

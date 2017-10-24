@@ -4,12 +4,14 @@ import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
 import ar.com.simore.simoreapi.entities.json.fitbit.calories.FitBitCalories;
+import ar.com.simore.simoreapi.entities.json.fitbit.distance.FitBitDistance;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
 import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitCalorieToMeasurementsConverter;
+import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitDistanceToMeasurementsConverter;
 import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitHeartRateToMeasurementsConverter;
 import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitWeightToMeasurementsConverter;
 import ar.com.simore.simoreapi.services.MeasurementService;
@@ -111,7 +113,6 @@ public class SyncProcessStarter {
                     try {
                         logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
                         final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
-                        // logger.info(RECEIVED + parseAsString(apiResponse.getContent()));
                         processResponse(treatment, vitalToSync, apiResponse);
                     } catch (IOException e) {
                         logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
@@ -182,7 +183,8 @@ public class SyncProcessStarter {
                     break;
                 case DISTANCE:
                     if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
-                        //TODO: Do converter for fitbit
+                        final FitBitDistance fitBitDistance = jacksonMappper.readValue(content, FitBitDistance.class);
+                        measurements.addAll(FitBitDistanceToMeasurementsConverter.convert(fitBitDistance));
                     }else{
                         //TODO: Do converter for withings
                     }
