@@ -1,19 +1,16 @@
 package ar.com.simore.simoreapi.scheduler.converters.fitbit;
 
-import ar.com.simore.simoreapi.entities.FitbitHeartRateMeasurement;
+import ar.com.simore.simoreapi.entities.FitBitHeartRateMeasurement;
 import ar.com.simore.simoreapi.entities.Measurement;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.ActivitiesHeart;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
-import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.HeartRateZone;
 import org.apache.log4j.Logger;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Converts received JSON from API call into the standard measurement for SIMORE
@@ -35,26 +32,26 @@ public class FitBitHeartRateToMeasurementsConverter {
 
         final List<ActivitiesHeart> activitiesHearts = source.getActivitiesHeart();
         activitiesHearts.forEach(activitiesHeart -> activitiesHeart.getValue().getHeartRateZones().stream().filter(heartRateZone -> (heartRateZone.getMinutes() != null && heartRateZone.getMinutes() > 0)).forEach(heartRateZone -> {
-            FitbitHeartRateMeasurement fitbitHeartRateMeasurement = new FitbitHeartRateMeasurement();
-            fitbitHeartRateMeasurement.setDate(getCurrentDate());
-            fitbitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
-            fitbitHeartRateMeasurement.setMax(heartRateZone.getMax());
-            fitbitHeartRateMeasurement.setMin(heartRateZone.getMin());
-            fitbitHeartRateMeasurement.setName(heartRateZone.getName());
-            fitbitHeartRateMeasurement.setMinutes(heartRateZone.getMinutes());
-            logger.info(String.format(CONVERTED,fitbitHeartRateMeasurement.toString()));
-            fitbitHeartRateMeasurements.add(fitbitHeartRateMeasurement);
+            FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
+            fitBitHeartRateMeasurement.setDate(getCurrentDate());
+            fitBitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
+            fitBitHeartRateMeasurement.setMax(heartRateZone.getMax());
+            fitBitHeartRateMeasurement.setMin(heartRateZone.getMin());
+            fitBitHeartRateMeasurement.setName(heartRateZone.getName());
+            fitBitHeartRateMeasurement.setMinutes(heartRateZone.getMinutes());
+            logger.info(String.format(CONVERTED, fitBitHeartRateMeasurement.toString()));
+            fitbitHeartRateMeasurements.add(fitBitHeartRateMeasurement);
         }));
         activitiesHearts.forEach(activitiesHeart -> {
             Long restingHeartRate = activitiesHeart.getValue().getRestingHeartRate();
             if(restingHeartRate !=null){
-                FitbitHeartRateMeasurement fitbitHeartRateMeasurement = new FitbitHeartRateMeasurement();
-                fitbitHeartRateMeasurement.setName(RESTING_HEART_RATE);
-                fitbitHeartRateMeasurement.setMin(restingHeartRate);
-                fitbitHeartRateMeasurement.setMax(restingHeartRate);
-                fitbitHeartRateMeasurement.setDate(getCurrentDate());
-                logger.info(String.format(CONVERTED,fitbitHeartRateMeasurement.toString()));
-                fitbitHeartRateMeasurements.add(fitbitHeartRateMeasurement);
+                FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
+                fitBitHeartRateMeasurement.setName(RESTING_HEART_RATE);
+                fitBitHeartRateMeasurement.setMin(restingHeartRate);
+                fitBitHeartRateMeasurement.setMax(restingHeartRate);
+                fitBitHeartRateMeasurement.setDate(getCurrentDate());
+                logger.info(String.format(CONVERTED, fitBitHeartRateMeasurement.toString()));
+                fitbitHeartRateMeasurements.add(fitBitHeartRateMeasurement);
             }
         });
         return fitbitHeartRateMeasurements;

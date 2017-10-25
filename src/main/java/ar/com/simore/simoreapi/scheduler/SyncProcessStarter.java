@@ -6,14 +6,12 @@ import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
 import ar.com.simore.simoreapi.entities.json.fitbit.calories.FitBitCalories;
 import ar.com.simore.simoreapi.entities.json.fitbit.distance.FitBitDistance;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
+import ar.com.simore.simoreapi.entities.json.fitbit.steps.FitBitSteps;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
 import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.UserRepository;
-import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitCalorieToMeasurementsConverter;
-import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitDistanceToMeasurementsConverter;
-import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitHeartRateToMeasurementsConverter;
-import ar.com.simore.simoreapi.scheduler.converters.fitbit.FitBitWeightToMeasurementsConverter;
+import ar.com.simore.simoreapi.scheduler.converters.fitbit.*;
 import ar.com.simore.simoreapi.services.MeasurementService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -167,7 +165,8 @@ public class SyncProcessStarter {
                     break;
                 case STEPS:
                     if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
-                        //TODO: Do converter for fitbit
+                        final FitBitSteps fitBitSteps = jacksonMappper.readValue(content, FitBitSteps.class);
+                        measurements.addAll(FitBitStepsToMeasurementsConverter.convert(fitBitSteps));
                     }else{
                         //TODO: Do converter for withings
                     }
@@ -198,13 +197,15 @@ public class SyncProcessStarter {
                     break;
                 case SLEEP_TRACKING:
                     if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
-                        //TODO: Do converter for fitbit
+                        //TODO: Do converter for fitbit. Fitbit JSOn Response is INVALID JSON
                     }else{
                         //TODO: Do converter for withings
                     }
                     break;
             }
-            removeExistingMeasurementsFromCurrentDate(treatment, vitalToSync);
+            if(!measurements.isEmpty()){
+                removeExistingMeasurementsFromCurrentDate(treatment, vitalToSync);
+            }
             setDataToTreatment(treatment, vitalToSync, measurements);
         } else {
             logger.error(String.format(API_CALL_ERROR, apiResponse.getStatusCode(), apiResponse.getStatusMessage()));

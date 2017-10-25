@@ -1,7 +1,6 @@
 package ar.com.simore.simoreapi.scheduler.converters.fitbit;
 
-import ar.com.simore.simoreapi.entities.FitbitCalorieMeasurement;
-import ar.com.simore.simoreapi.entities.FitbitDistanceMeasurement;
+import ar.com.simore.simoreapi.entities.FitBitDistanceMeasurement;
 import ar.com.simore.simoreapi.entities.Measurement;
 import ar.com.simore.simoreapi.entities.json.fitbit.distance.ActivitiesDistance;
 import ar.com.simore.simoreapi.entities.json.fitbit.distance.FitBitDistance;
@@ -29,15 +28,15 @@ public class FitBitDistanceToMeasurementsConverter {
 
         final List<ActivitiesDistance> activitiesDistance = source.getActivitiesDistance();
         activitiesDistance.forEach(distance -> {
-            FitbitDistanceMeasurement fitbitDistanceMeasurement = new FitbitDistanceMeasurement();
+            FitBitDistanceMeasurement fitBitDistanceMeasurement = new FitBitDistanceMeasurement();
             try {
-                fitbitDistanceMeasurement.setDate(DateUtils.simpleDateFormat.parse(distance.getDateTime()));
+                fitBitDistanceMeasurement.setDate(DateUtils.simpleDateFormat.parse(distance.getDateTime()));
             } catch (ParseException e) {
                 logger.error("Error converting date during distance conversion for Fitbit. Format expected " + DateUtils.simpleDateFormat.toPattern() + "received " + distance.getDateTime());
             }
-            fitbitDistanceMeasurement.setValue(distance.getValue());
-            logger.info(String.format(CONVERTED, fitbitDistanceMeasurement.toString()));
-            fitbitCalorieMeasurements.add(fitbitDistanceMeasurement);
+            fitBitDistanceMeasurement.setValue(distance.getValue());
+            logger.info(String.format(CONVERTED, fitBitDistanceMeasurement.toString()));
+            fitbitCalorieMeasurements.add(fitBitDistanceMeasurement);
         });
         return fitbitCalorieMeasurements;
     }

@@ -4,8 +4,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(value = "fitbitdistancemeasurement")
-public class FitbitDistanceMeasurement extends Measurement {
+@DiscriminatorValue(value = "fitbitstepsmeasurement")
+public class FitBitStepsMeasurement extends Measurement {
 
     private String value;
 
@@ -19,7 +19,7 @@ public class FitbitDistanceMeasurement extends Measurement {
 
     @Override
     public String toString() {
-        return "FitbitDistanceMeasurement{" +
+        return "FitBitStepsMeasurement{" +
                 "value=" + value +
                 '}';
     }

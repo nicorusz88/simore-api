@@ -1,6 +1,6 @@
 package ar.com.simore.simoreapi.scheduler.converters.fitbit;
 
-import ar.com.simore.simoreapi.entities.FitbitCalorieMeasurement;
+import ar.com.simore.simoreapi.entities.FitBitCalorieMeasurement;
 import ar.com.simore.simoreapi.entities.Measurement;
 import ar.com.simore.simoreapi.entities.json.fitbit.calories.ActivitiesCalory;
 import ar.com.simore.simoreapi.entities.json.fitbit.calories.FitBitCalories;
@@ -28,15 +28,15 @@ public class FitBitCalorieToMeasurementsConverter {
 
         final List<ActivitiesCalory> activitiesCalories = source.getActivitiesCalories();
         activitiesCalories.forEach(calorie -> {
-            FitbitCalorieMeasurement fitbitCalorieMeasurement = new FitbitCalorieMeasurement();
+            FitBitCalorieMeasurement fitBitCalorieMeasurement = new FitBitCalorieMeasurement();
             try {
-                fitbitCalorieMeasurement.setDate(DateUtils.simpleDateFormat.parse(calorie.getDateTime()));
+                fitBitCalorieMeasurement.setDate(DateUtils.simpleDateFormat.parse(calorie.getDateTime()));
             } catch (ParseException e) {
                 logger.error("Error converting date during calories conversion for Fitbit. Format expected " + DateUtils.simpleDateFormat.toPattern() + "received " + calorie.getDateTime());
             }
-            fitbitCalorieMeasurement.setValue(calorie.getValue());
-            logger.info(String.format(CONVERTED, fitbitCalorieMeasurement.toString()));
-            fitbitCalorieMeasurements.add(fitbitCalorieMeasurement);
+            fitBitCalorieMeasurement.setValue(calorie.getValue());
+            logger.info(String.format(CONVERTED, fitBitCalorieMeasurement.toString()));
+            fitbitCalorieMeasurements.add(fitBitCalorieMeasurement);
         });
         return fitbitCalorieMeasurements;
     }

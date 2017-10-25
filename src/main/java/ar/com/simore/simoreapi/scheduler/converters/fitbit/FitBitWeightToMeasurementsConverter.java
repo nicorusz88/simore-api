@@ -1,6 +1,6 @@
 package ar.com.simore.simoreapi.scheduler.converters.fitbit;
 
-import ar.com.simore.simoreapi.entities.FitbitWeightMeasurement;
+import ar.com.simore.simoreapi.entities.FitBitWeightMeasurement;
 import ar.com.simore.simoreapi.entities.Measurement;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.Weight;
@@ -31,13 +31,13 @@ public class FitBitWeightToMeasurementsConverter {
 
         final List<Weight> weights = source.getWeight();
         weights.forEach(weight -> {
-            FitbitWeightMeasurement fitbitWeightMeasurement = new FitbitWeightMeasurement();
-            fitbitWeightMeasurement.setDate(getDate(weight.getTime()));
-            fitbitWeightMeasurement.setBmi(weight.getBmi());
-            fitbitWeightMeasurement.setWeight(weight.getWeight());
-            fitbitWeightMeasurement.setFat(weight.getFat());
-            logger.info(String.format(CONVERTED, fitbitWeightMeasurement.toString()));
-            fitbitWeightMeasurements.add(fitbitWeightMeasurement);
+            FitBitWeightMeasurement fitBitWeightMeasurement = new FitBitWeightMeasurement();
+            fitBitWeightMeasurement.setDate(getDate(weight.getTime()));
+            fitBitWeightMeasurement.setBmi(weight.getBmi());
+            fitBitWeightMeasurement.setWeight(weight.getWeight());
+            fitBitWeightMeasurement.setFat(weight.getFat());
+            logger.info(String.format(CONVERTED, fitBitWeightMeasurement.toString()));
+            fitbitWeightMeasurements.add(fitBitWeightMeasurement);
         });
         return fitbitWeightMeasurements;
     }

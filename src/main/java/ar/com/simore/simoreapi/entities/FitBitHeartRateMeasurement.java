@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue(value="fitbitheartratemeasurement")
-public class FitbitHeartRateMeasurement extends Measurement {
+public class FitBitHeartRateMeasurement extends Measurement {
 
     private String name;
     private long caloriesOut;
@@ -59,7 +59,7 @@ public class FitbitHeartRateMeasurement extends Measurement {
 
     @Override
     public String toString() {
-        return "FitbitHeartRateMeasurement{" +
+        return "FitBitHeartRateMeasurement{" +
                 "name='" + name + '\'' +
                 ", caloriesOut=" + caloriesOut +
                 ", max=" + max +
