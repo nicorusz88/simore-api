@@ -31,7 +31,7 @@ public class FitBitHeartRateToMeasurementsConverter {
         List<Measurement> fitbitHeartRateMeasurements = new ArrayList<>();
 
         final List<ActivitiesHeart> activitiesHearts = source.getActivitiesHeart();
-        activitiesHearts.forEach(activitiesHeart -> activitiesHeart.getValue().getHeartRateZones().stream().filter(heartRateZone -> (heartRateZone.getMinutes() != null && heartRateZone.getMinutes() > 0)).forEach(heartRateZone -> {
+        activitiesHearts.forEach(activitiesHeart -> activitiesHeart.getValue().getHeartRateZones().forEach(heartRateZone -> {
             FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
             fitBitHeartRateMeasurement.setDate(getCurrentDate());
             fitBitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
