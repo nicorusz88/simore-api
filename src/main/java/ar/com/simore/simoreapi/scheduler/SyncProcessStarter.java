@@ -112,7 +112,7 @@ public class SyncProcessStarter {
                         logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
                         final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
                         processResponse(treatment, vitalToSync, apiResponse);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
                     }
                 }
