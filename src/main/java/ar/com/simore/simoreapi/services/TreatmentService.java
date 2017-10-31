@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,6 +17,9 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
 
     @Autowired
     private TreatmentRepository treatmentRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     protected TreatmentRepository getRepository() {
@@ -44,6 +50,8 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 CheckIn checkIn = (CheckIn) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getCheckIns(), checkIn)) {
                     treatment.getCheckIns().add((CheckIn) treatmentComponent);
+                    Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    userService.createCheckInResult(date, checkIn);
                 } else {
                     alreadyExists = true;
                 }
@@ -52,6 +60,8 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 Medication medication = (Medication) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getMedications(), medication)) {
                     treatment.getMedications().add((Medication) treatmentComponent);
+                    Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    userService.createMedicationStatus(date, medication);
                 } else {
                     alreadyExists = true;
                 }

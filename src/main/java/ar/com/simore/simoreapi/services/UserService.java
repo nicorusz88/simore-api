@@ -127,19 +127,17 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createFirstMedicationStatus(final Treatment treatment) {
-        treatment.getMedications().forEach(medication -> {
-            MedicationStatus medicationStatus = new MedicationStatus();
-            medicationStatus.setMedication(medication);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(treatment.getCreatedAt());
-            cal.set(Calendar.HOUR_OF_DAY, (int) medication.getStartAt());
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            medicationStatus.setNotificationDate(cal.getTime());
-            medicationStatusService.save(medicationStatus);
-        });
+        treatment.getMedications().forEach(medication -> createMedicationStatus(treatment.getCreatedAt(), medication));
     }
+
+    public void createMedicationStatus(final Date date, Medication medication) {
+        MedicationStatus medicationStatus = new MedicationStatus();
+        medicationStatus.setMedication(medication);
+        Calendar cal = getDateStartAt(date, (int) medication.getStartAt());
+        medicationStatus.setNotificationDate(cal.getTime());
+        medicationStatusService.save(medicationStatus);
+    }
+
 
     /**
      * Creates the first checkin result so that the notification job knows that start date
@@ -147,18 +145,25 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createFirstCheckInResult(final Treatment treatment) {
-        treatment.getCheckIns().forEach(checkIn -> {
-            CheckInResult checkInResult = new CheckInResult();
-            checkInResult.setCheckIn(checkIn);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(treatment.getCreatedAt());
-            cal.set(Calendar.HOUR_OF_DAY, (int) checkIn.getStartAt());
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            checkInResult.setNotificationDate(cal.getTime());
-            checkInResultService.save(checkInResult);
-        });
+        treatment.getCheckIns().forEach(checkIn -> createCheckInResult(treatment.getCreatedAt(), checkIn));
+    }
+
+    public void createCheckInResult(final Date date, final CheckIn checkIn) {
+        CheckInResult checkInResult = new CheckInResult();
+        checkInResult.setCheckIn(checkIn);
+        Calendar cal = getDateStartAt(date, (int) checkIn.getStartAt());
+        checkInResult.setNotificationDate(cal.getTime());
+        checkInResultService.save(checkInResult);
+    }
+
+    private Calendar getDateStartAt(final Date date, final int startAt) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, startAt);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal;
     }
 
     /**
