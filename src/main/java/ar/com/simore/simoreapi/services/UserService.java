@@ -74,9 +74,10 @@ public class UserService extends BaseService<UserRepository, User> {
                     r.getName().equals(RolesNamesEnum.PATIENT.name())).findAny();
             if (hasRolePacient.isPresent()) {
                 final Treatment treatment;
+
                 treatment = assignTreatmentTemplate(user);
-                assignCurrentDateDateToTreatment(treatment);
                 user.setTreatment(treatment);
+
                 if (treatment == null) {
                     LOGGER.error(TREATMENT_TEMPLATE_NOT_PRESENT);
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((T) TREATMENT_TEMPLATE_NOT_PRESENT);
@@ -112,6 +113,7 @@ public class UserService extends BaseService<UserRepository, User> {
         final TreatmentTemplate treatmentTemplate = treatmentTemmplateRepository.findOne(user.getTreatment().getTreatmentTemplate().getId());
         if (treatmentTemplate != null) {
             final Treatment treatment = TreatmentTemplateHandler.copyFromTemplate(treatmentTemplate, user.getTreatment());
+            assignCurrentDateDateToTreatment(treatment);
             createFirstMedicationStatus(treatment);
             createFirstCheckInResult(treatment);
             return treatment;
