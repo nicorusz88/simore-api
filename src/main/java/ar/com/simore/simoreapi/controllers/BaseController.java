@@ -1,8 +1,6 @@
 package ar.com.simore.simoreapi.controllers;
 
 import ar.com.simore.simoreapi.entities.BaseEntity;
-import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
-import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.services.BaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,13 +47,13 @@ public abstract class BaseController<S extends BaseService, E> {
     }
 
     @PostMapping
-    public ResponseEntity<E> add(@Valid @RequestBody E entity) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
+    public ResponseEntity<E> add(@Valid @RequestBody E entity){
         getService().save(entity);
         return new ResponseEntity<>(entity, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<E> update(@PathVariable long id, @Valid @RequestBody E entity) throws TreatmentTemplateNotFoundException, RolesNotPresentException {
+    public ResponseEntity<E> update(@PathVariable long id, @Valid @RequestBody E entity) {
         if (!StringUtils.isEmpty(id)) {
             ((BaseEntity) entity).setId(id);
             getService().save(entity);

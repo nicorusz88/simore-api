@@ -20,6 +20,19 @@ public class CheckIn extends BaseTreatmentComponent {
     @OneToOne(cascade= CascadeType.ALL)
     private Question question;
 
+    /**
+     * Hour in 24hs format at which the Check ins will start being notified
+     */
+    private long startAt;
+
+    public long getStartAt() {
+        return startAt;
+    }
+
+    public void setStartAt(long startAt) {
+        this.startAt = startAt;
+    }
+
     public int getFrecuency() {
         return frecuency;
     }

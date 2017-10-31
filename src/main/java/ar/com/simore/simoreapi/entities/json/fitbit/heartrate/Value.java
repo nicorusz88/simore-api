@@ -1,12 +1,13 @@
 
 package ar.com.simore.simoreapi.entities.json.fitbit.heartrate;
 
-import java.io.Serializable;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.codehaus.jackson.annotate.JsonIgnore;
+
+import java.io.Serializable;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({

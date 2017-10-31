@@ -146,6 +146,7 @@ public class Bootstrap {
         CheckIn checkIn1 = new CheckIn();
         checkIn1.setName("Pains");
         checkIn1.setFrecuency(12);
+        checkIn1.setStartAt(8);
         ChoiceQuestion question1 = new ChoiceQuestion();
         question1.setQuestion("¿Have you felt any chest pain in the last hours?");
         List<ChoiceQuestionOption> choiceQuestionOptions1 = new ArrayList<>();
@@ -161,6 +162,7 @@ public class Bootstrap {
         CheckIn checkIn2 = new CheckIn();
         checkIn2.setName("Dificulties");
         checkIn2.setFrecuency(12);
+        checkIn2.setStartAt(7);
         ChoiceQuestion question2 = new ChoiceQuestion();
         question2.setQuestion("¿Have you had any difficulty to breath in the last hours?");
         List<ChoiceQuestionOption> choiceQuestionOptions2 = new ArrayList<>();
@@ -183,11 +185,13 @@ public class Bootstrap {
         Medication medication1 = new Medication();
         medication1.setName("Aspirin");
         medication1.setQuantity(20);
+        medication1.setStartAt(13);
         medication1.setFrecuency(6);
 
         Medication medication2 = new Medication();
         medication2.setName("Atorvastatin");
         medication2.setQuantity(20);
+        medication2.setStartAt(13);
         medication2.setFrecuency(24);
 
         medications.add(medication1);
@@ -227,12 +231,18 @@ public class Bootstrap {
         vital6.setName(VitalsEnum.STEPS.getName());
         vital6.setWearableType(WearableTypeEnum.FITBIT);
 
+        Vital vital7 = new Vital();
+        vital7.setType(VitalsEnum.DISTANCE);
+        vital7.setName(VitalsEnum.DISTANCE.getName());
+        vital7.setWearableType(WearableTypeEnum.FITBIT);
+
         vitales.add(vital1);
         vitales.add(vital2);
         vitales.add(vital3);
         vitales.add(vital4);
         vitales.add(vital5);
         vitales.add(vital6);
+        vitales.add(vital7);
         return vitales;
     }
 
@@ -309,11 +319,13 @@ public class Bootstrap {
         Medication medication1 = new Medication();
         medication1.setName("Long Acting Insulin");
         medication1.setQuantity(20);
+        medication1.setStartAt(14);
         medication1.setFrecuency(24);
 
         Medication medication2 = new Medication();
         medication2.setName("Benazepril");
         medication2.setQuantity(20);
+        medication2.setStartAt(15);
         medication2.setFrecuency(48);
 
         medications.add(medication1);
@@ -326,6 +338,7 @@ public class Bootstrap {
         CheckIn checkIn1 = new CheckIn();
         checkIn1.setName("Diet");
         checkIn1.setFrecuency(12);
+        checkIn1.setStartAt(6);
         ChoiceQuestion question1 = new ChoiceQuestion();
         question1.setQuestion("¿Are you following yoour recommended diet?");
         List<ChoiceQuestionOption> choiceQuestionOptions1 = new ArrayList<>();
@@ -341,6 +354,7 @@ public class Bootstrap {
         CheckIn checkIn2 = new CheckIn();
         checkIn2.setName("Urination");
         checkIn2.setFrecuency(6);
+        checkIn2.setStartAt(5);
         ChoiceQuestion question2 = new ChoiceQuestion();
         question2.setQuestion("¿How many times did you go to urinate in the last 6 hours?");
         List<ChoiceQuestionOption> choiceQuestionOptions2 = new ArrayList<>();
@@ -359,6 +373,7 @@ public class Bootstrap {
         CheckIn checkIn3 = new CheckIn();
         checkIn3.setName("Thirst");
         checkIn3.setFrecuency(6);
+        checkIn3.setStartAt(4);
         ChoiceQuestion question3 = new ChoiceQuestion();
         question3.setQuestion("¿How you feel an increased thirst in the last 6 hours?");
         List<ChoiceQuestionOption> choiceQuestionOptions3 = new ArrayList<>();
@@ -460,11 +475,13 @@ public class Bootstrap {
         Medication medication1 = new Medication();
         medication1.setName("Lozol");
         medication1.setQuantity(20);
+        medication1.setStartAt(13);
         medication1.setFrecuency(24);
 
         Medication medication2 = new Medication();
         medication2.setName("Afeditab CR");
         medication2.setQuantity(20);
+        medication2.setStartAt(12);
         medication2.setFrecuency(48);
 
         medications.add(medication1);
@@ -477,6 +494,7 @@ public class Bootstrap {
         CheckIn checkIn1 = new CheckIn();
         checkIn1.setName("Headache");
         checkIn1.setFrecuency(12);
+        checkIn1.setStartAt(11);
         ChoiceQuestion question1 = new ChoiceQuestion();
         question1.setQuestion("¿Did you have any headache lately?");
         List<ChoiceQuestionOption> choiceQuestionOptions1 = new ArrayList<>();
@@ -492,6 +510,7 @@ public class Bootstrap {
         CheckIn checkIn2 = new CheckIn();
         checkIn2.setName("Vision");
         checkIn2.setFrecuency(6);
+        checkIn2.setStartAt(10);
         ChoiceQuestion question2 = new ChoiceQuestion();
         question2.setQuestion("¿Have you felt altered vision(example blurring)?");
         List<ChoiceQuestionOption> choiceQuestionOptions2 = new ArrayList<>();
@@ -507,6 +526,7 @@ public class Bootstrap {
         CheckIn checkIn3 = new CheckIn();
         checkIn3.setName("Thirst");
         checkIn3.setFrecuency(6);
+        checkIn3.setStartAt(9);
         ChoiceQuestion question3 = new ChoiceQuestion();
         question3.setQuestion("¿How you feel an increased thirst in the last 6 hours?");
         List<ChoiceQuestionOption> choiceQuestionOptions3 = new ArrayList<>();

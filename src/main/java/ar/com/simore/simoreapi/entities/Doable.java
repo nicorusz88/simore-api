@@ -1,16 +1,20 @@
 package ar.com.simore.simoreapi.entities;
 
+import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
 /**
- * Represents an acivity that can be done, marking it as checked and a date where it was completed (or not).
- * This can be used, for example for an appointment, for a Check in, for a recommendation, etc
+ * Represents an activity that can be done, marking it as checked and a date where it was completed (or not).
+ * This will be used for appointments and recommendation
  */
+@MappedSuperclass
 public class Doable extends BaseEntity {
 
-    private boolean done;
+    private boolean done = false;
 
-    private Date date;
+    private Date doneDate;
+
+    private Date notificationDate;
 
     public boolean isDone() {
         return done;
@@ -20,11 +24,20 @@ public class Doable extends BaseEntity {
         this.done = done;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getDoneDate() {
+        return doneDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDoneDate(Date doneDate) {
+        this.doneDate = doneDate;
+    }
+
+
+    public Date getNotificationDate() {
+        return notificationDate;
+    }
+
+    public void setNotificationDate(Date notificationDate) {
+        this.notificationDate = notificationDate;
     }
 }

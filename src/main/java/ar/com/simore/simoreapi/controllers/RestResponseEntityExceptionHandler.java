@@ -1,7 +1,5 @@
 package ar.com.simore.simoreapi.controllers;
 
-import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
-import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +19,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
      * @param request
      * @return
      */
-    @ExceptionHandler(value = {TreatmentTemplateNotFoundException.class, RolesNotPresentException.class})
+/*    @ExceptionHandler(value = {TreatmentTemplateNotFoundException.class, RolesNotPresentException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-    }
+    }*/
 
     /** Here we should handle all unhandled exceptions . It returns INTERNAL_SERVER_ERROR
      * @param ex

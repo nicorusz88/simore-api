@@ -1,10 +1,10 @@
 package ar.com.simore.simoreapi.controllers;
 
 
-import ar.com.simore.simoreapi.entities.Treatment;
 import ar.com.simore.simoreapi.entities.Appointment;
-import ar.com.simore.simoreapi.services.TreatmentService;
+import ar.com.simore.simoreapi.entities.Treatment;
 import ar.com.simore.simoreapi.services.AppointmentService;
+import ar.com.simore.simoreapi.services.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

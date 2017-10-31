@@ -8,8 +8,6 @@ import ar.com.simore.simoreapi.entities.json.fitbit.distance.FitBitDistance;
 import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.entities.json.fitbit.steps.FitBitSteps;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
-import ar.com.simore.simoreapi.exceptions.RolesNotPresentException;
-import ar.com.simore.simoreapi.exceptions.TreatmentTemplateNotFoundException;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.scheduler.converters.fitbit.*;
 import ar.com.simore.simoreapi.services.MeasurementService;
@@ -88,12 +86,8 @@ public class SyncProcessStarter {
     private MeasurementService measurementService;
 
 
-    /**
-     * @throws TreatmentTemplateNotFoundException
-     * @throws RolesNotPresentException
-     */
     @Scheduled(fixedDelay = 21600000)
-    public void init() throws TreatmentTemplateNotFoundException, RolesNotPresentException {
+    public void init(){
         final long startTime = System.currentTimeMillis();
         logger.info(STARTING_DEVICES_SYNCHRONIZATION);
         final List<User> pacients = getSynchronizablePacients();
@@ -130,7 +124,7 @@ public class SyncProcessStarter {
         return TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
     }
 
-    private void processResponse(final Treatment treatment, final Vital vitalToSync, final HttpResponse apiResponse) throws IOException, TreatmentTemplateNotFoundException, RolesNotPresentException {
+    private void processResponse(final Treatment treatment, final Vital vitalToSync, final HttpResponse apiResponse) throws IOException {
         if (apiResponse.isSuccessStatusCode()) {
             List<Measurement> measurements = new ArrayList<>();
             final String content = parseAsString(apiResponse.getContent());

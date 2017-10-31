@@ -1,10 +1,11 @@
 
 package ar.com.simore.simoreapi.entities.json.fitbit.calories;
 
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
+
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
