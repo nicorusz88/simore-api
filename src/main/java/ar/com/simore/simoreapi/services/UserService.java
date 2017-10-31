@@ -122,7 +122,7 @@ public class UserService extends BaseService<UserRepository, User> {
     }
 
     /**
-     * Creates the first medicatoon status so that the notification job knows the start date
+     * Creates the first medication status so that the notification job knows the start date
      *
      * @param treatment
      */
@@ -130,7 +130,7 @@ public class UserService extends BaseService<UserRepository, User> {
         treatment.getMedications().forEach(medication -> createMedicationStatus(treatment.getCreatedAt(), medication));
     }
 
-    public void createMedicationStatus(final Date date, Medication medication) {
+    void createMedicationStatus(final Date date, Medication medication) {
         MedicationStatus medicationStatus = new MedicationStatus();
         medicationStatus.setMedication(medication);
         Calendar cal = getDateStartAt(date, (int) medication.getStartAt());
@@ -148,7 +148,7 @@ public class UserService extends BaseService<UserRepository, User> {
         treatment.getCheckIns().forEach(checkIn -> createCheckInResult(treatment.getCreatedAt(), checkIn));
     }
 
-    public void createCheckInResult(final Date date, final CheckIn checkIn) {
+    void createCheckInResult(final Date date, final CheckIn checkIn) {
         CheckInResult checkInResult = new CheckInResult();
         checkInResult.setCheckIn(checkIn);
         Calendar cal = getDateStartAt(date, (int) checkIn.getStartAt());
