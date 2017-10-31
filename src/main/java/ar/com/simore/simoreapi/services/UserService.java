@@ -75,12 +75,12 @@ public class UserService extends BaseService<UserRepository, User> {
             if (hasRolePacient.isPresent()) {
                 final Treatment treatment;
                 treatment = assignTreatmentTemplate(user);
+                assignCurrentDateDateToTreatment(treatment);
+                user.setTreatment(treatment);
                 if (treatment == null) {
                     LOGGER.error(TREATMENT_TEMPLATE_NOT_PRESENT);
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((T) TREATMENT_TEMPLATE_NOT_PRESENT);
                 }
-                assignCurrentDateDateToTreatment(treatment);
-                user.setTreatment(treatment);
                 super.save(user);
             } else {
                 super.save(user);
