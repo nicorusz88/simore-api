@@ -37,9 +37,19 @@ public class FitBitMeasurementController {
         return fitBitHeartRateMeasurementService.getByTreatmentAndDate(treatmentId, date);
     }
 
+    @GetMapping("heart-rate/treatment/{treatmentId}/start-date/{startDate}/end-date/{endDate}")
+    public ResponseEntity<List<FitBitHeartRateMeasurement>> getHeartRateByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
+        return fitBitHeartRateMeasurementService.getByTreatmentAndDateRange(treatmentId, startDate, endDate);
+    }
+
     @GetMapping("weight/treatment/{treatmentId}/date/{date}")
     public ResponseEntity<List<FitBitWeightMeasurement>> getWeightByTreatmentAndDate(@PathVariable long treatmentId, @PathVariable String date) throws ParseException {
         return fitBitWeightMeasurementService.getByTreatmentAndDate(treatmentId, date);
+    }
+
+    @GetMapping("weight/treatment/{treatmentId}/start-date/{startDate}/end-date/{endDate}")
+    public ResponseEntity<List<FitBitWeightMeasurement>> getWeightByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
+        return fitBitWeightMeasurementService.getByTreatmentAndDateRange(treatmentId, startDate, endDate);
     }
 
     @GetMapping("distance/treatment/{treatmentId}/date/{date}")
@@ -47,13 +57,28 @@ public class FitBitMeasurementController {
         return fitBitDistanceMeasurementService.getByTreatmentAndDate(treatmentId, date);
     }
 
+    @GetMapping("distance/treatment/{treatmentId}/start-date/{startDate}/end-date/{endDate}")
+    public ResponseEntity<List<FitBitDistanceMeasurement>> getDistanceByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
+        return fitBitDistanceMeasurementService.getByTreatmentAndDateRange(treatmentId, startDate, endDate);
+    }
+
     @GetMapping("burnt-calories/treatment/{treatmentId}/date/{date}")
     public ResponseEntity<List<FitBitCalorieMeasurement>> getCaloriesByTreatmentAndDate(@PathVariable long treatmentId, @PathVariable String date) throws ParseException {
         return fitBitCaloriesMeasurementService.getByTreatmentAndDate(treatmentId, date);
     }
 
+    @GetMapping("burnt-calories/treatment/{treatmentId}/start-date/{startDate}/end-date/{endDate}")
+    public ResponseEntity<List<FitBitCalorieMeasurement>> getCaloriesByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
+        return fitBitCaloriesMeasurementService.getByTreatmentAndDateRange(treatmentId, startDate, endDate);
+    }
+
     @GetMapping("steps/treatment/{treatmentId}/date/{date}")
     public ResponseEntity<List<FitBitStepsMeasurement>> getStepsByTreatmentAndDate(@PathVariable long treatmentId, @PathVariable String date) throws ParseException {
         return fitBitStepsMeasurementService.getByTreatmentAndDate(treatmentId, date);
+    }
+
+    @GetMapping("steps/treatment/{treatmentId}/start-date/{startDate}/end-date/{endDate}")
+    public ResponseEntity<List<FitBitStepsMeasurement>> getStepsByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
+        return fitBitStepsMeasurementService.getByTreatmentAndDateRange(treatmentId, startDate, endDate);
     }
 }

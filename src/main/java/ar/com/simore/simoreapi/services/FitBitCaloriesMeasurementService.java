@@ -28,4 +28,11 @@ public class FitBitCaloriesMeasurementService extends BaseService<FitBitCalorieM
         final List<FitBitCalorieMeasurement> measurements = fitBitCalorieMeasurementRepository.findByTreatmentAndDate(treatmentId, dateParsed);
         return ResponseEntity.ok(measurements);
     }
+
+    public ResponseEntity<List<FitBitCalorieMeasurement>> getByTreatmentAndDateRange(long treatmentId, String startDate, String endDate) throws ParseException {
+        final Date startDateParsed = DateUtils.simpleDateFormat.parse(startDate);
+        final Date endDateParsed = DateUtils.simpleDateFormat.parse(endDate);
+        final List<FitBitCalorieMeasurement> measurements = fitBitCalorieMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDateParsed, endDateParsed);
+        return ResponseEntity.ok(measurements);
+    }
 }

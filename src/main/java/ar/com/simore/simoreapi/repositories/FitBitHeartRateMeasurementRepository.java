@@ -14,4 +14,7 @@ public interface FitBitHeartRateMeasurementRepository extends CrudRepository<Fit
 
     @Query("select fm from FitBitHeartRateMeasurement fm where fm.date = :dateParsed and fm.vitalMeasurement.id in (select id from VitalMeasurement where vitalsSynchronization.id in (select id from VitalsSynchronization where treatment.id = :treatmentId))")
     List<FitBitHeartRateMeasurement> findByTreatmentAndDate(@Param("treatmentId")long treatmentId, @Param("dateParsed") Date dateParsed);
+
+    @Query("select fm from FitBitHeartRateMeasurement fm where fm.date between :startDateParsed and :endDateParsed and fm.vitalMeasurement.id in (select id from VitalMeasurement where vitalsSynchronization.id in (select id from VitalsSynchronization where treatment.id = :treatmentId))")
+    List<FitBitHeartRateMeasurement> findByTreatmentAndDateBetween(@Param("treatmentId") long treatmentId, @Param("startDateParsed") Date startDateParsed, @Param("endDateParsed") Date endDateParsed);
 }

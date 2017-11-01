@@ -28,4 +28,11 @@ public class FitBitDistanceMeasurementService extends BaseService<FitBitDistance
         final List<FitBitDistanceMeasurement> measurements = fitBitDistanceMeasurementRepository.findByTreatmentAndDate(treatmentId, dateParsed);
         return ResponseEntity.ok(measurements);
     }
+
+    public ResponseEntity<List<FitBitDistanceMeasurement>> getByTreatmentAndDateRange(long treatmentId, String startDate, String endDate) throws ParseException {
+        final Date startDateParsed = DateUtils.simpleDateFormat.parse(startDate);
+        final Date endDateParsed = DateUtils.simpleDateFormat.parse(endDate);
+        final List<FitBitDistanceMeasurement> measurements = fitBitDistanceMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDateParsed, endDateParsed);
+        return ResponseEntity.ok(measurements);
+    }
 }

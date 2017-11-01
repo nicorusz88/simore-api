@@ -28,4 +28,11 @@ public class FitBitHeartRateMeasurementService extends BaseService<FitBitHeartRa
         final List<FitBitHeartRateMeasurement> measurements = fitbitHeartRateMeasurementRepository.findByTreatmentAndDate(treatmentId, dateParsed);
         return ResponseEntity.ok(measurements);
     }
+
+    public ResponseEntity<List<FitBitHeartRateMeasurement>> getByTreatmentAndDateRange(long treatmentId, String startDate, String endDate) throws ParseException {
+        final Date startDateParsed = DateUtils.simpleDateFormat.parse(startDate);
+        final Date endDateParsed = DateUtils.simpleDateFormat.parse(endDate);
+        final List<FitBitHeartRateMeasurement> measurements = fitbitHeartRateMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDateParsed, endDateParsed);
+        return ResponseEntity.ok(measurements);
+    }
 }
