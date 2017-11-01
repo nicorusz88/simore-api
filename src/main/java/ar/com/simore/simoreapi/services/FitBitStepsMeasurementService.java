@@ -1,6 +1,5 @@
 package ar.com.simore.simoreapi.services;
 
-import ar.com.simore.simoreapi.entities.FitBitCalorieMeasurement;
 import ar.com.simore.simoreapi.entities.FitBitStepsMeasurement;
 import ar.com.simore.simoreapi.repositories.FitBitStepsMeasurementRepository;
 import ar.com.simore.simoreapi.services.utils.DateUtils;
