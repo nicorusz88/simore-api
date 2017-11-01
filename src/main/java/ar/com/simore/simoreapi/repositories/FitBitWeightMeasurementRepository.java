@@ -13,5 +13,5 @@ import java.util.List;
 public interface FitBitWeightMeasurementRepository extends CrudRepository<FitBitWeightMeasurement, Long> {
 
     @Query("select fm from FitBitWeightMeasurement fm where fm.date = :dateParsed and fm.vitalMeasurement.id in (select id from VitalMeasurement where vitalsSynchronization.id in (select id from VitalsSynchronization where treatment.id = :treatmentId))")
-    List<FitBitWeightMeasurement> findByTreatmenAndDate(@Param("treatmentId") long treatmentId, @Param("dateParsed") Date dateParsed);
+    List<FitBitWeightMeasurement> findByTreatmentAndDate(@Param("treatmentId") long treatmentId, @Param("dateParsed") Date dateParsed);
 }

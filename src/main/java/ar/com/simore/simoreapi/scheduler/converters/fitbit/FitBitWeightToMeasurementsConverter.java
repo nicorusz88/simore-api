@@ -20,7 +20,6 @@ public class FitBitWeightToMeasurementsConverter {
     private static final Logger logger = Logger.getLogger("synchronizer");
 
     private static final String CONVERTED = "Converted FitBitWeightToMeasurement: \n %s";
-    private static final String TIME_SPLIT_CHARACTER = ":";
 
     /**
      * @param source
@@ -32,7 +31,7 @@ public class FitBitWeightToMeasurementsConverter {
         final List<Weight> weights = source.getWeight();
         weights.forEach(weight -> {
             FitBitWeightMeasurement fitBitWeightMeasurement = new FitBitWeightMeasurement();
-            fitBitWeightMeasurement.setDate(getDate(weight.getTime()));
+            fitBitWeightMeasurement.setDate(getDate());
             fitBitWeightMeasurement.setBmi(weight.getBmi());
             fitBitWeightMeasurement.setWeight(weight.getWeight());
             fitBitWeightMeasurement.setFat(weight.getFat());
@@ -48,14 +47,13 @@ public class FitBitWeightToMeasurementsConverter {
      *
      * @return
      */
-    private static Date getDate(final String time) {
+    private static Date getDate() {
         Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        String[] timeParts = time.split(TIME_SPLIT_CHARACTER);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeParts[0]));
-        cal.set(Calendar.MINUTE, Integer.parseInt(timeParts[1]));
-        cal.set(Calendar.SECOND, Integer.parseInt(timeParts[2]));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }

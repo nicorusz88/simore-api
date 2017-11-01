@@ -25,7 +25,7 @@ public class FitBitStepsMeasurementService extends BaseService<FitBitStepsMeasur
 
     public ResponseEntity<List<FitBitStepsMeasurement>> getByTreatmentAndDate(long treatmentId, String date) throws ParseException {
         final Date dateParsed = DateUtils.simpleDateFormat.parse(date);
-        final List<FitBitStepsMeasurement> measurements = fitBitStepsMeasurementRepository.findByTreatmenAndDate(treatmentId, dateParsed);
+        final List<FitBitStepsMeasurement> measurements = fitBitStepsMeasurementRepository.findByTreatmentAndDate(treatmentId, dateParsed);
         return ResponseEntity.ok(measurements);
     }
 }
