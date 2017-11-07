@@ -15,7 +15,7 @@ class TokenUtils {
     public static final String MAGIC_KEY = "obfuscate";
 
     public String createToken(UserDetails userDetails) {
-        long expires = System.currentTimeMillis() + 1000L * 60 * 60;
+        long expires = System.currentTimeMillis() + 3600L * 60 * 60;
         return userDetails.getUsername() + ":" + expires + ":" + computeSignature(userDetails, expires);
     }
 
