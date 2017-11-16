@@ -5,6 +5,10 @@ import ar.com.simore.simoreapi.repositories.MedicationStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 @Service
 public class MedicationStatusService extends BaseService<MedicationStatusRepository, MedicationStatus> {
 
@@ -16,4 +20,7 @@ public class MedicationStatusService extends BaseService<MedicationStatusReposit
         return medicationStatusRepository;
     }
 
+    public List<MedicationStatus> findByNotificationDate(final Date currentDateWithHourOnly) {
+        return medicationStatusRepository.findByNotificationDate(currentDateWithHourOnly);
+    }
 }

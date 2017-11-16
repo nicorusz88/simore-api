@@ -1,4 +1,4 @@
-package ar.com.simore.simoreapi.scheduler;
+package ar.com.simore.simoreapi.scheduler.devicessync;
 
 import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
@@ -9,7 +9,7 @@ import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.entities.json.fitbit.steps.FitBitSteps;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.repositories.UserRepository;
-import ar.com.simore.simoreapi.scheduler.converters.fitbit.*;
+import ar.com.simore.simoreapi.scheduler.devicessync.converters.fitbit.*;
 import ar.com.simore.simoreapi.services.MeasurementService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -82,11 +82,8 @@ public class SyncProcessStarter {
     @Autowired
     private TreatmentService treatmentService;
 
-    @Autowired
-    private MeasurementService measurementService;
 
-
-    @Scheduled(fixedDelay = 21600000)
+    @Scheduled(fixedDelay = 300000) //Every 5 minutes
     public void init(){
         final long startTime = System.currentTimeMillis();
         logger.info(STARTING_DEVICES_SYNCHRONIZATION);

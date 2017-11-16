@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * Represents an activity that can be done, marking it as checked and a date where it was completed (or not).
- * This will be used for appointments and recommendation
+ * This will be used for appointments, recommendations, medications and checkins.
  */
 @MappedSuperclass
 public class Doable extends BaseEntity {

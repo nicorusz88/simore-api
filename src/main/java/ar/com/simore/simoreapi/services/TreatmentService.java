@@ -70,6 +70,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 Appointment appointment = (Appointment) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getAppointments(), appointment)) {
                     treatment.getAppointments().add((Appointment) treatmentComponent);
+
                 } else {
                     alreadyExists = true;
                 }

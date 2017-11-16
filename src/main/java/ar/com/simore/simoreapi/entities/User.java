@@ -74,6 +74,21 @@ public class User extends BaseEntity {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<OAuth> oauths;
 
+    /**
+     * This is the device token that identifies the patient mobiel phone.
+     * It will be used to send him push notifications.
+     * It will be updated by the
+     */
+    private String deviceToken;
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
     public List<OAuth> getOauths() {
         return oauths;
     }
