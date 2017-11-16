@@ -61,7 +61,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 if (!treatmentComponentExists(treatment.getMedications(), medication)) {
                     treatment.getMedications().add((Medication) treatmentComponent);
                     Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    userService.createMedicationStatus(date, medication);
+                    userService.createMedicationNotifications(treatment, medication);
                 } else {
                     alreadyExists = true;
                 }

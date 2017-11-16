@@ -19,8 +19,5 @@ public class CheckInResultService extends BaseService<CheckInResultRepository, C
         return checkInResultRepository;
     }
 
-    public List<CheckInResult> findByNotificationDate(final Date currentDateWithHourOnly) {
-        return checkInResultRepository.findByNotificationDate(currentDateWithHourOnly);
-    }
 
 }

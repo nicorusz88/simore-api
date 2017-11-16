@@ -1,22 +1,14 @@
 package ar.com.simore.simoreapi.scheduler.notifications;
 
-import ar.com.simore.simoreapi.entities.AppointmentStatus;
-import ar.com.simore.simoreapi.entities.CheckInResult;
-import ar.com.simore.simoreapi.entities.MedicationStatus;
 import ar.com.simore.simoreapi.repositories.UserRepository;
-import ar.com.simore.simoreapi.services.*;
-import ar.com.simore.simoreapi.services.utils.DateUtils;
+import ar.com.simore.simoreapi.services.CheckInResultService;
+import ar.com.simore.simoreapi.services.MeasurementService;
+import ar.com.simore.simoreapi.services.TreatmentService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,13 +34,7 @@ public class NotificationsProcessStarter {
 
 
     @Autowired
-    private MedicationStatusService medicationStatusService;
-
-    @Autowired
     private CheckInResultService checkInResultService;
-
-    @Autowired
-    private AppointmentStatusService appointmentStatusService;
 
 
     @Scheduled(fixedDelay = 300000) //Every 5 minutes
@@ -65,18 +51,15 @@ public class NotificationsProcessStarter {
     }
 
     private void sendNotificationsForMedications() {
-        final List<MedicationStatus> medicationStatuses = medicationStatusService.findByNotificationDate(DateUtils.getCurrentDateWithHourOnly());
 
 
     }
 
     private void sendNotificationsForCheckIns() {
-        final List<CheckInResult> checkInResults = checkInResultService.findByNotificationDate(DateUtils.getCurrentDateWithHourOnly());
 
     }
 
     private void sendNotificationsForAppointments() {
-        final List<AppointmentStatus> appointmentStatuses = appointmentStatusService.findByNotificationDate(DateUtils.getCurrentDateWithHourAndMinutesOnly());
     }
 
 

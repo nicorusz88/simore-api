@@ -93,7 +93,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/users/**").hasAnyRole(RolesNamesEnum.ADMINISTRATOR.name(), RolesNamesEnum.PROFESSIONAL.name())
                 .antMatchers("/**").authenticated().
                 and().addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
 

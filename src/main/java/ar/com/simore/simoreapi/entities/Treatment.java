@@ -11,6 +11,9 @@ public class Treatment extends BaseEntity {
 
     private Date createdAt;
 
+    @OneToOne
+    private User user;
+
     @ManyToOne
     private TreatmentTemplate treatmentTemplate;
 
@@ -27,13 +30,8 @@ public class Treatment extends BaseEntity {
     private List<Medication> medications;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<MedicationStatus> medicationsStatuses;
-
-    @OneToMany(cascade = CascadeType.ALL)
     private List<Recommendation> recommendations;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<RecommendationStatus> recommendationsStatuses;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<CheckIn> checkIns;
@@ -44,8 +42,13 @@ public class Treatment extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<AppointmentStatus> appointmentsStatuses;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public VitalsSynchronization getVitalsSynchronization() {
         return vitalsSynchronization;
@@ -119,24 +122,6 @@ public class Treatment extends BaseEntity {
         this.checkIns = checkIns;
     }
 
-
-
-    public List<MedicationStatus> getMedicationsStatuses() {
-        return medicationsStatuses;
-    }
-
-    public void setMedicationsStatuses(List<MedicationStatus> medicationsStatuses) {
-        this.medicationsStatuses = medicationsStatuses;
-    }
-
-    public List<RecommendationStatus> getRecommendationsStatuses() {
-        return recommendationsStatuses;
-    }
-
-    public void setRecommendationsStatuses(List<RecommendationStatus> recommendationsStatuses) {
-        this.recommendationsStatuses = recommendationsStatuses;
-    }
-
     public List<CheckInResult> getCheckInsResults() {
         return checkInsResults;
     }
@@ -145,11 +130,4 @@ public class Treatment extends BaseEntity {
         this.checkInsResults = checkInsResults;
     }
 
-    public List<AppointmentStatus> getAppointmentsStatuses() {
-        return appointmentsStatuses;
-    }
-
-    public void setAppointmentsStatuses(List<AppointmentStatus> appointmentsStatuses) {
-        this.appointmentsStatuses = appointmentsStatuses;
-    }
 }

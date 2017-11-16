@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "checkin_result")
-public class CheckInResult extends Doable {
+public class CheckInResult extends BaseEntity{
 
     @ManyToOne
     private CheckIn checkIn;

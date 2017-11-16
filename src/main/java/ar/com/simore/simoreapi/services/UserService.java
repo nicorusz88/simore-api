@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.*;
+import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
@@ -29,13 +30,7 @@ public class UserService extends BaseService<UserRepository, User> {
     private TreatmentTemplateRepository treatmentTemmplateRepository;
 
     @Autowired
-    private MedicationStatusService medicationStatusService;
-
-    @Autowired
     private CheckInResultService checkInResultService;
-
-    @Autowired
-    private AppointmentStatusService appointmentStatusService;
 
     @Override
     protected UserRepository getRepository() {
@@ -117,10 +112,9 @@ public class UserService extends BaseService<UserRepository, User> {
         if (treatmentTemplate != null) {
             final Treatment treatment = TreatmentTemplateHandler.copyFromTemplate(treatmentTemplate, user.getTreatment());
             assignCurrentDateDateToTreatment(treatment);
-            createFirstMedicationsStatuses(treatment);
-            createFirstCheckInsResults(treatment);
-            createAppointmentsStatuses(treatment);
-            createRecommendationStatuses(treatment);
+            createFirstMedicationNotifications(treatment);
+            createFirstCheckInNotification(treatment);
+            createAppointmentsNotifications(treatment);
             return treatment;
         } else {
             LOGGER.error(TREATMENT_TEMPLATE_NOT_PRESENT);
@@ -128,25 +122,26 @@ public class UserService extends BaseService<UserRepository, User> {
         }
     }
 
-    private void createRecommendationStatuses(final  Treatment treatment) {
-
-    }
-
     /**
      * Creates the first medication status so that the notification job knows the start date
      *
      * @param treatment
      */
-    private void createFirstMedicationsStatuses(final Treatment treatment) {
-        treatment.getMedications().forEach(medication -> createMedicationStatus(treatment.getCreatedAt(), medication));
+    private void createFirstMedicationNotifications(final Treatment treatment) {
+        treatment.getMedications().forEach(medication -> createMedicationNotifications(treatment, medication));
     }
 
-    void createMedicationStatus(final Date date, Medication medication) {
-        MedicationStatus medicationStatus = new MedicationStatus();
+    void createMedicationNotifications(final Treatment treatment, final Medication medication) {
+        Notification notification = new Notification();
+        notification.setNotificationType(NotificationTypeEnum.MEDICATION);
+        notification.setUser(treatment.getUser());
+        notification.setReferenceID(medication.getId());
+        notification.setTitle(NotificationTypeEnum.MEDICATION.getTittle());
+/*        MedicationStatus medicationStatus = new MedicationStatus();
         medicationStatus.setMedication(medication);
-        Calendar cal = getDateStartAt(date, (int) medication.getStartAt());
+        Calendar cal = getDateStartAt(treatment.getCreatedAt(), (int) medication.getStartAt());
         medicationStatus.setNotificationDate(cal.getTime());
-        medicationStatusService.save(medicationStatus);
+        medicationStatusService.save(medicationStatus);*/
     }
 
 
@@ -155,16 +150,16 @@ public class UserService extends BaseService<UserRepository, User> {
      *
      * @param treatment
      */
-    private void createFirstCheckInsResults(final Treatment treatment) {
+    private void createFirstCheckInNotification(final Treatment treatment) {
         treatment.getCheckIns().forEach(checkIn -> createCheckInResult(treatment.getCreatedAt(), checkIn));
     }
 
     void createCheckInResult(final Date date, final CheckIn checkIn) {
-        CheckInResult checkInResult = new CheckInResult();
+/*        CheckInResult checkInResult = new CheckInResult();
         checkInResult.setCheckIn(checkIn);
         Calendar cal = getDateStartAt(date, (int) checkIn.getStartAt());
         checkInResult.setNotificationDate(cal.getTime());
-        checkInResultService.save(checkInResult);
+        checkInResultService.save(checkInResult);*/
     }
 
     /**
@@ -172,15 +167,15 @@ public class UserService extends BaseService<UserRepository, User> {
      *
      * @param treatment
      */
-    private void createAppointmentsStatuses(final Treatment treatment) {
+    private void createAppointmentsNotifications(final Treatment treatment) {
         treatment.getAppointments().forEach(this::createAppoointmentStatus);
     }
 
     private void createAppoointmentStatus(final Appointment appointment) {
-        AppointmentStatus appointmentStatus = new AppointmentStatus();
+/*        AppointmentStatus appointmentStatus = new AppointmentStatus();
         appointmentStatus.setNotificationDate(appointment.getDate());
         appointmentStatus.setAppointment(appointment);
-        appointmentStatusService.save(appointmentStatus);
+        appointmentStatusService.save(appointmentStatus);*/
 
     }
 

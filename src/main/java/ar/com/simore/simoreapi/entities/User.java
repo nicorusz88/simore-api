@@ -55,12 +55,13 @@ public class User extends BaseEntity {
     @Size(max = 400)
     private String allergies;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private Treatment treatment;
 
     private boolean deleted = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @NotNull
     private List<Role> roles;
 

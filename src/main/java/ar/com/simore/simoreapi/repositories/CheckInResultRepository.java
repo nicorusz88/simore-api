@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface CheckInResultRepository extends CrudRepository<CheckInResult, Long> {
 
-    List<CheckInResult> findByNotificationDate(Date currentDateWithHourOnly);
 }
