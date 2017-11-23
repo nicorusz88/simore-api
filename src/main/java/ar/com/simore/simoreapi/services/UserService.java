@@ -84,11 +84,10 @@ public class UserService extends BaseService<UserRepository, User> {
                 }
                 user.setTreatment(treatment);
                 super.save(user);
-                treatment.setUser(user);
                 assignCurrentDateDateToTreatment(treatment);
-                createFirstMedicationNotifications(treatment);
-                createFirstCheckInNotification(treatment);
-                createAppointmentsNotifications(treatment);
+                createFirstMedicationNotifications(user, treatment);
+                createFirstCheckInNotification(user, treatment);
+                createAppointmentsNotifications(user, treatment);
             } else {
                 super.save(user);
             }
@@ -130,14 +129,14 @@ public class UserService extends BaseService<UserRepository, User> {
      *
      * @param treatment
      */
-    private void createFirstMedicationNotifications(final Treatment treatment) {
-        treatment.getMedications().forEach(medication -> createMedicationNotifications(treatment, medication));
+    private void createFirstMedicationNotifications(final User user, final Treatment treatment) {
+        treatment.getMedications().forEach(medication -> createMedicationNotifications(user, treatment, medication));
     }
 
-    void createMedicationNotifications(final Treatment treatment, final Medication medication) {
+    void createMedicationNotifications(final User user, final Treatment treatment, final Medication medication) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.MEDICATION);
-        notification.setUser(treatment.getUser());
+        notification.setUser(user);
         notification.setReferenceId(medication.getId());
         notification.setTitle(NotificationTypeEnum.MEDICATION.getTitle());
         notification.setBody(String.format(NotificationTypeEnum.MEDICATION.getBody(), medication.getQuantity(), medication.getName()));
@@ -151,14 +150,14 @@ public class UserService extends BaseService<UserRepository, User> {
      *
      * @param treatment
      */
-    private void createFirstCheckInNotification(final Treatment treatment) {
-        treatment.getCheckIns().forEach(checkIn -> createCheckInResult(treatment, checkIn));
+    private void createFirstCheckInNotification(final User user,final Treatment treatment) {
+        treatment.getCheckIns().forEach(checkIn -> createCheckInResult(user, treatment, checkIn));
     }
 
-    void createCheckInResult(final Treatment treatment, final CheckIn checkIn) {
+    void createCheckInResult(final User user, final Treatment treatment, final CheckIn checkIn) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.CHECKIN);
-        notification.setUser(treatment.getUser());
+        notification.setUser(user);
         notification.setReferenceId(checkIn.getId());
         notification.setTitle(NotificationTypeEnum.CHECKIN.getTitle());
         notification.setBody(String.format(NotificationTypeEnum.CHECKIN.getBody(), checkIn.getQuestion().getQuestion()));
@@ -171,14 +170,14 @@ public class UserService extends BaseService<UserRepository, User> {
      *
      * @param treatment
      */
-    private void createAppointmentsNotifications(final Treatment treatment) {
-        treatment.getAppointments().forEach(appointment -> createAppointmentStatus(treatment, appointment));
+    private void createAppointmentsNotifications(final User user, final Treatment treatment) {
+        treatment.getAppointments().forEach(appointment -> createAppointmentStatus(user, treatment, appointment));
     }
 
-    private void createAppointmentStatus(final Treatment treatment, final Appointment appointment) {
+    private void createAppointmentStatus(final User user, final Treatment treatment, final Appointment appointment) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.APPOINTMENT);
-        notification.setUser(treatment.getUser());
+        notification.setUser(user);
         notification.setReferenceId(appointment.getId());
         notification.setTitle(NotificationTypeEnum.APPOINTMENT.getTitle());
         notification.setBody(String.format(NotificationTypeEnum.APPOINTMENT.getBody(), appointment.getDoctor(), appointment.getAddress(), DateUtils.formatDateHourAndMinutes(appointment.getDate())));
@@ -218,5 +217,9 @@ public class UserService extends BaseService<UserRepository, User> {
     public List<User> getPatientsFromProfessional(final Long professionalID) {
         final User professional = userRepository.findOne(professionalID);
         return userRepository.findByProfessional(professional);
+    }
+
+    public User getByTreatment(final Treatment treatment) {
+        return userRepository.findByTreatment(treatment);
     }
 }

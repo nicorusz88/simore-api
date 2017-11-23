@@ -1,8 +1,6 @@
 package ar.com.simore.simoreapi.entities;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -13,10 +11,6 @@ import java.util.List;
 public class Treatment extends BaseEntity {
 
     private Date createdAt;
-
-    @OneToOne
-    @JsonIgnore
-    private User user;
 
     @ManyToOne
     private TreatmentTemplate treatmentTemplate;
@@ -45,14 +39,6 @@ public class Treatment extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Appointment> appointments;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public VitalsSynchronization getVitalsSynchronization() {
         return vitalsSynchronization;

@@ -55,7 +55,7 @@ public class User extends BaseEntity {
     @Size(max = 400)
     private String allergies;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL)
     private Treatment treatment;
 
     private boolean deleted = false;

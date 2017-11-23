@@ -35,6 +35,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
      */
     public ResponseEntity<Treatment> addTreatmentComponentToTreatment(BaseTreatmentComponent treatmentComponent, Long treatmentId) {
         final Treatment treatment = treatmentRepository.findOne(treatmentId);
+        final User user = userService.getByTreatment(treatment);
         TreatmentComponentsEnum treatmentComponentsEnum = TreatmentComponentsEnum.valueOf(treatmentComponent.getClass().getSimpleName());
         boolean alreadyExists = false;
         switch (treatmentComponentsEnum) {
@@ -50,7 +51,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 CheckIn checkIn = (CheckIn) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getCheckIns(), checkIn)) {
                     treatment.getCheckIns().add((CheckIn) treatmentComponent);
-                    userService.createCheckInResult(treatment, checkIn);
+                    userService.createCheckInResult(user, treatment, checkIn);
                 } else {
                     alreadyExists = true;
                 }
@@ -59,7 +60,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 Medication medication = (Medication) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getMedications(), medication)) {
                     treatment.getMedications().add((Medication) treatmentComponent);
-                    userService.createMedicationNotifications(treatment, medication);
+                    userService.createMedicationNotifications(user, treatment, medication);
                 } else {
                     alreadyExists = true;
                 }
