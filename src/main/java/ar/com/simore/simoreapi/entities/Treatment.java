@@ -1,5 +1,8 @@
 package ar.com.simore.simoreapi.entities;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -12,6 +15,7 @@ public class Treatment extends BaseEntity {
     private Date createdAt;
 
     @OneToOne
+    @JsonIgnore
     private User user;
 
     @ManyToOne

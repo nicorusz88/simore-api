@@ -12,6 +12,7 @@ import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.scheduler.devicessync.converters.fitbit.*;
 import ar.com.simore.simoreapi.services.MeasurementService;
 import ar.com.simore.simoreapi.services.TreatmentService;
+import ar.com.simore.simoreapi.services.utils.DateUtils;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.GenericUrl;
@@ -110,15 +111,9 @@ public class SyncProcessStarter {
             }
             treatmentService.save(treatment);
         }
-        final long elapsedTimeInMinutes = getElapsedTimeInMinutes(startTime);
+        final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
         logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
         logger.info(ENDING_DEVICES_SYNCHRONIZATION);
-    }
-
-    private long getElapsedTimeInMinutes(long startTime) {
-        final long stopTime = System.currentTimeMillis();
-        final long elapsedTime = stopTime - startTime;
-        return TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
     }
 
     private void processResponse(final Treatment treatment, final Vital vitalToSync, final HttpResponse apiResponse) throws IOException {

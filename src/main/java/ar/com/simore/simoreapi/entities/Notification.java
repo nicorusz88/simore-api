@@ -19,12 +19,7 @@ public class Notification extends BaseEntity {
      * It is the ID of the represented notification type,
      * example it is the ID of the medication for which this notification is created
      */
-    private long referenceID;
-
-    /**
-     * indicates if the notification has been read or not
-     */
-    private boolean isRead;
+    private long referenceId;
 
     /**
      * Indicates the date that the notification was read
@@ -34,7 +29,7 @@ public class Notification extends BaseEntity {
     /**
      * This is the date the notifications should be sent
      */
-    private Date expecetedSendDate;
+    private Date expectedSendDate;
 
     /**
      * This is the date the notification has been sent
@@ -67,20 +62,12 @@ public class Notification extends BaseEntity {
         this.user = user;
     }
 
-    public long getReferenceID() {
-        return referenceID;
+    public long getReferenceId() {
+        return referenceId;
     }
 
-    public void setReferenceID(long referenceID) {
-        this.referenceID = referenceID;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
+    public void setReferenceId(long referenceId) {
+        this.referenceId = referenceId;
     }
 
     public Date getReadDate() {
@@ -91,12 +78,12 @@ public class Notification extends BaseEntity {
         this.readDate = readDate;
     }
 
-    public Date getExpecetedSendDate() {
-        return expecetedSendDate;
+    public Date getExpectedSendDate() {
+        return expectedSendDate;
     }
 
-    public void setExpecetedSendDate(Date expecetedSendDate) {
-        this.expecetedSendDate = expecetedSendDate;
+    public void setExpectedSendDate(Date expectedSendDate) {
+        this.expectedSendDate = expectedSendDate;
     }
 
     public Date getActualSendDate() {
@@ -128,10 +115,9 @@ public class Notification extends BaseEntity {
         return "Notification{" +
                 "notificationType=" + notificationType +
                 ", user=" + user +
-                ", referenceID=" + referenceID +
-                ", isRead=" + isRead +
+                ", referenceId=" + referenceId +
                 ", readDate=" + readDate +
-                ", expecetedSendDate=" + expecetedSendDate +
+                ", expectedSendDate=" + expectedSendDate +
                 ", actualSendDate=" + actualSendDate +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +

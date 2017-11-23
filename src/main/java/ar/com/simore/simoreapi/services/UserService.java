@@ -5,6 +5,7 @@ import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
+import ar.com.simore.simoreapi.services.utils.DateUtils;
 import ar.com.simore.simoreapi.services.utils.TreatmentTemplateHandler;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
@@ -30,7 +34,7 @@ public class UserService extends BaseService<UserRepository, User> {
     private TreatmentTemplateRepository treatmentTemmplateRepository;
 
     @Autowired
-    private CheckInResultService checkInResultService;
+    private NotificationService notificationService;
 
     @Override
     protected UserRepository getRepository() {
@@ -74,13 +78,17 @@ public class UserService extends BaseService<UserRepository, User> {
                 final Treatment treatment;
 
                 treatment = assignTreatmentTemplate(user);
-                user.setTreatment(treatment);
-
                 if (treatment == null) {
                     LOGGER.error(TREATMENT_TEMPLATE_NOT_PRESENT);
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((T) TREATMENT_TEMPLATE_NOT_PRESENT);
                 }
+                user.setTreatment(treatment);
                 super.save(user);
+                treatment.setUser(user);
+                assignCurrentDateDateToTreatment(treatment);
+                createFirstMedicationNotifications(treatment);
+                createFirstCheckInNotification(treatment);
+                createAppointmentsNotifications(treatment);
             } else {
                 super.save(user);
             }
@@ -110,12 +118,7 @@ public class UserService extends BaseService<UserRepository, User> {
     private Treatment assignTreatmentTemplate(User user) {
         final TreatmentTemplate treatmentTemplate = treatmentTemmplateRepository.findOne(user.getTreatment().getTreatmentTemplate().getId());
         if (treatmentTemplate != null) {
-            final Treatment treatment = TreatmentTemplateHandler.copyFromTemplate(treatmentTemplate, user.getTreatment());
-            assignCurrentDateDateToTreatment(treatment);
-            createFirstMedicationNotifications(treatment);
-            createFirstCheckInNotification(treatment);
-            createAppointmentsNotifications(treatment);
-            return treatment;
+            return TreatmentTemplateHandler.copyFromTemplate(treatmentTemplate, user.getTreatment());
         } else {
             LOGGER.error(TREATMENT_TEMPLATE_NOT_PRESENT);
             return null;
@@ -135,13 +138,10 @@ public class UserService extends BaseService<UserRepository, User> {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.MEDICATION);
         notification.setUser(treatment.getUser());
-        notification.setReferenceID(medication.getId());
-        notification.setTitle(NotificationTypeEnum.MEDICATION.getTittle());
-/*        MedicationStatus medicationStatus = new MedicationStatus();
-        medicationStatus.setMedication(medication);
-        Calendar cal = getDateStartAt(treatment.getCreatedAt(), (int) medication.getStartAt());
-        medicationStatus.setNotificationDate(cal.getTime());
-        medicationStatusService.save(medicationStatus);*/
+        notification.setReferenceId(medication.getId());
+        notification.setTitle(NotificationTypeEnum.MEDICATION.getTitle());
+        notification.setExpectedSendDate(DateUtils.getDateStartAt(treatment.getCreatedAt(), (int) medication.getStartAt()));
+        notificationService.save(notification);
     }
 
 
@@ -151,15 +151,17 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createFirstCheckInNotification(final Treatment treatment) {
-        treatment.getCheckIns().forEach(checkIn -> createCheckInResult(treatment.getCreatedAt(), checkIn));
+        treatment.getCheckIns().forEach(checkIn -> createCheckInResult(treatment, checkIn));
     }
 
-    void createCheckInResult(final Date date, final CheckIn checkIn) {
-/*        CheckInResult checkInResult = new CheckInResult();
-        checkInResult.setCheckIn(checkIn);
-        Calendar cal = getDateStartAt(date, (int) checkIn.getStartAt());
-        checkInResult.setNotificationDate(cal.getTime());
-        checkInResultService.save(checkInResult);*/
+    void createCheckInResult(final Treatment treatment, final CheckIn checkIn) {
+        Notification notification = new Notification();
+        notification.setNotificationType(NotificationTypeEnum.CHECKIN);
+        notification.setUser(treatment.getUser());
+        notification.setReferenceId(checkIn.getId());
+        notification.setTitle(NotificationTypeEnum.CHECKIN.getTitle());
+        notification.setExpectedSendDate(DateUtils.getDateStartAt(treatment.getCreatedAt(), (int) checkIn.getStartAt()));
+        notificationService.save(notification);
     }
 
     /**
@@ -168,25 +170,17 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createAppointmentsNotifications(final Treatment treatment) {
-        treatment.getAppointments().forEach(this::createAppoointmentStatus);
+        treatment.getAppointments().forEach(appointment -> createAppointmentStatus(treatment, appointment));
     }
 
-    private void createAppoointmentStatus(final Appointment appointment) {
-/*        AppointmentStatus appointmentStatus = new AppointmentStatus();
-        appointmentStatus.setNotificationDate(appointment.getDate());
-        appointmentStatus.setAppointment(appointment);
-        appointmentStatusService.save(appointmentStatus);*/
-
-    }
-
-    private Calendar getDateStartAt(final Date date, final int startAt) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, startAt);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal;
+    private void createAppointmentStatus(final Treatment treatment, final Appointment appointment) {
+        Notification notification = new Notification();
+        notification.setNotificationType(NotificationTypeEnum.APPOINTMENT);
+        notification.setUser(treatment.getUser());
+        notification.setReferenceId(appointment.getId());
+        notification.setTitle(NotificationTypeEnum.APPOINTMENT.getTitle());
+        notification.setExpectedSendDate(appointment.getDate());
+        notificationService.save(notification);
     }
 
     /**

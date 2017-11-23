@@ -50,8 +50,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 CheckIn checkIn = (CheckIn) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getCheckIns(), checkIn)) {
                     treatment.getCheckIns().add((CheckIn) treatmentComponent);
-                    Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    userService.createCheckInResult(date, checkIn);
+                    userService.createCheckInResult(treatment, checkIn);
                 } else {
                     alreadyExists = true;
                 }
@@ -60,7 +59,6 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 Medication medication = (Medication) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getMedications(), medication)) {
                     treatment.getMedications().add((Medication) treatmentComponent);
-                    Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
                     userService.createMedicationNotifications(treatment, medication);
                 } else {
                     alreadyExists = true;

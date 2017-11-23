@@ -18,7 +18,7 @@ public enum NotificationTypeEnum {
         this.tittle = tittle;
     }
 
-    public String getTittle() {
+    public String getTitle() {
         return tittle;
     }
 }
