@@ -161,7 +161,7 @@ public class UserService extends BaseService<UserRepository, User> {
         notification.setUser(treatment.getUser());
         notification.setReferenceId(checkIn.getId());
         notification.setTitle(NotificationTypeEnum.CHECKIN.getTitle());
-        notification.setBody(String.format(NotificationTypeEnum.CHECKIN.getBody(), checkIn.getQuestion()));
+        notification.setBody(String.format(NotificationTypeEnum.CHECKIN.getBody(), checkIn.getQuestion().getQuestion()));
         notification.setExpectedSendDate(DateUtils.getDateStartAt(treatment.getCreatedAt(), (int) checkIn.getStartAt()));
         notificationService.save(notification);
     }
