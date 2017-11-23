@@ -47,7 +47,7 @@ public class NotificationsProcessStarter {
 
 
     @Scheduled(fixedDelay = 300000) //Every 5 minutes
-    public void init(){
+    public void init() {
         final long startTime = System.currentTimeMillis();
         logger.info(STARTING_NOTIFICATIONS_PROCESS);
         List<Notification> notificationList = new ArrayList<>();
@@ -56,7 +56,11 @@ public class NotificationsProcessStarter {
         sendNotificationsForRecommendations(notificationList);
         sendNotificationsForCheckIns(notificationList);
         for (Notification notification : notificationList) {
-            pushNotificationService.sendNotification(notification);
+            if (notification.getUser().getDeviceToken() != null) {
+                pushNotificationService.sendNotification(notification);
+            } else {
+                logger.info(String.format("User with ID: %s does not have device token, will not sent notitication with ID: %s", notification.getUser().getId(), notification.getId()));
+            }
         }
 
         final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
@@ -64,13 +68,14 @@ public class NotificationsProcessStarter {
         logger.info(ENDING_NOTIFICATIONS_PROCESS);
     }
 
- private void addNotificationsForMedications(final List<Notification> notificationList) {
-     final Date currentDateWithHourOnly = DateUtils.getCurrentDateWithHourOnly();
-     logger.info(String.format("Looking for Medications notifications with date prior to %s ", currentDateWithHourOnly));
-     final List<Notification> medicationNotifications = notificationService.findByExpectedSendDateBeforeAndReadDateIsNullAndNotificationType(currentDateWithHourOnly, NotificationTypeEnum.MEDICATION);
-     logger.info(String.format("Found %s Medications notifications to send", medicationNotifications.size()));
-     notificationList.addAll(medicationNotifications);
+    private void addNotificationsForMedications(final List<Notification> notificationList) {
+        final Date currentDateWithHourOnly = DateUtils.getCurrentDateWithHourOnly();
+        logger.info(String.format("Looking for Medications notifications with date prior to %s ", currentDateWithHourOnly));
+        final List<Notification> medicationNotifications = notificationService.findByExpectedSendDateBeforeAndReadDateIsNullAndNotificationType(currentDateWithHourOnly, NotificationTypeEnum.MEDICATION);
+        logger.info(String.format("Found %s Medications notifications to send", medicationNotifications.size()));
+        notificationList.addAll(medicationNotifications);
     }
+
     private void sendNotificationsForCheckIns(final List<Notification> notificationList) {
         final Date currentDateWithHourOnly = DateUtils.getCurrentDateWithHourOnly();
         logger.info(String.format("Looking for Checkins notifications with date prior to %s ", currentDateWithHourOnly));
@@ -78,6 +83,7 @@ public class NotificationsProcessStarter {
         logger.info(String.format("Found %s Checkins notifications to send", medicationNotifications.size()));
         notificationList.addAll(medicationNotifications);
     }
+
     private void sendNotificationsForAppointments(final List<Notification> notificationList) {
         final Date currentDateWithHourOnly = DateUtils.getCurrentDateWithHourAndMinutesOnly();
         logger.info(String.format("Looking for Appointments notifications with date prior to %s ", currentDateWithHourOnly));
@@ -85,6 +91,7 @@ public class NotificationsProcessStarter {
         logger.info(String.format("Found %s Appointments notifications to send", medicationNotifications.size()));
         notificationList.addAll(medicationNotifications);
     }
+
     private void sendNotificationsForRecommendations(final List<Notification> notificationList) {
         final Date currentDateWithHourOnly = DateUtils.getCurrentDateWithHourOnly();
         logger.info(String.format("Looking for Recommendations notifications with date prior to %s ", currentDateWithHourOnly));

@@ -2,7 +2,9 @@ package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.Notification;
 import ar.com.simore.simoreapi.interceptors.HeaderRequestInterceptor;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -17,60 +19,66 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PushNotificationService {
 
+    private final Logger logger = Logger.getLogger("notifications");
+
     @Value("${firebase.api.key}")
     private String apiKey;
 
     @Value("${firebase.api.url}")
     private String firebaseAPIURL;
 
-    public void sendNotification(final Notification notification) {
-        JSONObject body = new JSONObject();
+    @Autowired
+    private NotificationService notificationService;
+
+    public boolean sendNotification(final Notification notification) {
+        final JSONObject body = new JSONObject();
         body.put("to", notification.getUser().getDeviceToken());
-        body.put("priority", "high");
 
         JSONObject notificationData = new JSONObject();
         notificationData.put("title", notification.getTitle());
-        notificationData.put("body", "Happy Message!");
+        notificationData.put("body", notification.getBody());
 
-        JSONObject data = new JSONObject();
-        data.put("Key-1", "JSA Data 1");
-        data.put("Key-2", "JSA Data 2");
+        final JSONObject data = new JSONObject();
+        data.put("type", notification.getNotificationType().name());
+        data.put("notificationId", notification.getId());
+        data.put("referenceId", notification.getReferenceId());
 
         body.put("notification", notificationData);
         body.put("data", data);
 
+        logger.info(String.format("Sending notification '%s' to user '%s'. Notification JSON is \n %s", notification.getTitle(), notification.getUser().getUserName(), body.toString()));
+
         /**
          {
          "notification": {
-         "title": "JSA Notification",
-         "body": "Happy Message!"
+         "title": "Take your medication",
+         "body": "Remember to take 20 Mg of Axalan"
          },
          "data": {
-         "Key-1": "JSA Data 1",
-         "Key-2": "JSA Data 2"
+         "type": "MEDICATION",
          },
-         "to": "/topics/JavaSampleApproach",
+         "to": "32f3f23f3g4h2j4242h4h24h",
          "priority": "high"
          }
          */
         HttpEntity<String> request = new HttpEntity<>(body.toString());
 
-        CompletableFuture<String> pushNotification = send(request);
-        CompletableFuture.allOf(pushNotification).join();
-
         try {
-            String firebaseResponse = pushNotification.get();
+            CompletableFuture<String> pushNotification = send(request);
+            CompletableFuture.allOf(pushNotification).join();
+            final String firebaseResponse = pushNotification.get();
+            logger.info("FireBase Response: " + firebaseResponse);
             //TODO: Read response and set to notification
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            return true;
+        } catch (Exception e) {
+           logger.error("An exception ocurred when sending the notifications", e);
         }
+        return false;
     }
 
 
     @Async
-    public CompletableFuture<String> send(HttpEntity<String> entity) {
+    private CompletableFuture<String> send(HttpEntity<String> entity) {
 
         RestTemplate restTemplate = new RestTemplate();
         ArrayList<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
@@ -82,6 +90,4 @@ public class PushNotificationService {
 
         return CompletableFuture.completedFuture(firebaseResponse);
     }
-
-
 }

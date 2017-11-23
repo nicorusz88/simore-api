@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.services.utils;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -21,9 +22,10 @@ public class DateUtils {
      * @return
      */
     public static Date getCurrentDateWithHourOnly() {
-        Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Instant instant = Instant.now();
+        long timeStampMillis = instant.toEpochMilli();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(currentDate);
+        cal.setTimeInMillis(timeStampMillis);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
@@ -34,9 +36,10 @@ public class DateUtils {
      * @return
      */
     public static Date getCurrentDateWithHourAndMinutesOnly() {
-        Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Instant instant = Instant.now();
+        long timeStampMillis = instant.toEpochMilli();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(currentDate);
+        cal.setTimeInMillis(timeStampMillis);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();

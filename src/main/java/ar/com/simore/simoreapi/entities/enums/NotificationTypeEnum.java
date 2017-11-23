@@ -4,9 +4,9 @@ package ar.com.simore.simoreapi.entities.enums;
  * Indicates the type of notification
  */
 public enum NotificationTypeEnum {
-    RECOMMENDATION("Rcommendation", ""),
+    RECOMMENDATION("Rcommendation", "%s"),
     MEDICATION("Take your medication", "Remember to take %s Mg of %s"),
-    CHECKIN("Complete the survey", ""),
+    CHECKIN("Complete the survey", "%s"),
     APPOINTMENT("You have an appointment","You have to see doctor %s in %s at %s");
 
     /**
