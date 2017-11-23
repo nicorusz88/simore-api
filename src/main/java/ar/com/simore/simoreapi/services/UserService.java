@@ -74,7 +74,7 @@ public class UserService extends BaseService<UserRepository, User> {
             List<Role> roles = rolesOptional.get();
             final Optional<Role> hasRolePacient = roles.stream().filter(r ->
                     r.getName().equals(RolesNamesEnum.PATIENT.name())).findAny();
-            if (hasRolePacient.isPresent()) {
+            if (hasRolePacient.isPresent() && user.getId() == 0 ) {
                 final Treatment treatment;
 
                 treatment = assignTreatmentTemplate(user);
@@ -140,6 +140,7 @@ public class UserService extends BaseService<UserRepository, User> {
         notification.setUser(treatment.getUser());
         notification.setReferenceId(medication.getId());
         notification.setTitle(NotificationTypeEnum.MEDICATION.getTitle());
+        notification.setBody(String.format(NotificationTypeEnum.MEDICATION.getBody(), medication.getQuantity(), medication.getName()));
         notification.setExpectedSendDate(DateUtils.getDateStartAt(treatment.getCreatedAt(), (int) medication.getStartAt()));
         notificationService.save(notification);
     }
@@ -160,6 +161,7 @@ public class UserService extends BaseService<UserRepository, User> {
         notification.setUser(treatment.getUser());
         notification.setReferenceId(checkIn.getId());
         notification.setTitle(NotificationTypeEnum.CHECKIN.getTitle());
+        notification.setBody(String.format(NotificationTypeEnum.CHECKIN.getBody(), checkIn.getQuestion()));
         notification.setExpectedSendDate(DateUtils.getDateStartAt(treatment.getCreatedAt(), (int) checkIn.getStartAt()));
         notificationService.save(notification);
     }
@@ -179,6 +181,7 @@ public class UserService extends BaseService<UserRepository, User> {
         notification.setUser(treatment.getUser());
         notification.setReferenceId(appointment.getId());
         notification.setTitle(NotificationTypeEnum.APPOINTMENT.getTitle());
+        notification.setBody(String.format(NotificationTypeEnum.APPOINTMENT.getBody(), appointment.getDoctor(), appointment.getAddress(), DateUtils.formatDateHourAndMinutes(appointment.getDate())));
         notification.setExpectedSendDate(appointment.getDate());
         notificationService.save(notification);
     }

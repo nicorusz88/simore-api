@@ -29,7 +29,7 @@ public class PushNotificationService {
         body.put("priority", "high");
 
         JSONObject notificationData = new JSONObject();
-        notificationData.put("title", "JSA Notification");
+        notificationData.put("title", notification.getTitle());
         notificationData.put("body", "Happy Message!");
 
         JSONObject data = new JSONObject();

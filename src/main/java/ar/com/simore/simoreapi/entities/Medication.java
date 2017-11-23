@@ -11,6 +11,7 @@ public class Medication extends BaseTreatmentComponent{
      * Quantity to take the drug in Mg
      */
     private long quantity;
+
     /**
      * Frecuency to take the drug in hours
      */
