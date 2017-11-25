@@ -2,8 +2,10 @@ package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.Notification;
 import ar.com.simore.simoreapi.interceptors.HeaderRequestInterceptor;
+import ar.com.simore.simoreapi.services.utils.DateUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,11 +16,18 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class PushNotificationService {
 
+    private static final String TO = "to";
+    private static final String TITLE = "title";
+    private static final String BODY = "body";
+    private static final String TYPE = "type";
+    private static final String NOTIFICATION_ID = "notificationId";
+    private static final String REFERENCE_ID = "referenceId";
+    private static final String NOTIFICATION = "notification";
+    private static final String DATA = "data";
     private final Logger logger = Logger.getLogger("notifications");
 
     @Value("${firebase.api.key}")
@@ -30,50 +39,54 @@ public class PushNotificationService {
     @Autowired
     private NotificationService notificationService;
 
-    public boolean sendNotification(final Notification notification) {
-        final JSONObject body = new JSONObject();
-        body.put("to", notification.getUser().getDeviceToken());
-
-        JSONObject notificationData = new JSONObject();
-        notificationData.put("title", notification.getTitle());
-        notificationData.put("body", notification.getBody());
-
-        final JSONObject data = new JSONObject();
-        data.put("type", notification.getNotificationType().name());
-        data.put("notificationId", notification.getId());
-        data.put("referenceId", notification.getReferenceId());
-
-        body.put("notification", notificationData);
-        body.put("data", data);
-
-        logger.info(String.format("Sending notification '%s' to user '%s'. Notification JSON is \n %s", notification.getTitle(), notification.getUser().getUserName(), body.toString()));
-
-        /**
-         {
-         "notification": {
-         "title": "Take your medication",
-         "body": "Remember to take 20 Mg of Axalan"
-         },
-         "data": {
-         "type": "MEDICATION",
-         },
-         "to": "32f3f23f3g4h2j4242h4h24h",
-         "priority": "high"
-         }
-         */
-        HttpEntity<String> request = new HttpEntity<>(body.toString());
-
+    public String sendNotification(final Notification notification) {
+        final JSONObject body = createJsonObject(notification);
+        final HttpEntity<String> request = new HttpEntity<>(body.toString());
         try {
             CompletableFuture<String> pushNotification = send(request);
             CompletableFuture.allOf(pushNotification).join();
-            final String firebaseResponse = pushNotification.get();
-            logger.info("FireBase Response: " + firebaseResponse);
-            //TODO: Read response and set to notification
-            return true;
+            return pushNotification.get();
         } catch (Exception e) {
            logger.error("An exception ocurred when sending the notifications", e);
         }
-        return false;
+        return null;
+    }
+
+    /**Creates something like the following:
+     *
+     /**
+     {
+        "notification": {
+            "title": "Take your medication",
+            "body": "Remember to take 20 Mg of Axalan"
+         },
+        "data": {
+            "type": "MEDICATION",
+            "reference_id": "3"
+        },
+        "to": "32f3f23f3g4h2j4242h4h24h"
+     }
+     * @param notification
+     * @return
+     */
+    private JSONObject createJsonObject(Notification notification) {
+        final JSONObject body = new JSONObject();
+        body.put(TO, notification.getUser().getDeviceToken());
+
+        JSONObject notificationData = new JSONObject();
+        notificationData.put(TITLE, notification.getTitle());
+        notificationData.put(BODY, notification.getBody());
+
+        final JSONObject data = new JSONObject();
+        data.put(TYPE, notification.getNotificationType().name());
+        data.put(NOTIFICATION_ID, notification.getId());
+        data.put(REFERENCE_ID, notification.getReferenceId());
+
+        body.put(NOTIFICATION, notificationData);
+        body.put(DATA, data);
+
+        logger.info(String.format("Sending notification '%s' to user '%s'. Notification JSON is \n %s", notification.getTitle(), notification.getUser().getUserName(), body.toString()));
+        return body;
     }
 
 

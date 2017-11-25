@@ -32,6 +32,11 @@ public class DateUtils {
         return cal.getTime();
     }
 
+    public static Date getCurrentDate(){
+        return Date.from(Instant.now());
+    }
+
+
     /** Gets the current date with only the Hour and minutes set
      * @return
      */

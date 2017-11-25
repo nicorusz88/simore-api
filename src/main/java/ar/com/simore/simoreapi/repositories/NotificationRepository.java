@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends CrudRepository<Notification, Long> {
 
-    List<Notification> findByExpectedSendDateBeforeAndReadDateIsNullAndNotificationType(Date expectedSendDate, NotificationTypeEnum notificationType);
-
+    List<Notification> findByExpectedSendDateBeforeAndActualSendDateIsNullAndReadDateIsNullAndNotificationType(Date expectedSendDate, NotificationTypeEnum notificationType);
 }

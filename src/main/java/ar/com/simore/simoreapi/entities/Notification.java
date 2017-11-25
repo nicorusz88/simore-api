@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.entities;
 
 import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,6 +14,7 @@ public class Notification extends BaseEntity {
     private NotificationTypeEnum notificationType;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     /**
@@ -45,6 +47,19 @@ public class Notification extends BaseEntity {
      * Notification body to be shown to the final user
      */
     private String body;
+
+    /**
+     * We save the JSON ressponse that cames from Firebase
+     */
+    private String fireBaseResponse;
+
+    public String getFireBaseResponse() {
+        return fireBaseResponse;
+    }
+
+    public void setFireBaseResponse(String fireBaseResponse) {
+        this.fireBaseResponse = fireBaseResponse;
+    }
 
     public NotificationTypeEnum getNotificationType() {
         return notificationType;
