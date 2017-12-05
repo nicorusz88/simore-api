@@ -21,7 +21,7 @@ public class NotificationService extends BaseService<NotificationRepository, Not
         return notificationRepository;
     }
 
-    public List<Notification> findByExpectedSendDateBeforeAndActualSendDateIsNullAndReadDateIsNullAndNotificationType(final Date currentDateWithHourOnly, final NotificationTypeEnum notificationType) {
+    public List<Notification> getNotificationsByDateAndType(final Date currentDateWithHourOnly, final NotificationTypeEnum notificationType) {
         return notificationRepository.findByExpectedSendDateBeforeAndActualSendDateIsNullAndReadDateIsNullAndNotificationType(currentDateWithHourOnly, notificationType);
     }
 
@@ -40,7 +40,20 @@ public class NotificationService extends BaseService<NotificationRepository, Not
      * @param userId
      * @return
      */
-    public List<Notification>  findByUserId(final Long userId) {
+    public List<Notification> getByUserId(final Long userId) {
         return notificationRepository.findFirst20ByUser_IdAndActualSendDateIsNotNullOrderByActualSendDateDesc(userId);
+    }
+
+    /** Gets the latest non sent notifications
+     * @param userId
+     * @param notificationType
+     * @return
+     */
+    public List<Notification> getLastsByUserIdAndType(final Long userId, final NotificationTypeEnum notificationType) {
+        return notificationRepository.findByUser_IdAndActualSendDateIsNullAndNotificationTypeOrderByExpectedSendDate(userId, notificationType);
+    }
+
+    public Notification getByReferenceIdAndActualSendDateIsNotNull(long referenceId) {
+        return notificationRepository.findFirstByReferenceIdAndActualSendDateIsNotNullOrderByActualSendDateDesc(referenceId);
     }
 }

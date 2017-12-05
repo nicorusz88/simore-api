@@ -3,6 +3,7 @@ package ar.com.simore.simoreapi.controllers;
 
 import ar.com.simore.simoreapi.entities.Medication;
 import ar.com.simore.simoreapi.entities.Treatment;
+import ar.com.simore.simoreapi.entities.resources.MedicationResource;
 import ar.com.simore.simoreapi.services.MedicationService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/medications")
@@ -35,5 +37,11 @@ public class MedicationController extends BaseController<MedicationService, Medi
     @PostMapping("/add-to-treatment")
     public ResponseEntity<Treatment> addMedicationToTreatment(@RequestParam Long treatmentId, @Valid @RequestBody Medication medication){
         return treatmentService.addTreatmentComponentToTreatment(medication, treatmentId);
+    }
+
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<MedicationResource>> getMedicationsByUserId(@PathVariable("id") Long userId){
+        return ResponseEntity.ok(medicationService.getByUserId(userId));
     }
 }

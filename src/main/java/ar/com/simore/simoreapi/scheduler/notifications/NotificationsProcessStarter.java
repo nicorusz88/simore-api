@@ -81,7 +81,7 @@ public class NotificationsProcessStarter {
 
     private void addNotificationsForType(final List<Notification> notificationList, final Date dateToSearch, final NotificationTypeEnum notificationTypeEnum) {
         logger.info(String.format("Looking for %s notifications with date prior to %s ", notificationTypeEnum.name(), dateToSearch));
-        final List<Notification> medicationNotifications = notificationService.findByExpectedSendDateBeforeAndActualSendDateIsNullAndReadDateIsNullAndNotificationType(dateToSearch, notificationTypeEnum);
+        final List<Notification> medicationNotifications = notificationService.getNotificationsByDateAndType(dateToSearch, notificationTypeEnum);
         logger.info(String.format("Found %s %s notifications to send", medicationNotifications.size(), notificationTypeEnum.name()));
         notificationList.addAll(medicationNotifications);
     }

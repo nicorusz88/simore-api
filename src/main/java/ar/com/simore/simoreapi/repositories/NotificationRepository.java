@@ -14,4 +14,8 @@ public interface NotificationRepository extends CrudRepository<Notification, Lon
     List<Notification> findByExpectedSendDateBeforeAndActualSendDateIsNullAndReadDateIsNullAndNotificationType(Date expectedSendDate, NotificationTypeEnum notificationType);
 
     List<Notification> findFirst20ByUser_IdAndActualSendDateIsNotNullOrderByActualSendDateDesc(Long userId);
+
+    List<Notification> findByUser_IdAndActualSendDateIsNullAndNotificationTypeOrderByExpectedSendDate(Long userId, NotificationTypeEnum notificationType);
+
+    Notification findFirstByReferenceIdAndActualSendDateIsNotNullOrderByActualSendDateDesc(long referenceId);
 }
