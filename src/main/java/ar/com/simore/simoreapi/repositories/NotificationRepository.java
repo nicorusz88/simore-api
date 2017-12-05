@@ -12,4 +12,6 @@ import java.util.List;
 public interface NotificationRepository extends CrudRepository<Notification, Long> {
 
     List<Notification> findByExpectedSendDateBeforeAndActualSendDateIsNullAndReadDateIsNullAndNotificationType(Date expectedSendDate, NotificationTypeEnum notificationType);
+
+    List<Notification> findFirst20ByUser_IdAndActualSendDateIsNotNullOrderByActualSendDateDesc(Long userId);
 }

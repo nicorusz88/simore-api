@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/notifications")
@@ -30,5 +31,11 @@ public class NotificationController extends BaseController<NotificationService, 
     @GetMapping("/set-read/{id}")
     public ResponseEntity<Notification> addNotificationToTreatment(@PathVariable("id") Long id){
         return ResponseEntity.ok(notificationService.setRead(id));
+    }
+
+    //TODO: Hacer metodo para devolver notiticciones por id
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<Notification>> getNotificationsByUserId(@PathVariable("id") Long userId){
+        return ResponseEntity.ok(notificationService.findByUserId(userId));
     }
 }

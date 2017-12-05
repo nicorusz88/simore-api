@@ -36,4 +36,6 @@ public class AppointmentController extends BaseController<AppointmentService, Ap
     public ResponseEntity<Treatment> addAppointmentToTreatment(@RequestParam Long treatmentId, @Valid @RequestBody Appointment appointment){
         return treatmentService.addTreatmentComponentToTreatment(appointment, treatmentId);
     }
+
+    //TODO: Hacer para obtener los appointments para 5 dias.
 }
