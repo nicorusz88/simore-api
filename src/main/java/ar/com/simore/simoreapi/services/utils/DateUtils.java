@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class DateUtils {
 
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    public static SimpleDateFormat simpleDateFormatHourAndMinutes = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static SimpleDateFormat simpleDateFormatHourAndMinutes = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     public static String formatDateHourAndMinutes(final Date date){
         return simpleDateFormatHourAndMinutes.format(date);
