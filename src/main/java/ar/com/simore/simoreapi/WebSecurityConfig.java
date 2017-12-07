@@ -3,7 +3,6 @@ package ar.com.simore.simoreapi;
 import ar.com.simore.simoreapi.entities.Role;
 import ar.com.simore.simoreapi.entities.SimpleUserDetails;
 import ar.com.simore.simoreapi.entities.User;
-import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.xauth.XAuthTokenConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;

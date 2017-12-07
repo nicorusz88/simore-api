@@ -2,10 +2,8 @@ package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.Notification;
 import ar.com.simore.simoreapi.interceptors.HeaderRequestInterceptor;
-import ar.com.simore.simoreapi.services.utils.DateUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

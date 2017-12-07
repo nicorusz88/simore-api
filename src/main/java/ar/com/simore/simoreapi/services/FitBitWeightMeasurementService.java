@@ -2,7 +2,6 @@ package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.FitBitWeightMeasurement;
 import ar.com.simore.simoreapi.repositories.FitBitWeightMeasurementRepository;
-import ar.com.simore.simoreapi.services.utils.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

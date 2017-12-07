@@ -10,7 +10,6 @@ import ar.com.simore.simoreapi.entities.json.fitbit.steps.FitBitSteps;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.scheduler.devicessync.converters.fitbit.*;
-import ar.com.simore.simoreapi.services.MeasurementService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import ar.com.simore.simoreapi.services.utils.DateUtils;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**

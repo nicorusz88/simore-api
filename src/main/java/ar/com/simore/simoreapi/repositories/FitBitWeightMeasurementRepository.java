@@ -1,6 +1,5 @@
 package ar.com.simore.simoreapi.repositories;
 
-import ar.com.simore.simoreapi.entities.FitBitHeartRateMeasurement;
 import ar.com.simore.simoreapi.entities.FitBitWeightMeasurement;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

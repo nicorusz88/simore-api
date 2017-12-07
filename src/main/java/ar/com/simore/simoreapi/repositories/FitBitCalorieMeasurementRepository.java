@@ -1,7 +1,6 @@
 package ar.com.simore.simoreapi.repositories;
 
 import ar.com.simore.simoreapi.entities.FitBitCalorieMeasurement;
-import ar.com.simore.simoreapi.entities.FitBitDistanceMeasurement;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
