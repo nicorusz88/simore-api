@@ -1,6 +1,8 @@
 package ar.com.simore.simoreapi.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -22,6 +24,7 @@ public class Treatment extends BaseEntity {
     private List<Vital> vitals;
 
     @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE } , mappedBy = "treatment")
+    @JsonIgnore
     private VitalsSynchronization vitalsSynchronization;
 
     @OneToMany(cascade = CascadeType.ALL)
