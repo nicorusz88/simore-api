@@ -40,6 +40,10 @@ public class MedicationController extends BaseController<MedicationService, Medi
     }
 
 
+    /** Gets the medications for a specific user to be shown in the dashboard from the professinal and from the patient
+     * @param userId
+     * @return
+     */
     @GetMapping("/user/{id}")
     public ResponseEntity<List<MedicationResource>> getMedicationsByUserId(@PathVariable("id") Long userId){
         return ResponseEntity.ok(medicationService.getByUserId(userId));

@@ -21,7 +21,7 @@ public class Treatment extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Vital> vitals;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "treatment")
+    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE } , mappedBy = "treatment")
     private VitalsSynchronization vitalsSynchronization;
 
     @OneToMany(cascade = CascadeType.ALL)

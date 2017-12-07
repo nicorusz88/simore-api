@@ -5,6 +5,9 @@ import ar.com.simore.simoreapi.repositories.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 public class AppointmentService extends BaseService<AppointmentRepository, Appointment> {
 
@@ -16,4 +19,7 @@ public class AppointmentService extends BaseService<AppointmentRepository, Appoi
         return appointmentRepository;
     }
 
+    public List<Appointment> getByUserId(Long userId) {
+        return Collections.emptyList();
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/appointments")
@@ -37,5 +38,15 @@ public class AppointmentController extends BaseController<AppointmentService, Ap
         return treatmentService.addTreatmentComponentToTreatment(appointment, treatmentId);
     }
 
-    //TODO: Hacer para obtener los appointments para 5 dias.
+    /** Gets the appointments for next five days of a specific user to be shown in the dashboard
+     * from the professional and from the patient (mobile)
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByUserId(@PathVariable("id") Long userId){
+        return ResponseEntity.ok(appointmentService.getByUserId(userId));
+    }
+
 }
+
