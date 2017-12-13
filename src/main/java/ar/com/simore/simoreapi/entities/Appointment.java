@@ -9,7 +9,7 @@ import java.util.Date;
 public class Appointment extends BaseTreatmentComponent {
 
     /**
-     * Frecuency in to ask for the survey in hours
+     * Frecuency to ask for the survey in hours
      */
     private String doctor;
 

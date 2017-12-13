@@ -130,10 +130,10 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createFirstMedicationNotifications(final User user, final Treatment treatment) {
-        treatment.getMedications().forEach(medication -> createMedicationNotifications(user, treatment, medication));
+        treatment.getMedications().forEach(medication -> createMedicationNotification(user, treatment, medication));
     }
 
-    void createMedicationNotifications(final User user, final Treatment treatment, final Medication medication) {
+    void createMedicationNotification(final User user, final Treatment treatment, final Medication medication) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.MEDICATION);
         notification.setUser(user);
@@ -151,10 +151,10 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createFirstCheckInNotification(final User user,final Treatment treatment) {
-        treatment.getCheckIns().forEach(checkIn -> createCheckInResult(user, treatment, checkIn));
+        treatment.getCheckIns().forEach(checkIn -> createCheckInResultNotification(user, treatment, checkIn));
     }
 
-    void createCheckInResult(final User user, final Treatment treatment, final CheckIn checkIn) {
+    void createCheckInResultNotification(final User user, final Treatment treatment, final CheckIn checkIn) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.CHECKIN);
         notification.setUser(user);
@@ -171,10 +171,10 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param treatment
      */
     private void createAppointmentsNotifications(final User user, final Treatment treatment) {
-        treatment.getAppointments().forEach(appointment -> createAppointmentStatus(user, treatment, appointment));
+        treatment.getAppointments().forEach(appointment -> createAppointmentNotification(user, appointment));
     }
 
-    private void createAppointmentStatus(final User user, final Treatment treatment, final Appointment appointment) {
+    private void createAppointmentNotification(final User user, final Appointment appointment) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.APPOINTMENT);
         notification.setUser(user);

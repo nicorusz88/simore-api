@@ -1,5 +1,6 @@
 package ar.com.simore.simoreapi.repositories;
 
+import ar.com.simore.simoreapi.entities.Appointment;
 import ar.com.simore.simoreapi.entities.Notification;
 import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
 import org.springframework.data.repository.CrudRepository;
@@ -18,4 +19,8 @@ public interface NotificationRepository extends CrudRepository<Notification, Lon
     List<Notification> findByUser_IdAndActualSendDateIsNullAndNotificationTypeOrderByExpectedSendDate(Long userId, NotificationTypeEnum notificationType);
 
     Notification findFirstByReferenceIdAndActualSendDateIsNotNullOrderByActualSendDateDesc(long referenceId);
+
+    List<Notification> findByUser_IdAndExpectedSendDateBetweenAndNotificationType(Long userId, Date currentDateFirstHour, Date currentDateLastHour, NotificationTypeEnum notificationType);
+
+    List<Notification>  findByUser_IdAndExpectedSendDateAfterAndNotificationType(Long userId, Date tomorrowDateLastHour, NotificationTypeEnum notificationType);
 }
