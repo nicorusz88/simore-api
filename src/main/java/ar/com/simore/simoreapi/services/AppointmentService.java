@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 public class AppointmentService extends BaseService<AppointmentRepository, Appointment> {
@@ -26,33 +27,33 @@ public class AppointmentService extends BaseService<AppointmentRepository, Appoi
         return appointmentRepository;
     }
 
-    /** Gets the appointments for today, tomorrow and the day after
+    /**
+     * Gets the appointments for today, tomorrow and the day after
      * tomorrow to show all of them separate
+     *
      * @param userId
      * @return
      */
     public AppointmentsResource getByUserId(Long userId) {
         final List<Appointment> todayAppointments = new ArrayList<>();
         final List<Notification> todayAppointmentsNotifications = notificationService.getByUserIdAndBetweenDates(userId, DateUtils.getCurrentDateFirstHour(), DateUtils.getCurrentDateLastHour(), NotificationTypeEnum.APPOINTMENT);
-        todayAppointmentsNotifications.forEach( a -> {
-            final Appointment appointment = appointmentRepository.findOne(a.getReferenceId());
-            todayAppointments.add(appointment);
-        });
+        todayAppointmentsNotifications.forEach(getNotificationConsumer(todayAppointments));
 
         final List<Appointment> tomorrowAppointments = new ArrayList<>();
         final List<Notification> tomorrowAppointmentsNotifications = notificationService.getByUserIdAndBetweenDates(userId, DateUtils.getTomorrowDateFirstHour(), DateUtils.getTomorrowDateLastHour(), NotificationTypeEnum.APPOINTMENT);
-        tomorrowAppointmentsNotifications.forEach( a -> {
-            final Appointment appointment = appointmentRepository.findOne(a.getReferenceId());
-            tomorrowAppointments.add(appointment);
-        });
+        tomorrowAppointmentsNotifications.forEach(getNotificationConsumer(tomorrowAppointments));
 
         final List<Appointment> followingAppointments = new ArrayList<>();
         final List<Notification> followingAppointmentsNotifications = notificationService.getByUserIdAndAfterTomorrow(userId, DateUtils.getTomorrowDateLastHour(), NotificationTypeEnum.APPOINTMENT);
-        followingAppointmentsNotifications.forEach( a -> {
-            final Appointment appointment = appointmentRepository.findOne(a.getReferenceId());
-            followingAppointments.add(appointment);
-        });
+        followingAppointmentsNotifications.forEach(getNotificationConsumer(followingAppointments));
 
         return new AppointmentsResource(todayAppointments, tomorrowAppointments, followingAppointments);
+    }
+
+    private Consumer<Notification> getNotificationConsumer(List<Appointment> appointmentList) {
+        return a -> {
+            final Appointment appointment = appointmentRepository.findOne(a.getReferenceId());
+            appointmentList.add(appointment);
+        };
     }
 }
