@@ -88,6 +88,7 @@ public class UserService extends BaseService<UserRepository, User> {
                 createFirstMedicationNotifications(user, treatment);
                 createFirstCheckInNotification(user, treatment);
                 createAppointmentsNotifications(user, treatment);
+                createRecommendationsNotifications(user, treatment);
             } else {
                 super.save(user);
             }
@@ -97,6 +98,7 @@ public class UserService extends BaseService<UserRepository, User> {
         }
         return ResponseEntity.ok((T) user);
     }
+
 
     /**
      * Sets the "creeatedAt" Date to the treatment
@@ -148,9 +150,10 @@ public class UserService extends BaseService<UserRepository, User> {
     /**
      * Creates the first checkin result so that the notification job knows that start date
      *
+     * @param user
      * @param treatment
      */
-    private void createFirstCheckInNotification(final User user,final Treatment treatment) {
+    private void createFirstCheckInNotification(final User user, final Treatment treatment) {
         treatment.getCheckIns().forEach(checkIn -> createCheckInResultNotification(user, treatment, checkIn));
     }
 
@@ -166,15 +169,16 @@ public class UserService extends BaseService<UserRepository, User> {
     }
 
     /**
-     * Creates the first checkin result so that the notification job knows that start date
+     * Creates the appointment notification so that the notification job knows that start date
      *
+     * @param user
      * @param treatment
      */
     private void createAppointmentsNotifications(final User user, final Treatment treatment) {
         treatment.getAppointments().forEach(appointment -> createAppointmentNotification(user, appointment));
     }
 
-    private void createAppointmentNotification(final User user, final Appointment appointment) {
+    public void createAppointmentNotification(final User user, final Appointment appointment) {
         Notification notification = new Notification();
         notification.setNotificationType(NotificationTypeEnum.APPOINTMENT);
         notification.setUser(user);
@@ -184,6 +188,29 @@ public class UserService extends BaseService<UserRepository, User> {
         notification.setExpectedSendDate(appointment.getDate());
         notificationService.save(notification);
     }
+
+
+    /**
+     * Creates the recommendation notification so that the notification job knows that start date
+     *
+     * @param user
+     * @param treatment
+     */
+    private void createRecommendationsNotifications(final User user, final Treatment treatment) {
+        treatment.getRecommendations().forEach(recommendation -> createRecommendationNotification(user, recommendation));
+    }
+
+    public void createRecommendationNotification(final User user, final Recommendation recommendation) {
+        Notification notification = new Notification();
+        notification.setNotificationType(NotificationTypeEnum.RECOMMENDATION);
+        notification.setUser(user);
+        notification.setReferenceId(recommendation.getId());
+        notification.setTitle(NotificationTypeEnum.RECOMMENDATION.getTitle());
+        notification.setBody(String.format(NotificationTypeEnum.RECOMMENDATION.getBody(), recommendation.getText()));
+        notification.setExpectedSendDate(DateUtils.getCurrentDatePlusHalfAnHour());
+        notificationService.save(notification);
+    }
+
 
     /**
      * Adds the fitbit token to the user

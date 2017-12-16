@@ -66,7 +66,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 Appointment appointment = (Appointment) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getAppointments(), appointment)) {
                     treatment.getAppointments().add((Appointment) treatmentComponent);
-
+                    userService.createAppointmentNotification(user,  appointment);
                 } else {
                     alreadyExists = true;
                 }
@@ -75,6 +75,7 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
                 Recommendation recommendation = (Recommendation) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getRecommendations(), recommendation)) {
                     treatment.getRecommendations().add((Recommendation) treatmentComponent);
+                    userService.createRecommendationNotification(user,  recommendation);
                 } else {
                     alreadyExists = true;
                 }

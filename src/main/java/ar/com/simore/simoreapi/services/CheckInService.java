@@ -11,9 +11,15 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
     @Autowired
     private CheckInRepository checkInRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Override
     protected CheckInRepository getRepository() {
         return checkInRepository;
     }
 
+/*    public List<CheckInResource> getByUserId(final Long userId) {
+        notificationService.
+    }*/
 }

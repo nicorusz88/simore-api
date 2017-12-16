@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/checkins")
@@ -36,4 +37,15 @@ public class CheckInController extends BaseController<CheckInService, CheckIn> {
     public ResponseEntity<Treatment> addCheckInToTreatment(@RequestParam Long treatmentId, @Valid @RequestBody CheckIn checkIn){
         return treatmentService.addTreatmentComponentToTreatment(checkIn, treatmentId);
     }
+
+    /**
+     * Gets the 10 last recommendations
+     *
+     * @param userId
+     * @return
+     */
+/*    @GetMapping("/user/{id}")
+    public ResponseEntity<List<CheckInResource>> getCheckInsByUserId(@PathVariable("id") Long userId) {
+        return ResponseEntity.ok(checkInService.getByUserId(userId));
+    }*/
 }

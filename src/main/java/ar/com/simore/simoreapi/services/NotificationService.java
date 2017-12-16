@@ -77,4 +77,12 @@ public class NotificationService extends BaseService<NotificationRepository, Not
     public List<Notification> getByUserIdAndAfterTomorrow(Long userId, Date afterDate, NotificationTypeEnum notificationType) {
         return notificationRepository.findByUser_IdAndExpectedSendDateAfterAndNotificationType(userId, afterDate, notificationType);
     }
+
+    /** Gets the 10 latest notifications of a specific type for the user
+     * @param userId
+     * @return
+     */
+    public List<Notification> getByUserIdAndType(final Long userId, NotificationTypeEnum notificationType) {
+        return notificationRepository.findFirst10ByUser_IdAndActualSendDateIsNotNullAndNotificationTypeOrderByActualSendDateDesc(userId, notificationType);
+    }
 }

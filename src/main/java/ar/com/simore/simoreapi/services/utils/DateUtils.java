@@ -130,4 +130,16 @@ public class DateUtils {
         final long elapsedTime = stopTime - startTime;
         return TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
     }
+
+    /** We wet the current time and add it 30 minutes.
+     * @return
+     */
+    public static Date getCurrentDatePlusHalfAnHour() {
+        Instant instant = Instant.now();
+        long timeStampMillis = instant.toEpochMilli();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(timeStampMillis);
+        cal.add(Calendar.MINUTE, 30);
+        return cal.getTime();
+    }
 }
