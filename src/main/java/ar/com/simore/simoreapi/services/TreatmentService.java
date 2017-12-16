@@ -18,6 +18,18 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AppointmentService appointmentService;
+
+    @Autowired
+    private MedicationService medicationService;
+
+    @Autowired
+    private CheckInService checkInService;
+
+    @Autowired
+    private RecommendationService recommendationService;
+
     @Override
     protected TreatmentRepository getRepository() {
         return treatmentRepository;
@@ -34,57 +46,52 @@ public class TreatmentService extends BaseService<TreatmentRepository, Treatment
         final Treatment treatment = treatmentRepository.findOne(treatmentId);
         final User user = userService.getByTreatment(treatment);
         TreatmentComponentsEnum treatmentComponentsEnum = TreatmentComponentsEnum.valueOf(treatmentComponent.getClass().getSimpleName());
-        boolean alreadyExists = false;
         switch (treatmentComponentsEnum) {
             case Vital:
                 Vital vital = (Vital) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getVitals(), vital)) {
-                    treatment.getVitals().add((Vital) treatmentComponent);
-                } else {
-                    alreadyExists = true;
+                    treatment.getVitals().add(vital);
+                    treatmentRepository.save(treatment);
                 }
                 break;
             case CheckIn:
                 CheckIn checkIn = (CheckIn) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getCheckIns(), checkIn)) {
-                    treatment.getCheckIns().add((CheckIn) treatmentComponent);
+                    treatment.getCheckIns().add(checkIn);
+                    checkInService.save(checkIn);
+                    treatmentRepository.save(treatment);
                     userService.createCheckInResultNotification(user, treatment, checkIn);
-                } else {
-                    alreadyExists = true;
                 }
                 break;
             case Medication:
                 Medication medication = (Medication) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getMedications(), medication)) {
-                    treatment.getMedications().add((Medication) treatmentComponent);
+                    treatment.getMedications().add(medication);
+                    medicationService.save(medication);
+                    treatmentRepository.save(treatment);
                     userService.createMedicationNotification(user, treatment, medication);
-                } else {
-                    alreadyExists = true;
                 }
                 break;
             case Appointment:
                 Appointment appointment = (Appointment) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getAppointments(), appointment)) {
-                    treatment.getAppointments().add((Appointment) treatmentComponent);
+                    treatment.getAppointments().add(appointment);
+                    appointmentService.save(appointment);
+                    treatmentRepository.save(treatment);
                     userService.createAppointmentNotification(user,  appointment);
-                } else {
-                    alreadyExists = true;
                 }
                 break;
             case Recommendation:
                 Recommendation recommendation = (Recommendation) treatmentComponent;
                 if (!treatmentComponentExists(treatment.getRecommendations(), recommendation)) {
-                    treatment.getRecommendations().add((Recommendation) treatmentComponent);
+                    treatment.getRecommendations().add(recommendation);
+                    recommendationService.save(recommendation);
+                    treatmentRepository.save(treatment);
                     userService.createRecommendationNotification(user,  recommendation);
-                } else {
-                    alreadyExists = true;
                 }
                 break;
             default:
                 break;
-        }
-        if (!alreadyExists) {
-            treatmentRepository.save(treatment);
         }
         return ResponseEntity.ok(treatment);
     }

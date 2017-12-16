@@ -44,8 +44,8 @@ public class CheckInController extends BaseController<CheckInService, CheckIn> {
      * @param userId
      * @return
      */
-/*    @GetMapping("/user/{id}")
-    public ResponseEntity<List<CheckInResource>> getCheckInsByUserId(@PathVariable("id") Long userId) {
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<CheckIn>> getCheckInsByUserId(@PathVariable("id") Long userId) {
         return ResponseEntity.ok(checkInService.getByUserId(userId));
-    }*/
+    }
 }
