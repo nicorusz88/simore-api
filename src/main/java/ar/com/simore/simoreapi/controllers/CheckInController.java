@@ -3,6 +3,7 @@ package ar.com.simore.simoreapi.controllers;
 
 import ar.com.simore.simoreapi.entities.CheckIn;
 import ar.com.simore.simoreapi.entities.Treatment;
+import ar.com.simore.simoreapi.entities.resources.PlainAnswer;
 import ar.com.simore.simoreapi.services.CheckInService;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class CheckInController extends BaseController<CheckInService, CheckIn> {
     }
 
     /**
-     * Gets the 10 last recommendations
+     * Gets the checkins by user
      *
      * @param userId
      * @return
@@ -47,5 +48,18 @@ public class CheckInController extends BaseController<CheckInService, CheckIn> {
     @GetMapping("/user/{id}")
     public ResponseEntity<List<CheckIn>> getCheckInsByUserId(@PathVariable("id") Long userId) {
         return ResponseEntity.ok(checkInService.getByUserId(userId));
+    }
+
+    /**
+     * We anwer the question
+     *
+     * @param checkInId
+     * @param plainAnswer
+     * @return
+     */
+    @PostMapping("/answer/{checkInId}")
+    public ResponseEntity answerQuestion(@PathVariable("checkInId") Long checkInId, @RequestBody PlainAnswer plainAnswer) {
+        checkInService.answerQuestion(checkInId, plainAnswer.getAnswer());
+        return ResponseEntity.ok().build();
     }
 }

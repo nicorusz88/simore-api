@@ -6,7 +6,7 @@ import javax.persistence.InheritanceType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Answer extends BaseEntity {
+abstract class Answer extends BaseEntity {
 
 
 }

@@ -1,9 +1,6 @@
 package ar.com.simore.simoreapi.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "checkin_result")
@@ -12,7 +9,7 @@ public class CheckInResult extends BaseEntity{
     @ManyToOne
     private CheckIn checkIn;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Answer answer;
 
     public CheckIn getCheckIn() {
