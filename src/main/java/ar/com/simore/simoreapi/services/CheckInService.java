@@ -4,6 +4,7 @@ import ar.com.simore.simoreapi.entities.*;
 import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
 import ar.com.simore.simoreapi.repositories.CheckInRepository;
 import ar.com.simore.simoreapi.repositories.CheckInResultRepository;
+import ar.com.simore.simoreapi.repositories.ChoiceQuestionOptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +23,25 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    ChoiceQuestionOptionRepository choiceQuestionOptionRepository;
+
     @Override
     protected CheckInRepository getRepository() {
         return checkInRepository;
     }
 
+    /** Gets the Check ins by user that were not answered
+     * @param userId
+     * @return
+     */
     public List<CheckIn> getByUserId(final Long userId) {
         List<CheckIn> checkins = new ArrayList<>();
         final List<Notification> checkInNotifications = notificationService.getByUserIdAndType(userId, NotificationTypeEnum.CHECKIN);
         checkInNotifications.forEach(not -> {
             final CheckIn checkIn = checkInRepository.findOne(not.getReferenceId());
-            if (checkIn != null) {
+            final List<CheckInResult> checkInResults = checkInResultRepository.findByCheckIn_Id(checkIn.getId());
+            if (checkInResults.isEmpty()) {
                 checkins.add(checkIn);
             }
         });
@@ -53,8 +62,7 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
         CheckInResult checkInResult = new CheckInResult();
         checkInResult.setCheckIn(checkin);
         if (question instanceof ChoiceQuestion) {
-            ChoiceQuestionOption choiceQuestionOption = new ChoiceQuestionOption();
-            choiceQuestionOption.setId(Long.parseLong(answer));
+            final ChoiceQuestionOption choiceQuestionOption = choiceQuestionOptionRepository.findOne(Long.parseLong(answer));
             ChoiceAnswer choiceAnswer = new ChoiceAnswer();
             choiceAnswer.setChoiceQuestionOption(choiceQuestionOption);
             checkInResult.setAnswer(choiceAnswer);
