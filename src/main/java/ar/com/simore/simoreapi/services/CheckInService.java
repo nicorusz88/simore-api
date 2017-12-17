@@ -47,7 +47,7 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
      * @param answer
      * @return
      */
-    public void answerQuestion(Long checkInId, String answer) {
+    public CheckInResult answerQuestion(Long checkInId, String answer) {
         final CheckIn checkin = checkInRepository.findOne(checkInId);
         final Question question = checkin.getQuestion();
         CheckInResult checkInResult = new CheckInResult();
@@ -64,5 +64,6 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
             checkInResult.setAnswer(openAnswer);
         }
         checkInResultRepository.save(checkInResult);
+        return checkInResult;
     }
 }

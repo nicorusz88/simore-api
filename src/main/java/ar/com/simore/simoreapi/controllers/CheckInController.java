@@ -2,6 +2,7 @@ package ar.com.simore.simoreapi.controllers;
 
 
 import ar.com.simore.simoreapi.entities.CheckIn;
+import ar.com.simore.simoreapi.entities.CheckInResult;
 import ar.com.simore.simoreapi.entities.Treatment;
 import ar.com.simore.simoreapi.entities.resources.PlainAnswer;
 import ar.com.simore.simoreapi.services.CheckInService;
@@ -58,8 +59,7 @@ public class CheckInController extends BaseController<CheckInService, CheckIn> {
      * @return
      */
     @PostMapping("/answer/{checkInId}")
-    public ResponseEntity answerQuestion(@PathVariable("checkInId") Long checkInId, @RequestBody PlainAnswer plainAnswer) {
-        checkInService.answerQuestion(checkInId, plainAnswer.getAnswer());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CheckInResult> answerQuestion(@PathVariable("checkInId") Long checkInId, @RequestBody PlainAnswer plainAnswer) {
+        return ResponseEntity.ok( checkInService.answerQuestion(checkInId, plainAnswer.getAnswer()));
     }
 }
