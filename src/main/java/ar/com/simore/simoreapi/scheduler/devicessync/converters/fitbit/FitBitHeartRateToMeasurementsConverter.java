@@ -31,29 +31,31 @@ public class FitBitHeartRateToMeasurementsConverter {
         List<Measurement> fitbitHeartRateMeasurements = new ArrayList<>();
 
         final List<ActivitiesHeart> activitiesHearts = source.getActivitiesHeart();
-        activitiesHearts.forEach(activitiesHeart -> activitiesHeart.getValue().getHeartRateZones().forEach(heartRateZone -> {
-            FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
-            fitBitHeartRateMeasurement.setDate(getCurrentDate());
-            fitBitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
-            fitBitHeartRateMeasurement.setMax(heartRateZone.getMax());
-            fitBitHeartRateMeasurement.setMin(heartRateZone.getMin());
-            fitBitHeartRateMeasurement.setName(heartRateZone.getName());
-            fitBitHeartRateMeasurement.setMinutes(heartRateZone.getMinutes());
-            logger.info(String.format(CONVERTED, fitBitHeartRateMeasurement.toString()));
-            fitbitHeartRateMeasurements.add(fitBitHeartRateMeasurement);
-        }));
-        activitiesHearts.forEach(activitiesHeart -> {
-            Long restingHeartRate = activitiesHeart.getValue().getRestingHeartRate();
-            if(restingHeartRate !=null){
+        if(activitiesHearts!=null){
+            activitiesHearts.forEach(activitiesHeart -> activitiesHeart.getValue().getHeartRateZones().forEach(heartRateZone -> {
                 FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
-                fitBitHeartRateMeasurement.setName(RESTING_HEART_RATE);
-                fitBitHeartRateMeasurement.setMin(restingHeartRate);
-                fitBitHeartRateMeasurement.setMax(restingHeartRate);
                 fitBitHeartRateMeasurement.setDate(getCurrentDate());
+                fitBitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
+                fitBitHeartRateMeasurement.setMax(heartRateZone.getMax());
+                fitBitHeartRateMeasurement.setMin(heartRateZone.getMin());
+                fitBitHeartRateMeasurement.setName(heartRateZone.getName());
+                fitBitHeartRateMeasurement.setMinutes(heartRateZone.getMinutes());
                 logger.info(String.format(CONVERTED, fitBitHeartRateMeasurement.toString()));
                 fitbitHeartRateMeasurements.add(fitBitHeartRateMeasurement);
-            }
-        });
+            }));
+            activitiesHearts.forEach(activitiesHeart -> {
+                Long restingHeartRate = activitiesHeart.getValue().getRestingHeartRate();
+                if(restingHeartRate !=null){
+                    FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
+                    fitBitHeartRateMeasurement.setName(RESTING_HEART_RATE);
+                    fitBitHeartRateMeasurement.setMin(restingHeartRate);
+                    fitBitHeartRateMeasurement.setMax(restingHeartRate);
+                    fitBitHeartRateMeasurement.setDate(getCurrentDate());
+                    logger.info(String.format(CONVERTED, fitBitHeartRateMeasurement.toString()));
+                    fitbitHeartRateMeasurements.add(fitBitHeartRateMeasurement);
+                }
+            });
+        }
         return fitbitHeartRateMeasurements;
     }
 

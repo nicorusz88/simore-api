@@ -53,8 +53,8 @@ public class NotificationService extends BaseService<NotificationRepository, Not
         return notificationRepository.findByUser_IdAndActualSendDateIsNullAndNotificationTypeOrderByExpectedSendDate(userId, notificationType);
     }
 
-    public Notification getByReferenceIdAndActualSendDateIsNotNull(long referenceId) {
-        return notificationRepository.findFirstByReferenceIdAndActualSendDateIsNotNullOrderByActualSendDateDesc(referenceId);
+    public Notification getByReferenceIdAndActualSendDateIsNotNull(long referenceId, final NotificationTypeEnum notificationType) {
+        return notificationRepository.findFirstByReferenceIdAndNotificationTypeAndActualSendDateIsNotNullOrderByActualSendDateDesc(referenceId, notificationType);
     }
 
     /** Gets notifications of a certain type, for a specific user and between certain dates

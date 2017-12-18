@@ -87,8 +87,8 @@ public class Bootstrap {
 
             User user1 = new User();
             user1.setUserName("prof");
-            user1.setFirstName("prof");
-            user1.setLastName("prof");
+            user1.setFirstName("Hector");
+            user1.setLastName("Flaubert");
             user1.setPassword("prof");
             user1.setGender("Male");
             user1.setDeleted(false);

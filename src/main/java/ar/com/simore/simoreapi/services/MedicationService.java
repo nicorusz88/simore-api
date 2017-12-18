@@ -37,7 +37,7 @@ public class MedicationService extends BaseService<MedicationRepository, Medicat
         final List<Notification> notifications = notificationService.getLastsByUserIdAndType(userId, NotificationTypeEnum.MEDICATION);
         notifications.forEach(notification -> {
             final Medication medication = medicationRepository.findOne(notification.getReferenceId());
-            final Notification previousNotification = notificationService.getByReferenceIdAndActualSendDateIsNotNull(notification.getReferenceId());
+            final Notification previousNotification = notificationService.getByReferenceIdAndActualSendDateIsNotNull(notification.getReferenceId(), NotificationTypeEnum.MEDICATION);
             Date previousDate = null;
             if (previousNotification != null) {
                 previousDate = previousNotification.getActualSendDate();
