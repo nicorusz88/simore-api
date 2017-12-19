@@ -20,6 +20,13 @@ public class FitBitHeartRateToMeasurementsConverter {
     private static final String RESTING_HEART_RATE = "Resting Heart Rate";
 
     private static final String CONVERTED = "Converted FitBitHeartRateToMeasurement: \n %s";
+    private static final String OUT_OF_RANGE = "Out of Range";
+    private static final String FAT_BURN = "Fat Burn";
+    private static final String CARDIO = "Cardio";
+    private static final String PEAK = "Peak";
+    private static final String FUERA_DE_RANGO = "Fuera de rango";
+    private static final String QUEMA_DE_GRASA = "Quema de grasa";
+    private static final String PICO = "Pico";
 
     /**
      * Only those heartRateZones which their mins are different to Zero re converted
@@ -38,7 +45,7 @@ public class FitBitHeartRateToMeasurementsConverter {
                 fitBitHeartRateMeasurement.setCaloriesOut(heartRateZone.getCaloriesOut());
                 fitBitHeartRateMeasurement.setMax(heartRateZone.getMax());
                 fitBitHeartRateMeasurement.setMin(heartRateZone.getMin());
-                fitBitHeartRateMeasurement.setName(heartRateZone.getName());
+                fitBitHeartRateMeasurement.setName(translate(heartRateZone.getName()));
                 fitBitHeartRateMeasurement.setMinutes(heartRateZone.getMinutes());
                 logger.info(String.format(CONVERTED, fitBitHeartRateMeasurement.toString()));
                 fitbitHeartRateMeasurements.add(fitBitHeartRateMeasurement);
@@ -57,6 +64,20 @@ public class FitBitHeartRateToMeasurementsConverter {
             });
         }
         return fitbitHeartRateMeasurements;
+    }
+
+    private static String translate(String name) {
+        switch (name){
+            case OUT_OF_RANGE:
+                return FUERA_DE_RANGO;
+            case FAT_BURN:
+                return QUEMA_DE_GRASA;
+            case CARDIO:
+                return CARDIO;
+            case PEAK:
+                return PICO;
+        }
+        return null;
     }
 
     /**

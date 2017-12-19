@@ -1,7 +1,7 @@
 package ar.com.simore.simoreapi.entities.enums;
 
 public enum YesNoOptionEnum {
-    YES("Yes"),
+    YES("Si"),
     NO("No");
 
    private String text;

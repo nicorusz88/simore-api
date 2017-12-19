@@ -4,10 +4,10 @@ package ar.com.simore.simoreapi.entities.enums;
  * Indicates the type of notification
  */
 public enum NotificationTypeEnum {
-    RECOMMENDATION("Rcommendation", "%s"),
-    MEDICATION("Take your medication", "Remember to take %s Mg of %s"),
-    CHECKIN("Complete the survey", "%s"),
-    APPOINTMENT("You have an appointment","You have to see doctor %s in %s at %s");
+    RECOMMENDATION("Recomendación", "%s"),
+    MEDICATION("Tome su medicina", "Acordate de tomar %s Mg de %s"),
+    CHECKIN("Complete la encuesta", "%s"),
+    APPOINTMENT("Tienes una cita","Tienes que ver al doctor %s en %s a las %s");
 
     /**
      * Is the tittle tht will be shown in the notification

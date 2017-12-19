@@ -38,7 +38,7 @@ public class Bootstrap {
             initRoles();
             initUsers();
         } catch (Exception e) {
-            logger.error("ERROR initializing data: " + e.getMessage());
+            logger.error("ERROR inicializando la carga de datos: " + e.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public class Bootstrap {
     private void initRoles() {
         final long count = roleRepository.count();
         if (count==0) {
-            logger.warn("ATENTION: No roles, creating them...");
+            logger.warn("ATENCIÓN:No hay roles, creando roles de administrador, paciente y profesional");
             Role role1 = new Role();
             role1.setName(RolesNamesEnum.ADMINISTRATOR.name());
             roleRepository.save(role1);
@@ -66,14 +66,14 @@ public class Bootstrap {
         List<User> professionals = userRepository.findByRoles_Name(RolesNamesEnum.PROFESSIONAL.name());
 
         if (administrators.isEmpty()) {
-            logger.warn("ATENTION: No administrators, creating [user/pass]: admin/admin");
+            logger.warn("ATENCIÓN: No hay administradores, creeando[user/pass]: admin/admin");
 
             User user1 = new User();
             user1.setUserName("admin");
             user1.setFirstName("admin");
             user1.setLastName("admin");
             user1.setPassword("admin");
-            user1.setGender("Male");
+            user1.setGender("Masculino");
             user1.setDeleted(false);
             Role role1 = roleRepository.findByName(RolesNamesEnum.ADMINISTRATOR.name());
             List<Role> roles = new ArrayList<>();
@@ -83,14 +83,14 @@ public class Bootstrap {
         }
 
         if (professionals.isEmpty()) {
-            logger.warn("ATENTION: No professionals, creating [user/pass]: prof/prof");
+            logger.warn("ATENCIÓN: No hay profesionales, creando [user/pass]: prof/prof");
 
             User user1 = new User();
             user1.setUserName("prof");
             user1.setFirstName("Hector");
             user1.setLastName("Flaubert");
             user1.setPassword("prof");
-            user1.setGender("Male");
+            user1.setGender("Masculino");
             user1.setDeleted(false);
             Role role1 = roleRepository.findByName(RolesNamesEnum.PROFESSIONAL.name());
             List<Role> roles = new ArrayList<>();
@@ -106,7 +106,7 @@ public class Bootstrap {
 
         final long count = treatmentTemplateRepository.count();
         if (count==0) {
-            logger.warn("ATENTION: No Treatment Templates, creating Treatment templates for Cardiac Disease, Diabeted Type I and Hypertension");
+            logger.warn("ATENCIÓN: No hay plantillas de tratamiento, creandolas para for Enfermedad Cardiovascular , Diabetes tipo I e Hipertensión");
             TreatmentTemplate treatmentTemplate = generateTreatmentTemplateCardiacDisease();
             treatmentTemplateRepository.save(treatmentTemplate);
             TreatmentTemplate treatmentTemplate2 = generateTreatmentTemplateDiabetesType1();
@@ -120,7 +120,7 @@ public class Bootstrap {
 
     private TreatmentTemplate generateTreatmentTemplateCardiacDisease() {
         TreatmentTemplate treatmentTemplate = new TreatmentTemplate();
-        treatmentTemplate.setName("Cardiovascular Disease");
+        treatmentTemplate.setName("Enfermedad Cardiovascular");
 
         //Vitales
         List<Vital> vitales = generateVitalsCardiovascularDisease();
@@ -144,11 +144,11 @@ public class Bootstrap {
     private List<CheckIn> getCheckInsCardiovascularDisease() {
         List<CheckIn> checkins = new ArrayList<>();
         CheckIn checkIn1 = new CheckIn();
-        checkIn1.setName("Pains");
+        checkIn1.setName("Dolores");
         checkIn1.setFrecuency(12);
         checkIn1.setStartAt(8);
         ChoiceQuestion question1 = new ChoiceQuestion();
-        question1.setQuestion("¿Have you felt any chest pain in the last hours?");
+        question1.setQuestion("¿Sentiste dolor en el pecho en las ultimas horas?");
         List<ChoiceQuestionOption> choiceQuestionOptions1 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption1 = new ChoiceQuestionOption();
         choiceQuestionOption1.setOption(YesNoOptionEnum.YES.getText());
@@ -160,11 +160,11 @@ public class Bootstrap {
         checkIn1.setQuestion(question1);
 
         CheckIn checkIn2 = new CheckIn();
-        checkIn2.setName("Dificulties");
+        checkIn2.setName("Dificultades");
         checkIn2.setFrecuency(12);
         checkIn2.setStartAt(7);
         ChoiceQuestion question2 = new ChoiceQuestion();
-        question2.setQuestion("¿Have you had any difficulty to breath in the last hours?");
+        question2.setQuestion("¿Tuviste alguna dificultad para respirar en las ultimas horas?");
         List<ChoiceQuestionOption> choiceQuestionOptions2 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption3 = new ChoiceQuestionOption();
         choiceQuestionOption3.setOption(YesNoOptionEnum.YES.getText());
@@ -183,13 +183,13 @@ public class Bootstrap {
     private List<Medication> getMedicationsCardiovascularDisease() {
         List<Medication> medications = new ArrayList<>();
         Medication medication1 = new Medication();
-        medication1.setName("Aspirin");
+        medication1.setName("Aspirina");
         medication1.setQuantity(20);
         medication1.setStartAt(13);
         medication1.setFrecuency(6);
 
         Medication medication2 = new Medication();
-        medication2.setName("Atorvastatin");
+        medication2.setName("Atorvastatina");
         medication2.setQuantity(20);
         medication2.setStartAt(13);
         medication2.setFrecuency(24);
@@ -260,7 +260,7 @@ public class Bootstrap {
 
     private TreatmentTemplate generateTreatmentTemplateDiabetesType1() {
         TreatmentTemplate treatmentTemplate = new TreatmentTemplate();
-        treatmentTemplate.setName("Diabetes Type 1");
+        treatmentTemplate.setName("Diabetes Tipo 1");
         //Vitales
         List<Vital> vitales = generateVitalsDiabetesType1();
         treatmentTemplate.setVitals(vitales);
@@ -317,7 +317,7 @@ public class Bootstrap {
     private List<Medication> getMedicationsDiabetesType1() {
         List<Medication> medications = new ArrayList<>();
         Medication medication1 = new Medication();
-        medication1.setName("Long Acting Insulin");
+        medication1.setName("Insulina de acción prolongada");
         medication1.setQuantity(20);
         medication1.setStartAt(14);
         medication1.setFrecuency(24);
@@ -336,11 +336,11 @@ public class Bootstrap {
     private List<CheckIn> getCheckInsDiabetesType1() {
         List<CheckIn> checkins = new ArrayList<>();
         CheckIn checkIn1 = new CheckIn();
-        checkIn1.setName("Diet");
+        checkIn1.setName("Dieta");
         checkIn1.setFrecuency(12);
         checkIn1.setStartAt(6);
         ChoiceQuestion question1 = new ChoiceQuestion();
-        question1.setQuestion("¿Are you following yoour recommended diet?");
+        question1.setQuestion("¿Estas siguiendo la dieta recomendada?");
         List<ChoiceQuestionOption> choiceQuestionOptions1 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption1 = new ChoiceQuestionOption();
         choiceQuestionOption1.setOption(YesNoOptionEnum.YES.getText());
@@ -352,18 +352,18 @@ public class Bootstrap {
         checkIn1.setQuestion(question1);
 
         CheckIn checkIn2 = new CheckIn();
-        checkIn2.setName("Urination");
+        checkIn2.setName("Orina");
         checkIn2.setFrecuency(6);
         checkIn2.setStartAt(5);
         ChoiceQuestion question2 = new ChoiceQuestion();
-        question2.setQuestion("¿How many times did you go to urinate in the last 6 hours?");
+        question2.setQuestion("¿Cuantas veces fuiste a orinar en las ultimas 6 horas?");
         List<ChoiceQuestionOption> choiceQuestionOptions2 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption3 = new ChoiceQuestionOption();
-        choiceQuestionOption3.setOption("Between 1 and 3");
+        choiceQuestionOption3.setOption("Entre 1 and 3");
         ChoiceQuestionOption choiceQuestionOption4 = new ChoiceQuestionOption();
-        choiceQuestionOption4.setOption("Between 3 and 5");
+        choiceQuestionOption4.setOption("Entre 3 and 5");
         ChoiceQuestionOption choiceQuestionOption5 = new ChoiceQuestionOption();
-        choiceQuestionOption5.setOption("More than 5");
+        choiceQuestionOption5.setOption("Mas de 5");
         choiceQuestionOptions2.add(choiceQuestionOption3);
         choiceQuestionOptions2.add(choiceQuestionOption4);
         choiceQuestionOptions2.add(choiceQuestionOption5);
@@ -371,11 +371,11 @@ public class Bootstrap {
         checkIn2.setQuestion(question2);
 
         CheckIn checkIn3 = new CheckIn();
-        checkIn3.setName("Thirst");
+        checkIn3.setName("Hidratación");
         checkIn3.setFrecuency(6);
         checkIn3.setStartAt(4);
         ChoiceQuestion question3 = new ChoiceQuestion();
-        question3.setQuestion("¿How you feel an increased thirst in the last 6 hours?");
+        question3.setQuestion("¿Sentiste un aumento anormal en la sed en las ultimas 6 horas?");
         List<ChoiceQuestionOption> choiceQuestionOptions3 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption6 = new ChoiceQuestionOption();
         choiceQuestionOption6.setOption(YesNoOptionEnum.YES.getText());
@@ -398,7 +398,7 @@ public class Bootstrap {
         List<Appointment> appointments = new ArrayList<>();
         Appointment appointment1 = new Appointment();
         appointment1.setName("Hospital");
-        appointment1.setAddress("Av. Hilbert 1203, Minnetonka, Minnesota");
+        appointment1.setAddress("Av. Hilbert 1203, CABA, Buenos Aires, Argentina");
         appointment1.setDoctor("Dr. Hoffman");
         appointment1.setDate(new Date());
 
@@ -408,7 +408,7 @@ public class Bootstrap {
 
     private TreatmentTemplate generateTreatmentTemplateHypertension() {
         TreatmentTemplate treatmentTemplate = new TreatmentTemplate();
-        treatmentTemplate.setName("Hypertension");
+        treatmentTemplate.setName("Hipertensión");
         //Vitales
         List<Vital> vitales = generateVitalsHypertension();
         treatmentTemplate.setVitals(vitales);
@@ -492,11 +492,11 @@ public class Bootstrap {
     private List<CheckIn> getCheckInsHypertension() {
         List<CheckIn> checkins = new ArrayList<>();
         CheckIn checkIn1 = new CheckIn();
-        checkIn1.setName("Headache");
+        checkIn1.setName("Dolores de Cabeza");
         checkIn1.setFrecuency(12);
         checkIn1.setStartAt(11);
         ChoiceQuestion question1 = new ChoiceQuestion();
-        question1.setQuestion("¿Did you have any headache lately?");
+        question1.setQuestion("¿Tuviste algun dolor de cabeza ultimamente?");
         List<ChoiceQuestionOption> choiceQuestionOptions1 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption1 = new ChoiceQuestionOption();
         choiceQuestionOption1.setOption(YesNoOptionEnum.YES.getText());
@@ -508,11 +508,11 @@ public class Bootstrap {
         checkIn1.setQuestion(question1);
 
         CheckIn checkIn2 = new CheckIn();
-        checkIn2.setName("Vision");
+        checkIn2.setName("Visión");
         checkIn2.setFrecuency(6);
         checkIn2.setStartAt(10);
         ChoiceQuestion question2 = new ChoiceQuestion();
-        question2.setQuestion("¿Have you felt altered vision(example blurring)?");
+        question2.setQuestion("¿Tuviste la sensación de una vision alterada (ejemplo vision borrosa)?");
         List<ChoiceQuestionOption> choiceQuestionOptions2 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption3 = new ChoiceQuestionOption();
         choiceQuestionOption3.setOption(YesNoOptionEnum.YES.getText());
@@ -524,11 +524,11 @@ public class Bootstrap {
         checkIn2.setQuestion(question2);
 
         CheckIn checkIn3 = new CheckIn();
-        checkIn3.setName("Thirst");
+        checkIn3.setName("Hidratación");
         checkIn3.setFrecuency(6);
         checkIn3.setStartAt(9);
         ChoiceQuestion question3 = new ChoiceQuestion();
-        question3.setQuestion("¿How you feel an increased thirst in the last 6 hours?");
+        question3.setQuestion("¿Sentiste un aumento anormal en la sed en las ultimas 6 horas?");
         List<ChoiceQuestionOption> choiceQuestionOptions3 = new ArrayList<>();
         ChoiceQuestionOption choiceQuestionOption6 = new ChoiceQuestionOption();
         choiceQuestionOption6.setOption(YesNoOptionEnum.YES.getText());
@@ -550,7 +550,7 @@ public class Bootstrap {
         List<Appointment> appointments = new ArrayList<>();
         Appointment appointment1 = new Appointment();
         appointment1.setName("Hospital");
-        appointment1.setAddress("Av. Hilbert 1203, Minnetonka, Minnesota");
+        appointment1.setAddress("Av. Hilbert 1203, CABA, Buenos Aires, Argentina");
         appointment1.setDoctor("Dr. Riviera");
         appointment1.setDate(new Date());
 

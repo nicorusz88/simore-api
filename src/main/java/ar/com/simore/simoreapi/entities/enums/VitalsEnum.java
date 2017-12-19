@@ -1,15 +1,14 @@
 package ar.com.simore.simoreapi.entities.enums;
 
 public enum VitalsEnum {
-    //TODO: Add real URLs
-    HEART_RATE("Hearth Rate", "BPM", "/activities/heart/date/today/1d.json", ""),
-    STEPS("Steps", "Steps", "/activities/steps/date/today/1d.json", ""),
-    BLOOD_OXYGEN("Blood Oxygen", "SO2", "", ""),
-    BLOOD_PRESSURE("Blood Pressure", "mmHg", "", ""),
-    WEIGHT("Weight", "KG", "/body/log/weight/date/today.json", ""),
-    DISTANCE("Distance", "KM", "/activities/distance/date/today/1d.json", ""),
-    BURNT_CALORIES("Burnt Calories", "Cal.", "/activities/calories/date/today/1d.json", ""),
-    SLEEP_TRACKING("Sleep Tracking", "Hour", "/sleep/date/today.json", "");
+    HEART_RATE("Ritmo Cardíaco", "BPM", "/activities/heart/date/today/1d.json", ""),
+    STEPS("Pasos", "Pasos", "/activities/steps/date/today/1d.json", ""),
+    BLOOD_OXYGEN("Oxígeno en sangre", "SO2", "", ""),
+    BLOOD_PRESSURE("Presión sanguínea", "mmHg", "", ""),
+    WEIGHT("Peso", "KG", "/body/log/weight/date/today.json", ""),
+    DISTANCE("Distancia", "KM", "/activities/distance/date/today/1d.json", ""),
+    BURNT_CALORIES("Calorias quemadas", "Cal.", "/activities/calories/date/today/1d.json", ""),
+    SLEEP_TRACKING("Seguimiento del sueño", "Hora", "/sleep/date/today.json", "");
 
    private String name;
    private String unit;
