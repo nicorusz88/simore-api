@@ -7,12 +7,22 @@ import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
 import ar.com.simore.simoreapi.services.utils.DateUtils;
 import ar.com.simore.simoreapi.services.utils.TreatmentTemplateHandler;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -26,6 +36,13 @@ public class UserService extends BaseService<UserRepository, User> {
     private static final String ROLES_NOT_PRESENT = "Roles not present";
     private static final String TREATMENT_TEMPLATE_NOT_PRESENT = "Treatment Template not present";
     private final Logger LOGGER = Logger.getLogger(this.getClass());
+
+    @Value("${avatar.upload.dir}")
+    private String avatarUploadDir;
+
+
+    @Value("${avatar.default}")
+    private String defaultAvatar;
 
     @Autowired
     private UserRepository userRepository;
@@ -74,7 +91,7 @@ public class UserService extends BaseService<UserRepository, User> {
             List<Role> roles = rolesOptional.get();
             final Optional<Role> hasRolePacient = roles.stream().filter(r ->
                     r.getName().equals(RolesNamesEnum.PATIENT.name())).findAny();
-            if (hasRolePacient.isPresent() && user.getId() == 0 ) {
+            if (hasRolePacient.isPresent() && user.getId() == 0) {
                 final Treatment treatment;
 
                 treatment = assignTreatmentTemplate(user);
@@ -248,5 +265,57 @@ public class UserService extends BaseService<UserRepository, User> {
 
     public User getByTreatment(final Treatment treatment) {
         return userRepository.findByTreatment(treatment);
+    }
+
+    /**
+     * Save the uploaded image into configued dir
+     *
+     * @param multipartFiles
+     * @return
+     */
+    public User saveAvatar(Long userId, List<MultipartFile> multipartFiles) {
+        final User user = userRepository.findOne(userId);
+        for (MultipartFile file : multipartFiles) {
+            if (file.isEmpty()) {
+                continue;
+            }
+            byte[] bytes;
+            try {
+                bytes = file.getBytes();
+                Path path = Paths.get(avatarUploadDir + file.getOriginalFilename());
+                Files.write(path, bytes);
+                user.setAvatar(file.getOriginalFilename());
+                userRepository.save(user);
+                return user;
+            } catch (IOException e) {
+                LOGGER.error("An error ocurred uploading the avatar", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the user avatar. If none then default is sent
+     *
+     * @param userId
+     * @return
+     */
+    public byte[] getAvatar(Long userId) {
+        final User user = userRepository.findOne(userId);
+        InputStream in;
+        try {
+            String path;
+            if (user != null && user.getAvatar() != null) {
+                path = avatarUploadDir + user.getAvatar();
+            } else {
+                path = avatarUploadDir + defaultAvatar;
+            }
+            File image = new File(path);
+            in = FileUtils.openInputStream(image);
+            return IOUtils.toByteArray(in);
+        } catch (IOException e) {
+            LOGGER.error("An error ocurred retrieving the avatar", e);
+        }
+        return null;
     }
 }
