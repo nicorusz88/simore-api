@@ -62,4 +62,15 @@ public class CheckInController extends BaseController<CheckInService, CheckIn> {
     public ResponseEntity<CheckInResult> answerQuestion(@PathVariable("checkInId") Long checkInId, @RequestBody PlainAnswer plainAnswer) {
         return ResponseEntity.ok( checkInService.answerQuestion(checkInId, plainAnswer.getAnswer()));
     }
+
+    /**
+     * Gets the answered checkins for a patient, for the current day
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/answered/{userId}")
+    public ResponseEntity<List<CheckInResult>> getCheckInsAnsweredByUserForCurrentDay(@PathVariable Long userId) {
+        return ResponseEntity.ok(checkInService.getAnsweredByUserForCurrentDay(userId));
+    }
 }

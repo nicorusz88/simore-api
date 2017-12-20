@@ -5,6 +5,8 @@ import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
 import ar.com.simore.simoreapi.repositories.CheckInRepository;
 import ar.com.simore.simoreapi.repositories.CheckInResultRepository;
 import ar.com.simore.simoreapi.repositories.ChoiceQuestionOptionRepository;
+import ar.com.simore.simoreapi.repositories.UserRepository;
+import ar.com.simore.simoreapi.services.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +28,17 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
     @Autowired
     ChoiceQuestionOptionRepository choiceQuestionOptionRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     protected CheckInRepository getRepository() {
         return checkInRepository;
     }
 
-    /** Gets the Check ins by user that were not answered
+    /**
+     * Gets the Check ins by user that were not answered
+     *
      * @param userId
      * @return
      */
@@ -61,6 +68,7 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
         final Question question = checkin.getQuestion();
         CheckInResult checkInResult = new CheckInResult();
         checkInResult.setCheckIn(checkin);
+        checkInResult.setAnsweredDate(DateUtils.getCurrentDateFirstHour());
         if (question instanceof ChoiceQuestion) {
             final ChoiceQuestionOption choiceQuestionOption = choiceQuestionOptionRepository.findOne(Long.parseLong(answer));
             ChoiceAnswer choiceAnswer = new ChoiceAnswer();
@@ -73,5 +81,19 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
         }
         checkInResultRepository.save(checkInResult);
         return checkInResult;
+    }
+
+    public List<CheckInResult> getAnsweredByUserForCurrentDay(final Long userId) {
+        final List<CheckInResult> checkInResults = new ArrayList<>();
+        final User user = userRepository.findOne(userId);
+        if (user != null) {
+            final List<CheckIn> checkIns = user.getTreatment().getCheckIns();
+            checkIns.forEach(c ->
+            {
+                final CheckInResult checkInResult = checkInResultRepository.findByCheckIn_IdAndAnsweredDate(c.getId(), DateUtils.getCurrentDateFirstHour());
+                checkInResults.add(checkInResult);
+            });
+        }
+        return checkInResults;
     }
 }

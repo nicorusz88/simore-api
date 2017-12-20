@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.entities;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "checkin_result")
@@ -11,6 +12,16 @@ public class CheckInResult extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     private Answer answer;
+
+    private Date answeredDate;
+
+    public Date getAnsweredDate() {
+        return answeredDate;
+    }
+
+    public void setAnsweredDate(Date answeredDate) {
+        this.answeredDate = answeredDate;
+    }
 
     public CheckIn getCheckIn() {
         return checkIn;
