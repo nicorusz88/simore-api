@@ -59,4 +59,14 @@ public class Alert extends BaseTreatmentComponent  {
     public void setThreshold(Long threshold) {
         this.threshold = threshold;
     }
+
+    @Override
+    public String toString() {
+        return "Alert{" +
+                "alertTypeEnum=" + alertTypeEnum +
+                ", description='" + description + '\'' +
+                ", threshold=" + threshold +
+                ", triggeredDate=" + triggeredDate +
+                '}';
+    }
 }

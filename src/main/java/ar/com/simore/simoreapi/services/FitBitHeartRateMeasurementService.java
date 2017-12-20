@@ -43,4 +43,8 @@ public class FitBitHeartRateMeasurementService extends BaseService<FitBitHeartRa
         final List<FitBitHeartRateMeasurement> measurements = fitbitHeartRateMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDateParsed, endDateParsed);
         return ResponseEntity.ok(measurements);
     }
+
+    public List<FitBitHeartRateMeasurement> getByTreatmentAndDateRangeParsed(long treatmentId, Date startDate, Date endDate){
+        return fitbitHeartRateMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDate, endDate);
+    }
 }

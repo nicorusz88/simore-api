@@ -43,4 +43,8 @@ public class FitBitWeightMeasurementService extends BaseService<FitBitWeightMeas
         final List<FitBitWeightMeasurement> measurements = fitBitWeightMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDateParsed, endDateParsed);
         return ResponseEntity.ok(measurements);
     }
+
+    public List<FitBitWeightMeasurement> getByTreatmentAndDateRangeParsed(long treatmentId, Date startDate, Date endDate){
+        return fitBitWeightMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDate, endDate);
+    }
 }

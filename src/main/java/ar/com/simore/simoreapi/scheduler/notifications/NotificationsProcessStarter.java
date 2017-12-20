@@ -38,8 +38,8 @@ public class NotificationsProcessStarter {
      */
     private static AtomicBoolean isRunning = new AtomicBoolean(Boolean.FALSE);
 
-    private static final String STARTING_NOTIFICATIONS_PROCESS = "Starting Notifications process";
-    private static final String ENDING_NOTIFICATIONS_PROCESS = "Ending Notifications process";
+    private static final String STARTING_NOTIFICATIONS_PROCESS = "#######STARTING NOTIFICATION PROCESS#########";
+    private static final String ENDING_NOTIFICATIONS_PROCESS = "#######ENDING NOTIFICATION PROCESS#########";
     private static final String NOTIFICATION_PROCESS_TOOK_S_MINUTES = "Notification process took %s minutes";
 
 

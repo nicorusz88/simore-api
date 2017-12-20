@@ -2,6 +2,8 @@ package ar.com.simore.simoreapi.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -43,7 +45,8 @@ public class Treatment extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Alert> alerts;
 
     public List<Alert> getAlerts() {

@@ -53,7 +53,7 @@ public class SyncProcessStarter {
     /**
      * Indicates if the process is running
      */
-    public static AtomicBoolean isRunning = new AtomicBoolean(Boolean.FALSE);
+    private static AtomicBoolean isRunning = new AtomicBoolean(Boolean.FALSE);
 
     private static final String SYNCHING_VITAL_S_FROM_S_DEVICE = "Synching vital %s from %s device";
     private static final String UNKNOWN_EXCEPTION_MESSAGE = "An unknown issue ocurred while synching vitals information for Pacient %s and Vital %s";

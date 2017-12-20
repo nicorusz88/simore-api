@@ -6,6 +6,7 @@ import ar.com.simore.simoreapi.entities.resources.MessageResource;
 import ar.com.simore.simoreapi.entities.resources.UserResource;
 import ar.com.simore.simoreapi.repositories.MessageRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
+import ar.com.simore.simoreapi.services.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class MessageService extends BaseService<MessageRepository, Message> {
      * @return
      */
     public MessageResource sendMessage(final Message message) {
+        message.setSendDate(DateUtils.getCurrentDate());
         final User from = userRepository.findOne(message.getFrom().getId());
         final User to = userRepository.findOne(message.getTo().getId());
         message.setFrom(from);

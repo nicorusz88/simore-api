@@ -1,6 +1,7 @@
 package ar.com.simore.simoreapi.services;
 
 import ar.com.simore.simoreapi.entities.FitBitCalorieMeasurement;
+import ar.com.simore.simoreapi.entities.FitBitHeartRateMeasurement;
 import ar.com.simore.simoreapi.repositories.FitBitCalorieMeasurementRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,9 @@ public class FitBitCaloriesMeasurementService extends BaseService<FitBitCalorieM
         final Date endDateParsed = simpleDateFormat.parse(endDate);
         final List<FitBitCalorieMeasurement> measurements = fitBitCalorieMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDateParsed, endDateParsed);
         return ResponseEntity.ok(measurements);
+    }
+
+    public List<FitBitCalorieMeasurement> getByTreatmentAndDateRangeParsed(long treatmentId, Date startDate, Date endDate){
+        return fitBitCalorieMeasurementRepository.findByTreatmentAndDateBetween(treatmentId, startDate, endDate);
     }
 }
