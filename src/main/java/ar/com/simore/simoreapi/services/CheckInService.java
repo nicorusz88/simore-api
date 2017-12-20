@@ -91,7 +91,9 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
             checkIns.forEach(c ->
             {
                 final CheckInResult checkInResult = checkInResultRepository.findByCheckIn_IdAndAnsweredDate(c.getId(), DateUtils.getCurrentDateFirstHour());
-                checkInResults.add(checkInResult);
+                if(checkInResult!= null){
+                    checkInResults.add(checkInResult);
+                }
             });
         }
         return checkInResults;
