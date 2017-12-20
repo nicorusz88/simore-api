@@ -5,6 +5,7 @@ import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
 import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
+import ar.com.simore.simoreapi.scheduler.devicessync.SyncProcessStarter;
 import ar.com.simore.simoreapi.services.utils.DateUtils;
 import ar.com.simore.simoreapi.services.utils.TreatmentTemplateHandler;
 import org.apache.commons.io.FileUtils;
@@ -52,6 +53,9 @@ public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private SyncProcessStarter syncProcessStarter;
 
     @Override
     protected UserRepository getRepository() {
@@ -244,6 +248,7 @@ public class UserService extends BaseService<UserRepository, User> {
                 oAuth.setUser_id(oAuthNew.getUser_id());
                 oAuth.setExpires_in(oAuthNew.getExpires_in());
                 userRepository.save(user);
+                syncProcessStarter.init();
                 return ResponseEntity.ok().build();
             }
         }

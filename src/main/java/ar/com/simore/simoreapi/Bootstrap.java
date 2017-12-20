@@ -451,21 +451,15 @@ public class Bootstrap {
         vital4.setWearableType(WearableTypeEnum.FITBIT);
 
         Vital vital5 = new Vital();
-        vital5.setType(VitalsEnum.BLOOD_PRESSURE);
-        vital5.setName(VitalsEnum.BLOOD_PRESSURE.getName());
+        vital5.setType(VitalsEnum.HEART_RATE);
+        vital5.setName(VitalsEnum.HEART_RATE.getName());
         vital5.setWearableType(WearableTypeEnum.FITBIT);
-
-        Vital vital6 = new Vital();
-        vital6.setType(VitalsEnum.HEART_RATE);
-        vital6.setName(VitalsEnum.HEART_RATE.getName());
-        vital6.setWearableType(WearableTypeEnum.FITBIT);
 
         vitales.add(vital1);
         vitales.add(vital2);
         vitales.add(vital3);
         vitales.add(vital4);
         vitales.add(vital5);
-        vitales.add(vital6);
 
         return vitales;
     }

@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +49,11 @@ import java.util.stream.Collectors;
 public class SyncProcessStarter {
 
     private final Logger logger = Logger.getLogger("synchronizer");
+
+    /**
+     * Indicates if the process is running
+     */
+    public static AtomicBoolean isRunning = new AtomicBoolean(Boolean.FALSE);
 
     private static final String SYNCHING_VITAL_S_FROM_S_DEVICE = "Synching vital %s from %s device";
     private static final String UNKNOWN_EXCEPTION_MESSAGE = "An unknown issue ocurred while synching vitals information for Pacient %s and Vital %s";
@@ -82,36 +89,43 @@ public class SyncProcessStarter {
     private TreatmentService treatmentService;
 
 
-    @Scheduled(fixedDelay = 300000) //Every 5 minutes
+    @Scheduled(fixedDelay = 120000) //Every 2 minutes
+    @Async
     public void init(){
-        final long startTime = System.currentTimeMillis();
-        logger.info(STARTING_DEVICES_SYNCHRONIZATION);
-        final List<User> pacients = getSynchronizablePacients();
-        logger.info(String.format(SYNCHING_S_PACIENTS, pacients.size()));
-        for (final User patientToSync : pacients) {
-            logger.info(String.format(SYNCHING_PACIENT_S, patientToSync.getUserName()));
-            final Treatment treatment = patientToSync.getTreatment();
-            final List<Vital> vitals = treatment.getVitals();
-            for (final Vital vitalToSync : vitals) {
-                logger.info(String.format(SYNCHING_VITAL_S_FROM_S_DEVICE, vitalToSync.getType().name(), vitalToSync.getWearableType().name()));
-                final Optional<OAuth> firstOauth = getPatientAndWearableTypeCredentials(patientToSync, vitalToSync);
-                if (firstOauth.isPresent()) {
-                    final OAuth oAuth = firstOauth.get();
-                    final GenericUrl url = generateAPIURL(vitalToSync, oAuth);
-                    try {
-                        logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
-                        final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
-                        processResponse(treatment, vitalToSync, apiResponse);
-                    } catch (Exception e) {
-                        logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
+        if(!isRunning.get()){
+            isRunning.set(true);
+            final long startTime = System.currentTimeMillis();
+            logger.info(STARTING_DEVICES_SYNCHRONIZATION);
+            final List<User> pacients = getSynchronizablePacients();
+            logger.info(String.format(SYNCHING_S_PACIENTS, pacients.size()));
+            for (final User patientToSync : pacients) {
+                logger.info(String.format(SYNCHING_PACIENT_S, patientToSync.getUserName()));
+                final Treatment treatment = patientToSync.getTreatment();
+                final List<Vital> vitals = treatment.getVitals();
+                for (final Vital vitalToSync : vitals) {
+                    logger.info(String.format(SYNCHING_VITAL_S_FROM_S_DEVICE, vitalToSync.getType().name(), vitalToSync.getWearableType().name()));
+                    final Optional<OAuth> firstOauth = getPatientAndWearableTypeCredentials(patientToSync, vitalToSync);
+                    if (firstOauth.isPresent()) {
+                        final OAuth oAuth = firstOauth.get();
+                        final GenericUrl url = generateAPIURL(vitalToSync, oAuth);
+                        try {
+                            logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
+                            final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
+                            processResponse(treatment, vitalToSync, apiResponse);
+                        } catch (Exception e) {
+                            logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
+                        }
                     }
                 }
+                treatmentService.save(treatment);
             }
-            treatmentService.save(treatment);
+            final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
+            logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
+            logger.info(ENDING_DEVICES_SYNCHRONIZATION);
+            isRunning.set(false);
+        }else{
+            logger.warn("Cannot start synchronizing process since it is already started");
         }
-        final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
-        logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
-        logger.info(ENDING_DEVICES_SYNCHRONIZATION);
     }
 
     private void processResponse(final Treatment treatment, final Vital vitalToSync, final HttpResponse apiResponse) throws IOException {

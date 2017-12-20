@@ -15,18 +15,24 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This bean acts as a starter for the wearables data synchronization service
  */
 @Component
 public class NotificationsProcessStarter {
+    private final Logger logger = Logger.getLogger("notifications");
+
+    /**
+     * Indicates if the process is running
+     */
+    private static AtomicBoolean isRunning = new AtomicBoolean(Boolean.FALSE);
 
     private static final String STARTING_NOTIFICATIONS_PROCESS = "Starting Notifications process";
     private static final String ENDING_NOTIFICATIONS_PROCESS = "Ending Notifications process";
     private static final String NOTIFICATION_PROCESS_TOOK_S_MINUTES = "Notification process took %s minutes";
-    private final Logger logger = Logger.getLogger("notifications");
-    public static volatile boolean isRunning = false;
+
 
     @Autowired
     private NotificationService notificationService;
@@ -34,33 +40,37 @@ public class NotificationsProcessStarter {
     @Autowired
     private PushNotificationService pushNotificationService;
 
-    @Scheduled(fixedDelay = 300000) //Every 5 minutes
-    public void init() {
-        final long startTime = System.currentTimeMillis();
-        isRunning = true;
-        logger.info(STARTING_NOTIFICATIONS_PROCESS);
-        List<Notification> notificationList = new ArrayList<>();
-        addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.MEDICATION);
-        addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.CHECKIN);
-        addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourAndMinutesOnly(), NotificationTypeEnum.APPOINTMENT);
-        addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.RECOMMENDATION);
-        for (Notification notification : notificationList) {
-            if (notification.getUser().getDeviceToken() != null) {
-                final String response = pushNotificationService.sendNotification(notification);
-                if (response != null) {
-                    processResponse(response, notification);
-                } else {
-                    logger.warn("Firebase response was null, weird...");
-                }
+    @Scheduled(fixedDelay = 120000) //Every 2 minutes
+    public synchronized void init() {
+        if(!isRunning.get()){
+            isRunning.set(true);
+            final long startTime = System.currentTimeMillis();
+            logger.info(STARTING_NOTIFICATIONS_PROCESS);
+            List<Notification> notificationList = new ArrayList<>();
+            addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.MEDICATION);
+            addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.CHECKIN);
+            addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourAndMinutesOnly(), NotificationTypeEnum.APPOINTMENT);
+            addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.RECOMMENDATION);
+            for (Notification notification : notificationList) {
+                if (notification.getUser().getDeviceToken() != null) {
+                    final String response = pushNotificationService.sendNotification(notification);
+                    if (response != null) {
+                        processResponse(response, notification);
+                    } else {
+                        logger.warn("Firebase response was null, weird...");
+                    }
 
-            } else {
-                logger.info(String.format("User with ID: %s does not have device token, will not sent notitication with ID: %s", notification.getUser().getId(), notification.getId()));
+                } else {
+                    logger.info(String.format("User with ID: %s does not have device token, will not sent notitication with ID: %s", notification.getUser().getId(), notification.getId()));
+                }
             }
+            final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
+            logger.info(String.format(NOTIFICATION_PROCESS_TOOK_S_MINUTES, elapsedTimeInMinutes));
+            logger.info(ENDING_NOTIFICATIONS_PROCESS);
+            isRunning.set(false);
+        }else{
+            logger.warn("Cannot start synchronizing process since it is already started");
         }
-        final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
-        logger.info(String.format(NOTIFICATION_PROCESS_TOOK_S_MINUTES, elapsedTimeInMinutes));
-        logger.info(ENDING_NOTIFICATIONS_PROCESS);
-        isRunning = false;
     }
 
     private void processResponse(final String response, final Notification notification) {
