@@ -43,6 +43,17 @@ public class Treatment extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Alert> alerts;
+
+    public List<Alert> getAlerts() {
+        return alerts;
+    }
+
+    public void setAlerts(List<Alert> alerts) {
+        this.alerts = alerts;
+    }
+
     public VitalsSynchronization getVitalsSynchronization() {
         return vitalsSynchronization;
     }

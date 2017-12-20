@@ -90,7 +90,6 @@ public class SyncProcessStarter {
 
 
     @Scheduled(fixedDelay = 120000) //Every 2 minutes
-    @Async
     public void init(){
         if(!isRunning.get()){
             isRunning.set(true);

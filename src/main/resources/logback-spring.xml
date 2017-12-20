@@ -7,6 +7,7 @@
     <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
     <property name="SYNCHRONIZER_FILE" value="/var/log/simore-synchronizer.log"/>
     <property name="NOTIFICATIONS_FILE" value="/var/log/simore-notifications.log"/>
+    <property name="ALERTS_FILE" value="/var/log/simore-alerts.log"/>
     <appender name="SYNCHRONIZER-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${SYNCHRONIZER_FILE}</file>
         <append>true</append>
@@ -36,12 +37,31 @@
             <MaxFileSize>10MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
+
+    <appender name="ALERTS-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ALERTS_FILE}</file>
+        <append>true</append>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${ALERTS_FILE}.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
     <!-- additivity=false ensures synchronizer data only goes to the synchronizer log -->
     <logger name="synchronizer" level="DEBUG" additivity="false">
         <appender-ref ref="SYNCHRONIZER-FILE"/>
     </logger>
     <logger name="notifications" level="DEBUG" additivity="false">
         <appender-ref ref="NOTIFICATIONS-FILE"/>
+    </logger>
+
+    <logger name="alerts" level="DEBUG" additivity="false">
+        <appender-ref ref="ALERTS-FILE"/>
     </logger>
     <root level="INFO">
         <appender-ref ref="CONSOLE" />

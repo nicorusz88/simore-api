@@ -16,7 +16,6 @@ public class TreatmentTemplate extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Vital> vitals;
 
-
     @OneToMany(cascade = CascadeType.ALL)
     private List<Medication> medications;
 
@@ -28,6 +27,17 @@ public class TreatmentTemplate extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Appointment> appointments;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Alert> alerts;
+
+    public List<Alert> getAlerts() {
+        return alerts;
+    }
+
+    public void setAlerts(List<Alert> alerts) {
+        this.alerts = alerts;
+    }
 
     public List<Vital> getVitals() {
         return vitals;

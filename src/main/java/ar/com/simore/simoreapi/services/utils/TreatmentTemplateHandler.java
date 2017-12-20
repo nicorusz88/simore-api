@@ -22,6 +22,7 @@ public class TreatmentTemplateHandler {
         treatment.setCheckIns(new ArrayList<>(copyCheckins(treatmentTemplate.getCheckIns())));
         treatment.setMedications(new ArrayList<>(copyMedications(treatmentTemplate.getMedications())));
         treatment.setRecommendations(new ArrayList<>(copyRecommendations(treatmentTemplate.getRecommendations())));
+        treatment.setAlerts(new ArrayList<>(copyAlerts(treatmentTemplate.getAlerts())));
         treatment.setTreatmentTemplate(treatmentTemplate);
         return treatment;
     }
@@ -78,14 +79,27 @@ public class TreatmentTemplateHandler {
         return newMedications;
     }
     
-    private static List<Recommendation> copyRecommendations(List<Recommendation> medications) {
+    private static List<Recommendation> copyRecommendations(List<Recommendation> recommendations) {
         List<Recommendation> newRecommendations = new ArrayList<>();
-        medications.forEach(r -> {
+        recommendations.forEach(r -> {
             Recommendation recommendation = new Recommendation();
             recommendation.setText(r.getText());
             recommendation.setName(r.getName());
             newRecommendations.add(recommendation);
         });
         return newRecommendations;
+    }
+
+    private static List<Alert> copyAlerts(List<Alert> alerts) {
+        List<Alert> newAlerts = new ArrayList<>();
+        alerts.forEach(a -> {
+            Alert alert = new Alert();
+            alert.setDescription(a.getDescription());
+            alert.setName(a.getName());
+            alert.setThreshold(a.getThreshold());
+            alert.setAlertTypeEnum(a.getAlertTypeEnum());
+            newAlerts.add(alert);
+        });
+        return newAlerts;
     }
 }

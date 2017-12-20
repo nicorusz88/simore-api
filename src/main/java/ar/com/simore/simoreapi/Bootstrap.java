@@ -1,10 +1,7 @@
 package ar.com.simore.simoreapi;
 
 import ar.com.simore.simoreapi.entities.*;
-import ar.com.simore.simoreapi.entities.enums.RolesNamesEnum;
-import ar.com.simore.simoreapi.entities.enums.VitalsEnum;
-import ar.com.simore.simoreapi.entities.enums.WearableTypeEnum;
-import ar.com.simore.simoreapi.entities.enums.YesNoOptionEnum;
+import ar.com.simore.simoreapi.entities.enums.*;
 import ar.com.simore.simoreapi.repositories.RoleRepository;
 import ar.com.simore.simoreapi.repositories.TreatmentTemplateRepository;
 import ar.com.simore.simoreapi.repositories.UserRepository;
@@ -424,6 +421,10 @@ public class Bootstrap {
         //Appointments
         List<Appointment> appointments = getAppointmentsHypertension();
         treatmentTemplate.setAppointments(appointments);
+
+        //Alerts
+        List<Alert> alerts = getAlertsHypertension();
+        treatmentTemplate.setAlerts(alerts);
         return treatmentTemplate;
     }
 
@@ -550,6 +551,31 @@ public class Bootstrap {
 
         appointments.add(appointment1);
         return appointments;
+    }
+
+    private List<Alert> getAlertsHypertension() {
+        List<Alert> alerts = new ArrayList<>();
+        Alert alert1 = new Alert();
+        alert1.setName(AlertTypeEnum.FITBIT_HEART_RATE_RESTING_HEART.getTittle());
+        alert1.setDescription(AlertTypeEnum.FITBIT_HEART_RATE_RESTING_HEART.getDescription());
+        alert1.setAlertTypeEnum(AlertTypeEnum.FITBIT_HEART_RATE_RESTING_HEART);
+        alert1.setThreshold(70L);
+        alerts.add(alert1);
+
+        Alert alert2 = new Alert();
+        alert2.setName(AlertTypeEnum.FITBIT_WEIGHT.getTittle());
+        alert2.setDescription(AlertTypeEnum.FITBIT_WEIGHT.getDescription());
+        alert2.setAlertTypeEnum(AlertTypeEnum.FITBIT_WEIGHT);
+        alert2.setThreshold(85L);
+        alerts.add(alert2);
+
+        Alert alert3 = new Alert();
+        alert3.setName(AlertTypeEnum.FITBIT_DISTANCE.getTittle());
+        alert3.setDescription(AlertTypeEnum.FITBIT_DISTANCE.getDescription());
+        alert3.setAlertTypeEnum(AlertTypeEnum.FITBIT_DISTANCE);
+        alert3.setThreshold(3L);
+        alerts.add(alert3);
+        return alerts;
     }
 
 }
