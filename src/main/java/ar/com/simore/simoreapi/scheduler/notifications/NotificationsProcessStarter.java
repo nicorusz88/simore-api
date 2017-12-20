@@ -26,6 +26,7 @@ public class NotificationsProcessStarter {
     private static final String ENDING_NOTIFICATIONS_PROCESS = "Ending Notifications process";
     private static final String NOTIFICATION_PROCESS_TOOK_S_MINUTES = "Notification process took %s minutes";
     private final Logger logger = Logger.getLogger("notifications");
+    public static volatile boolean isRunning = false;
 
     @Autowired
     private NotificationService notificationService;
@@ -36,6 +37,7 @@ public class NotificationsProcessStarter {
     @Scheduled(fixedDelay = 300000) //Every 5 minutes
     public void init() {
         final long startTime = System.currentTimeMillis();
+        isRunning = true;
         logger.info(STARTING_NOTIFICATIONS_PROCESS);
         List<Notification> notificationList = new ArrayList<>();
         addNotificationsForType(notificationList, DateUtils.getCurrentDateWithHourOnly(), NotificationTypeEnum.MEDICATION);
@@ -58,6 +60,7 @@ public class NotificationsProcessStarter {
         final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
         logger.info(String.format(NOTIFICATION_PROCESS_TOOK_S_MINUTES, elapsedTimeInMinutes));
         logger.info(ENDING_NOTIFICATIONS_PROCESS);
+        isRunning = false;
     }
 
     private void processResponse(final String response, final Notification notification) {

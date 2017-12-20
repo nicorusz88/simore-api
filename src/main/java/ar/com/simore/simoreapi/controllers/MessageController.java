@@ -52,12 +52,17 @@ public class MessageController extends BaseController<MessageService, Message> {
     }
 
     @GetMapping("/sent/{userId}")
-    public ResponseEntity<List<MessageResource>> getAllSent(@PathVariable final Long userId){
+    public ResponseEntity<List<MessageResource>> getSent(@PathVariable final Long userId){
         return ResponseEntity.ok(messageService.getSent(userId));
     }
 
     @GetMapping("/received/{userId}")
-    public ResponseEntity<List<MessageResource>> getAllReceived(@PathVariable final Long userId){
+    public ResponseEntity<List<MessageResource>> getReceived(@PathVariable final Long userId){
         return ResponseEntity.ok(messageService.getReceived(userId));
+    }
+
+    @GetMapping("/unread/{userId}")
+    public ResponseEntity<Integer> getUnread(@PathVariable final Long userId){
+        return ResponseEntity.ok(messageService.getUnread(userId));
     }
 }

@@ -14,4 +14,6 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
     List<Message> findByFrom_IdOrderBySendDateAsc(Long userId);
 
     List<Message> findByTo_IdOrderBySendDateAsc(Long userId);
+
+    List<Message> findByTo_IdAndIsRead(Long userId, boolean b);
 }

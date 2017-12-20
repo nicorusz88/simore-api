@@ -103,4 +103,9 @@ public class MessageService extends BaseService<MessageRepository, Message> {
         return messageResources;
 
     }
+
+    public Integer getUnread(Long userId) {
+        final List<Message> messages = messageRepository.findByTo_IdAndIsRead(userId, false);
+        return messages.size();
+    }
 }
