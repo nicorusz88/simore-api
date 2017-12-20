@@ -1,9 +1,7 @@
 package ar.com.simore.simoreapi.controllers;
 
 
-import ar.com.simore.simoreapi.entities.Medication;
 import ar.com.simore.simoreapi.entities.Message;
-import ar.com.simore.simoreapi.entities.Treatment;
 import ar.com.simore.simoreapi.entities.resources.MessageResource;
 import ar.com.simore.simoreapi.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class MessageController extends BaseController<MessageService, Message> {
      * @return
      */
     @PostMapping("/send")
-    public ResponseEntity<MessageResource> sendMessage(@Valid @RequestBody Message message){
+    public ResponseEntity<MessageResource> sendMessage(@Valid @RequestBody final Message message){
         return ResponseEntity.ok(messageService.sendMessage(message));
     }
 
@@ -39,7 +37,7 @@ public class MessageController extends BaseController<MessageService, Message> {
      * @return
      */
     @GetMapping("/set-read/{messageId}")
-    public ResponseEntity<MessageResource> setMessageAsRead(@PathVariable Long messageId){
+    public ResponseEntity<MessageResource> setMessageAsRead(@PathVariable final Long messageId){
         return ResponseEntity.ok(messageService.setAsRead(messageId));
     }
 
@@ -49,12 +47,17 @@ public class MessageController extends BaseController<MessageService, Message> {
      * @return
      */
     @GetMapping("/conversation/{user1Id}/{user2Id}")
-    public ResponseEntity<List<MessageResource>> getConversation(@PathVariable("user1Id") Long user1Id, @PathVariable("user2Id") Long user2Id ){
+    public ResponseEntity<List<MessageResource>> getConversation(@PathVariable("user1Id") final Long user1Id, @PathVariable("user2Id") final Long user2Id ){
         return ResponseEntity.ok(messageService.getConversation(user1Id, user2Id));
     }
 
     @GetMapping("/sent/{userId}")
-    public ResponseEntity<List<MessageResource>> getAllSent(@PathVariable Long userId){
+    public ResponseEntity<List<MessageResource>> getAllSent(@PathVariable final Long userId){
         return ResponseEntity.ok(messageService.getSent(userId));
+    }
+
+    @GetMapping("/received/{userId}")
+    public ResponseEntity<List<MessageResource>> getAllReceived(@PathVariable final Long userId){
+        return ResponseEntity.ok(messageService.getReceived(userId));
     }
 }

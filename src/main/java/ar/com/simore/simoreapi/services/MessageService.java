@@ -96,4 +96,11 @@ public class MessageService extends BaseService<MessageRepository, Message> {
         messages.forEach(message -> messageResources.add(convertMessageToMessageResource(message)));
         return messageResources;
     }
+
+    public List<MessageResource> getReceived(Long userId) {        final List<MessageResource> messageResources = new ArrayList<>();
+        final List<Message> messages = messageRepository.findByTo_IdOrderBySendDateAsc(userId);
+        messages.forEach(message -> messageResources.add(convertMessageToMessageResource(message)));
+        return messageResources;
+
+    }
 }
