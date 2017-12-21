@@ -64,7 +64,7 @@ public class AlertsProcessStarter {
     private FitBitWeightMeasurementService fitBitWeightMeasurementService;
 
 
-    @Scheduled(fixedDelay = 120000, initialDelay = 60000) //Every 2 minutes, 1 minute delay for first execution
+    @Scheduled(fixedDelay = 30000, initialDelay = 60000) //Every 1 minutes, 1 minute delay for first execution
     public void init() {
         try{
             if (!isRunning.get()) {

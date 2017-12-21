@@ -49,7 +49,7 @@ public class NotificationsProcessStarter {
     @Autowired
     private PushNotificationService pushNotificationService;
 
-    @Scheduled(fixedDelay = 120000, initialDelay = 120000) // //Every 2 minutes, 2 minute delay for first execution
+    @Scheduled(fixedDelay = 30000, initialDelay = 120000) // //Every 30 seconds, 2 minute delay for first execution
     public synchronized void init() {
         try {
             if (!isRunning.get()) {

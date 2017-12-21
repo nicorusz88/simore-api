@@ -91,7 +91,7 @@ public class SyncProcessStarter {
     private TreatmentService treatmentService;
 
     @Autowired
-    AlertsProcessStarter alertsProcessStarter;
+    private AlertsProcessStarter alertsProcessStarter;
 
 
     @Scheduled(fixedDelay = 120000) //Every 2 minutes
