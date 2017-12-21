@@ -90,7 +90,7 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
             final List<CheckIn> checkIns = user.getTreatment().getCheckIns();
             checkIns.forEach(c ->
             {
-                final CheckInResult checkInResult = checkInResultRepository.findByCheckIn_IdAndAnsweredDate(c.getId(), DateUtils.getCurrentDateFirstHour());
+                final CheckInResult checkInResult = checkInResultRepository.findByCheckIn_IdAndAnsweredDateAfter(c.getId(), DateUtils.getCurrentDateFirstHour());
                 if(checkInResult!= null){
                     checkInResults.add(checkInResult);
                 }

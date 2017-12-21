@@ -12,5 +12,5 @@ public interface CheckInResultRepository extends CrudRepository<CheckInResult, L
 
     List<CheckInResult> findByCheckIn_Id(long id);
 
-    CheckInResult findByCheckIn_IdAndAnsweredDate(long id, Date currentDateFirstHour);
+    CheckInResult findByCheckIn_IdAndAnsweredDateAfter(long id, Date currentDateFirstHour);
 }
