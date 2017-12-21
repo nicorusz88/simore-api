@@ -68,7 +68,7 @@ public class CheckInService extends BaseService<CheckInRepository, CheckIn> {
         final Question question = checkin.getQuestion();
         CheckInResult checkInResult = new CheckInResult();
         checkInResult.setCheckIn(checkin);
-        checkInResult.setAnsweredDate(DateUtils.getCurrentDateFirstHour());
+        checkInResult.setAnsweredDate(DateUtils.getCurrentDate());
         if (question instanceof ChoiceQuestion) {
             final ChoiceQuestionOption choiceQuestionOption = choiceQuestionOptionRepository.findOne(Long.parseLong(answer));
             ChoiceAnswer choiceAnswer = new ChoiceAnswer();

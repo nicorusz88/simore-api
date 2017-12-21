@@ -2,6 +2,7 @@ package ar.com.simore.simoreapi.controllers;
 
 
 import ar.com.simore.simoreapi.entities.*;
+import ar.com.simore.simoreapi.entities.resources.FitBitHeartRateMeasurementResource;
 import ar.com.simore.simoreapi.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class FitBitMeasurementController {
     }
 
     @GetMapping("heart-rate/treatment/{treatmentId}/start-date/{startDate}/end-date/{endDate}")
-    public ResponseEntity<List<FitBitHeartRateMeasurement>> getHeartRateByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
+    public ResponseEntity<List<FitBitHeartRateMeasurementResource>> getHeartRateByTreatmentAndDateRange(@PathVariable long treatmentId, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
         return fitBitHeartRateMeasurementService.getByTreatmentAndDateRange(treatmentId, startDate, endDate);
     }
 
