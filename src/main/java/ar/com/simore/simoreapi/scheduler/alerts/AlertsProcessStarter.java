@@ -192,24 +192,15 @@ public class AlertsProcessStarter {
     private Message getMessage(User patientToSync, Alert alert, String obtainedValue) {
         Message message = new Message();
         message.setTo(patientToSync.getProfessional());
-        User admin = getAdminUser();
-        message.setFrom(admin);
+        message.setFrom(patientToSync);
         message.setSendDate(DateUtils.getCurrentDate());
         message.setText(String.format(alert.getAlertTypeEnum().getAlertMessageForProfessional(), patientToSync.getUserName(), alert.getThreshold(), obtainedValue));
         return message;
     }
 
-    private User getAdminUser() {
-        User admin = userRepository.findByUserName("admin");
-        if (admin == null) {
-            admin = userRepository.findOne(1L);
-        }
-        return admin;
-    }
-
 
     /**
-     * Gets all the pacients that are synchronizable. //We filter those pacients that have a treatment,
+     * Gets all the pacients that are synchronizable. We filter those pacients that have a treatment,
      * that has vitals in their treatment and that they have already authorized the application
      * to communicate with the providers.
      *
