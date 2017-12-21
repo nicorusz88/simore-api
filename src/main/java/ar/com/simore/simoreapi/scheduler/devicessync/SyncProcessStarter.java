@@ -9,6 +9,7 @@ import ar.com.simore.simoreapi.entities.json.fitbit.heartrate.FitBitHeartRate;
 import ar.com.simore.simoreapi.entities.json.fitbit.steps.FitBitSteps;
 import ar.com.simore.simoreapi.entities.json.fitbit.weight.FitBitWeight;
 import ar.com.simore.simoreapi.repositories.UserRepository;
+import ar.com.simore.simoreapi.scheduler.alerts.AlertsProcessStarter;
 import ar.com.simore.simoreapi.scheduler.devicessync.converters.fitbit.*;
 import ar.com.simore.simoreapi.services.TreatmentService;
 import ar.com.simore.simoreapi.services.utils.DateUtils;
@@ -25,7 +26,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -55,18 +55,20 @@ public class SyncProcessStarter {
      */
     private static AtomicBoolean isRunning = new AtomicBoolean(Boolean.FALSE);
 
-    private static final String SYNCHING_VITAL_S_FROM_S_DEVICE = "Synching vital %s from %s device";
-    private static final String UNKNOWN_EXCEPTION_MESSAGE = "An unknown issue ocurred while synching vitals information for Pacient %s and Vital %s";
-    private static final String RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S = "Retrieving info for pacient %s, vital %s from URL %s ";
+    private static final String SYNCHING_VITAL_S_FROM_S_DEVICE = "Sincronizando Vital %s del dispositivo %s";
+    private static final String UNKNOWN_EXCEPTION_MESSAGE = "Ocurrio un error mientras se sincronizaba la informacion de vitaless ddel paciente %s y el vital %s";
+    private static final String RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S = "Obteniendo information para el paciente %s, vital %s desde la URL %s ";
     private static final String API_CALL_ERROR = "Oopps, something wen't wrong while synchronizing. API call status Code: %s, API call status Message: %s";
-    private static final String REQUEST_URL_WAS = "Request URL was:\n";
-    private static final String REQUEST_HEADERS_WERE = "Request HEADERS were:\n";
-    private static final String RECEIVED = "RECEIVED \n ";
-    private static final String STARTING_DEVICES_SYNCHRONIZATION = "#######STARTING DEVICES SYNCHRONIZATION#########";
-    private static final String ENDING_DEVICES_SYNCHRONIZATION = "#######ENDING DEVICES SYNCHRONIZATION#########";
-    private static final String DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES = "Devices synchronization took %s minutes";
-    private static final String SYNCHING_S_PACIENTS = "Synching %s pacients";
-    private static final String SYNCHING_PACIENT_S = "Synching pacient %s";
+    private static final String REQUEST_URL_WAS = "Request URL era:\n";
+    private static final String REQUEST_HEADERS_WERE = "Request HEADERS eran:\n";
+    private static final String RECEIVED = "RECIBIDO \n ";
+    private static final String STARTING_DEVICES_SYNCHRONIZATION = "#######COMENZANDO SINCRONIZACION DE DISPOSITIVOS#########";
+    private static final String ENDING_DEVICES_SYNCHRONIZATION = "#######FINALIZANDO SINCCRONIZACION DE DISPOSITIVOS#########";
+    private static final String DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES = "La sincronizacion de dispositivos tomo %s minutos";
+    private static final String SYNCHING_S_PACIENTS = "Sincronizando %s pacientes";
+    private static final String SYNCHING_PACIENT_S = "Sincronizando paciente %s";
+    private static final String CLEANING_EXISTING_MEASUREMENTS_FOR_TODAY_S = "Limpiando mediciones exxistentes para hoy %s ";
+    private static final String REMOVING_MEASUREMENT_S = "Removiendo medicion %s ";
 
     /**
      * Global instance of the HTTP transport.
@@ -88,42 +90,52 @@ public class SyncProcessStarter {
     @Autowired
     private TreatmentService treatmentService;
 
+    @Autowired
+    AlertsProcessStarter alertsProcessStarter;
+
 
     @Scheduled(fixedDelay = 120000) //Every 2 minutes
-    public void init(){
-        if(!isRunning.get()){
-            isRunning.set(true);
-            final long startTime = System.currentTimeMillis();
-            logger.info(STARTING_DEVICES_SYNCHRONIZATION);
-            final List<User> pacients = getSynchronizablePacients();
-            logger.info(String.format(SYNCHING_S_PACIENTS, pacients.size()));
-            for (final User patientToSync : pacients) {
-                logger.info(String.format(SYNCHING_PACIENT_S, patientToSync.getUserName()));
-                final Treatment treatment = patientToSync.getTreatment();
-                final List<Vital> vitals = treatment.getVitals();
-                for (final Vital vitalToSync : vitals) {
-                    logger.info(String.format(SYNCHING_VITAL_S_FROM_S_DEVICE, vitalToSync.getType().name(), vitalToSync.getWearableType().name()));
-                    final Optional<OAuth> firstOauth = getPatientAndWearableTypeCredentials(patientToSync, vitalToSync);
-                    if (firstOauth.isPresent()) {
-                        final OAuth oAuth = firstOauth.get();
-                        final GenericUrl url = generateAPIURL(vitalToSync, oAuth);
-                        try {
-                            logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
-                            final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
-                            processResponse(treatment, vitalToSync, apiResponse);
-                        } catch (Exception e) {
-                            logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
+    public void init() {
+        try {
+            if (!isRunning.get()) {
+                isRunning.set(true);
+                final long startTime = System.currentTimeMillis();
+                logger.info(STARTING_DEVICES_SYNCHRONIZATION);
+                final List<User> pacients = getSynchronizablePacients();
+                logger.info(String.format(SYNCHING_S_PACIENTS, pacients.size()));
+                for (final User patientToSync : pacients) {
+                    logger.info(String.format(SYNCHING_PACIENT_S, patientToSync.getUserName()));
+                    final Treatment treatment = patientToSync.getTreatment();
+                    final List<Vital> vitals = treatment.getVitals();
+                    for (final Vital vitalToSync : vitals) {
+                        logger.info(String.format(SYNCHING_VITAL_S_FROM_S_DEVICE, vitalToSync.getType().name(), vitalToSync.getWearableType().name()));
+                        final Optional<OAuth> firstOauth = getPatientAndWearableTypeCredentials(patientToSync, vitalToSync);
+                        if (firstOauth.isPresent()) {
+                            final OAuth oAuth = firstOauth.get();
+                            final GenericUrl url = generateAPIURL(vitalToSync, oAuth);
+                            try {
+                                logger.info(String.format(RETRIEVING_INFO_FOR_PACIENT_S_VITAL_S_FROM_URL_S, patientToSync.getUserName(), vitalToSync.toString(), url.toString()));
+                                final HttpResponse apiResponse = executeGet(HTTP_TRANSPORT, firstOauth.get().getAccess_token(), url);
+                                processResponse(treatment, vitalToSync, apiResponse);
+                            } catch (Exception e) {
+                                logger.error(String.format(UNKNOWN_EXCEPTION_MESSAGE, patientToSync.getUserName(), vitalToSync.toString()), e);
+                            }
                         }
                     }
+                    treatmentService.save(treatment);
                 }
-                treatmentService.save(treatment);
+                alertsProcessStarter.init();
+                final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
+                logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
+                logger.info(ENDING_DEVICES_SYNCHRONIZATION);
+                logger.info("\n");
+                logger.info("\n");
+                isRunning.set(false);
+            } else {
+                logger.warn("Cannot start synchronizing process since it is already started");
             }
-            final long elapsedTimeInMinutes = DateUtils.getElapsedTimeInMinutes(startTime);
-            logger.info(String.format(DEVICES_SYNCHRONIZATION_TOOK_S_MINUTES, elapsedTimeInMinutes));
-            logger.info(ENDING_DEVICES_SYNCHRONIZATION);
-            isRunning.set(false);
-        }else{
-            logger.warn("Cannot start synchronizing process since it is already started");
+        } catch (Exception e) {
+            logger.error("An Error ocurred during synchronizing process" ,e);
         }
     }
 
@@ -134,73 +146,73 @@ public class SyncProcessStarter {
             logger.info(RECEIVED + content);
             switch (vitalToSync.getType()) {
                 case HEART_RATE:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         //ClassLoader classLoader = getClass().getClassLoader();
                         //TODO: We read from file with data temporarily
                         //File file = new File(classLoader.getResource("jsonexamples/heartRateZones.json").getFile());
                         //final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(file, FitBitHeartRate.class);
                         final FitBitHeartRate fitBitHeartRate = jacksonMappper.readValue(content, FitBitHeartRate.class);
                         measurements.addAll(FitBitHeartRateToMeasurementsConverter.convert(fitBitHeartRate));
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
                 case BLOOD_PRESSURE:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         //TODO: Do converter for fitbit
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
                 case BURNT_CALORIES:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         final FitBitCalories fitBitCalories = jacksonMappper.readValue(content, FitBitCalories.class);
                         measurements.addAll(FitBitCalorieToMeasurementsConverter.convert(fitBitCalories));
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
                 case STEPS:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         final FitBitSteps fitBitSteps = jacksonMappper.readValue(content, FitBitSteps.class);
                         measurements.addAll(FitBitStepsToMeasurementsConverter.convert(fitBitSteps));
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
                 case WEIGHT:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         final FitBitWeight fitBitWeight = jacksonMappper.readValue(content, FitBitWeight.class);
                         measurements.addAll(FitBitWeightToMeasurementsConverter.convert(fitBitWeight));
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
 
                     break;
                 case DISTANCE:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         final FitBitDistance fitBitDistance = jacksonMappper.readValue(content, FitBitDistance.class);
                         measurements.addAll(FitBitDistanceToMeasurementsConverter.convert(fitBitDistance));
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
                 case BLOOD_OXYGEN:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         //TODO: Do converter for fitbit
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
                 case SLEEP_TRACKING:
-                    if(vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)){
+                    if (vitalToSync.getWearableType().equals(WearableTypeEnum.FITBIT)) {
                         //TODO: Do converter for fitbit. Fitbit JSOn Response is INVALID JSON
-                    }else{
+                    } else {
                         //TODO: Do converter for withings
                     }
                     break;
             }
-            if(!measurements.isEmpty()){
+            if (!measurements.isEmpty()) {
                 removeExistingMeasurementsFromCurrentDate(treatment, vitalToSync);
             }
             setDataToTreatment(treatment, vitalToSync, measurements);
@@ -219,13 +231,13 @@ public class SyncProcessStarter {
      * @param vitalToSync
      */
     private void removeExistingMeasurementsFromCurrentDate(Treatment treatment, Vital vitalToSync) {
-        logger.info(String.format("Cleaning existing measurements for today %s ", getCurrentDate()));
+        logger.info(String.format(CLEANING_EXISTING_MEASUREMENTS_FOR_TODAY_S, getCurrentDate()));
         final VitalsSynchronization vitalsSynchronization = getVitalsSynchronization(treatment);
         final VitalMeasurement vitalMeasurement = getVitalMeasurement(vitalToSync, vitalsSynchronization);
         if (vitalMeasurement.getMeasurements() != null && !vitalMeasurement.getMeasurements().isEmpty()) {
             final List<Measurement> measurementsFromCurrentDate = vitalMeasurement.getMeasurements().stream().filter(measurement -> measurement.getDate().compareTo(getCurrentDate()) == 0).collect(Collectors.toList());
             for (Measurement measurementToDelete : measurementsFromCurrentDate) {
-                logger.info(String.format("Removing measurement %s ", measurementToDelete.toString()));
+                logger.info(String.format(REMOVING_MEASUREMENT_S, measurementToDelete.toString()));
                 vitalMeasurement.getMeasurements().remove(measurementToDelete);
             }
         }
@@ -408,7 +420,7 @@ public class SyncProcessStarter {
         return withingsBaseURL;
     }
 
-    public String parseAsString(final InputStream content) throws IOException {
+    private String parseAsString(final InputStream content) throws IOException {
         if (content == null) {
             return "";
         }

@@ -66,5 +66,16 @@ public class Message extends BaseEntity{
     public void setRead(boolean read) {
         isRead = read;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sendDate=" + sendDate +
+                ", from=" + from +
+                ", to=" + to +
+                ", text='" + text + '\'' +
+                ", isRead=" + isRead +
+                '}';
+    }
 }
 
