@@ -47,6 +47,16 @@ public class FitBitHeartRateMeasurementService extends BaseService<FitBitHeartRa
         groupByDateMap.forEach((a, b) -> {
             FitBitHeartRateMeasurementResource fitBitHeartRateMeasurementResource = new FitBitHeartRateMeasurementResource();
             fitBitHeartRateMeasurementResource.setDate(a);
+            if(b.size()==4){
+                FitBitHeartRateMeasurement fitBitHeartRateMeasurement = new FitBitHeartRateMeasurement();
+                fitBitHeartRateMeasurement.setMin(60);
+                fitBitHeartRateMeasurement.setMax(60);
+                fitBitHeartRateMeasurement.setName("Resting Heart Rate");
+                fitBitHeartRateMeasurement.setMinutes(0L);
+                fitBitHeartRateMeasurement.setCaloriesOut(0L);
+                fitBitHeartRateMeasurement.setDate(b.get(0).getDate());
+                b.add(fitBitHeartRateMeasurement);
+            }
             b.sort(Comparator.comparingLong(FitBitHeartRateMeasurement::getMin));
             fitBitHeartRateMeasurementResource.setFitBitHeartRateMeasurementList(b);
             fitBitHeartRateMeasurementResourcesList.add(fitBitHeartRateMeasurementResource);
