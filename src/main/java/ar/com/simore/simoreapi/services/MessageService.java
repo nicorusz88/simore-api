@@ -60,6 +60,7 @@ public class MessageService extends BaseService<MessageRepository, Message> {
 
     private MessageResource convertMessageToMessageResource(Message message) {
         final MessageResource messageResource = new MessageResource();
+        messageResource.setId(message.getId());
         messageResource.setRead(message.isRead());
         messageResource.setText(message.getText());
         messageResource.setSendDate(message.getSendDate());

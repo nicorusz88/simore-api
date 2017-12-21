@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class MessageResource {
 
+    private long id;
+
     private Date sendDate;
 
     private UserResource from;
@@ -14,6 +16,14 @@ public class MessageResource {
     private String text;
 
     private boolean isRead;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public Date getSendDate() {
         return sendDate;
