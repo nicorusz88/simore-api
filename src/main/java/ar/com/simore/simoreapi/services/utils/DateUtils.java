@@ -142,4 +142,14 @@ public class DateUtils {
         cal.add(Calendar.MINUTE, 30);
         return cal.getTime();
     }
+
+    /** We wet the current time and add it 30 minutes.
+     * @return
+     */
+    public static Date getNextExecutionTime(Date baseDate, Long addHour) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(baseDate);
+        cal.add(Calendar.HOUR_OF_DAY, addHour.intValue());
+        return cal.getTime();
+    }
 }

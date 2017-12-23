@@ -1,9 +1,10 @@
 package ar.com.simore.simoreapi.scheduler.notifications;
 
+import ar.com.simore.simoreapi.entities.CheckIn;
+import ar.com.simore.simoreapi.entities.Medication;
 import ar.com.simore.simoreapi.entities.Notification;
 import ar.com.simore.simoreapi.entities.enums.NotificationTypeEnum;
-import ar.com.simore.simoreapi.services.NotificationService;
-import ar.com.simore.simoreapi.services.PushNotificationService;
+import ar.com.simore.simoreapi.services.*;
 import ar.com.simore.simoreapi.services.utils.DateUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -48,6 +49,15 @@ public class NotificationsProcessStarter {
 
     @Autowired
     private PushNotificationService pushNotificationService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    MedicationService medicationService;
+
+    @Autowired
+    CheckInService checkInService;
 
     @Scheduled(fixedDelay = 30000, initialDelay = 120000) // //Every 30 seconds, 2 minute delay for first execution
     public synchronized void init() {
@@ -95,6 +105,7 @@ public class NotificationsProcessStarter {
                 final long success = (long) (jsonObjectResponse.get(SUCCESS));
                 if (success == 1) {
                     notification.setActualSendDate(DateUtils.getCurrentDate());
+                    generateNextNotification(notification);
                 } else {
                     logger.warn(String.format(FAILED_TO_SEND_MESSAGE_TO_USER_ID_S_USER_NAME_S, notification.getUser().getId(), notification.getUser().getUserName()));
                 }
@@ -104,6 +115,35 @@ public class NotificationsProcessStarter {
         } catch (Exception e) {
             logger.error(AN_ERROR_OCURRED_WHILE_PARSING_JSSON_RESPONSE, e);
         }
+    }
+
+    private void generateNextNotification(Notification notification) {
+        logger.info("Generando proxima notificacion para "+ notification.getNotificationType());
+        switch (notification.getNotificationType()){
+            case MEDICATION:
+                final Medication medication = medicationService.getOne(notification.getReferenceId());
+
+                Notification notification2 = getNextNotification(notification);
+                notification2.setExpectedSendDate(DateUtils.getNextExecutionTime(notification.getActualSendDate(), medication.getFrecuency()));
+                notificationService.save(notification2);
+                break;
+            case CHECKIN:
+                final CheckIn checkin = checkInService.getOne(notification.getReferenceId());
+                Notification notification3 = getNextNotification(notification);
+                notification3.setExpectedSendDate(DateUtils.getNextExecutionTime(notification.getActualSendDate(), (long) checkin.getFrecuency()));
+                notificationService.save(notification3);
+                break;
+        }
+    }
+
+    private Notification getNextNotification(Notification notification) {
+        Notification notification2 = new Notification();
+        notification2.setBody(notification.getBody());
+        notification2.setReferenceId(notification.getReferenceId());
+        notification2.setTitle(notification.getTitle());
+        notification2.setNotificationType(notification.getNotificationType());
+        notification2.setUser(notification.getUser());
+        return notification2;
     }
 
     private void addNotificationsForType(final List<Notification> notificationList, final Date dateToSearch, final NotificationTypeEnum notificationTypeEnum) {
